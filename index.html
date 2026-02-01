@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Ask Book - Pro</title>
+    <title>My Ask Book - V9.1 Fix</title>
     <link href="https://fonts.googleapis.com/css2?family=Gloria+Hallelujah&family=Patrick+Hand&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -11,11 +11,12 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
     <style>
-        /* --- ESTILOS GERAIS (High Quality) --- */
+        /* --- ESTILOS GERAIS --- */
         body { 
             background-color: #1a1a1a; 
-            /* Imagem de fundo de mesa de madeira de alta resolução */
-            background-image: url("https://images.unsplash.com/photo-1526566762798-8fac9c07aa98?q=80&w=2000&auto=format&fit=crop"); 
+            /* --- COLOQUE AQUI O LINK DA SUA NOVA IMAGEM DE FUNDO --- */
+            /* Exemplo usando a imagem que você mandou (você precisa hospedar ela e por o link) */
+            background-image: url("https://i.imgur.com/Su4x85g.jpeg"); /* <-- SUBSTITUA ESTE LINK */
             background-size: cover;
             background-attachment: fixed;
             background-position: center;
@@ -29,19 +30,10 @@
         }
 
         .screen { display: none; width: 100%; min-height: 100vh; justify-content: center; align-items: center; flex-direction: column; padding-bottom: 50px; box-sizing: border-box; }
-        
         #screen-loading { display: flex; font-family: 'Gloria Hallelujah'; color: white; font-size: 24px; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
 
-        /* Login Elegante */
-        .login-card { 
-            background: rgba(255, 255, 255, 0.95); 
-            width: 320px; padding: 40px; 
-            border-radius: 15px; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
-            text-align: center; 
-            border-top: 5px solid #d81b60; 
-            backdrop-filter: blur(10px);
-        }
+        /* Login */
+        .login-card { background: rgba(255, 255, 255, 0.95); width: 320px; padding: 40px; border-radius: 15px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); text-align: center; border-top: 5px solid #d81b60; backdrop-filter: blur(10px); }
         .login-title { font-family: 'Gloria Hallelujah', cursive; font-size: 32px; color: #333; margin-bottom: 10px; }
         .btn-google { background-color: #fff; color: #444; display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px; margin: 20px 0; border: 1px solid #ddd; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; font-family: 'Inter', sans-serif; font-size: 16px; }
         .btn-google:hover { background-color: #f8f8f8; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
@@ -50,11 +42,9 @@
         .sidebar { position: fixed; left: -320px; top: 0; width: 300px; height: 100%; background: #222; color: #eee; transition: 0.3s; z-index: 2000; box-shadow: 5px 0 15px rgba(0,0,0,0.5); padding: 20px; display: flex; flex-direction: column; box-sizing: border-box; }
         .sidebar.open { left: 0; }
         .sidebar-title { font-family: 'Gloria Hallelujah'; font-size: 24px; border-bottom: 1px solid #444; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;}
-        
         .add-friend-box { display: flex; gap: 5px; margin-bottom: 20px; }
         .input-friend { flex: 1; padding: 10px; border-radius: 6px; border: 1px solid #444; background: #333; color: white; font-family: 'Inter', sans-serif; }
         .btn-add-friend { background: #d81b60; color: white; border: none; padding: 5px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; font-family: 'Inter', sans-serif; }
-        
         .friend-list { list-style: none; padding: 0; overflow-y: auto; flex: 1; margin-bottom: 20px; }
         .friend-item { padding: 12px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
         .btn-icon { background: none; border: none; cursor: pointer; font-size: 18px; transition: transform 0.2s; color: #ccc; }
@@ -88,11 +78,10 @@
         .sub-logo { font-family: 'Patrick Hand'; font-size: 24px; color: #ddd; text-shadow: 1px 1px 5px rgba(0,0,0,0.8); margin-top: 5px; }
         .btn-menu { font-size: 30px; background: rgba(0,0,0,0.5); width: 50px; height: 50px; border-radius: 50%; border: none; cursor: pointer; color: white; display: flex; justify-content: center; align-items: center; transition: 0.2s; }
         .btn-menu:hover { background: rgba(0,0,0,0.8); }
-        
         .btn-create-main { background-color: #d81b60; color: #fff; border: none; padding: 12px 30px; font-family: 'Gloria Hallelujah'; font-size: 22px; border-radius: 50px; cursor: pointer; margin-bottom: 40px; box-shadow: 0 5px 15px rgba(216, 27, 96, 0.4); transition: 0.2s; }
         .btn-create-main:hover { transform: scale(1.05); background-color: #c2185b; }
 
-        /* --- LIVROS REALISTAS (CAPA DURA) --- */
+        /* --- LIVROS (CAPAS NOVAS) --- */
         .friends-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 40px; justify-items: center; padding-bottom: 40px; }
         .friend-book { 
             width: 150px; height: 210px; 
@@ -100,38 +89,40 @@
             cursor: pointer; display: flex; justify-content: center; align-items: center; 
             transition: transform 0.3s ease; 
             position: relative; 
-            box-shadow: 5px 10px 20px rgba(0,0,0,0.5); /* Sombra realista */
+            box-shadow: 5px 10px 20px rgba(0,0,0,0.5);
             background-size: cover; background-position: center;
-            border-left: 4px solid rgba(0,0,0,0.2); /* Dobra da capa */
+            border-left: 4px solid rgba(0,0,0,0.2);
+            /* Cor de fundo padrão caso a imagem não carregue ou seja transparente */
+            background-color: #f0f0f0; 
         }
-        /* Lombada (Efeito de brilho na esquerda) */
         .friend-book::before {
             content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 10px;
-            background: linear-gradient(to right, rgba(255,255,255,0.3), rgba(0,0,0,0.1));
-            z-index: 2;
+            background: linear-gradient(to right, rgba(255,255,255,0.3), rgba(0,0,0,0.1)); z-index: 2;
         }
         .friend-book:hover { transform: translateY(-10px) scale(1.02); z-index: 10; box-shadow: 10px 20px 30px rgba(0,0,0,0.6); }
-
         .book-label { 
             background: #fff; color: #111; padding: 8px 10px; 
             font-family: 'Patrick Hand', cursive; font-size: 18px; font-weight: bold;
             width: 80%; text-align: center; 
             box-shadow: 0 2px 4px rgba(0,0,0,0.3); 
-            transform: rotate(-2deg); /* Levemente torto como etiqueta */
+            transform: rotate(-2deg);
         }
         .btn-delete-book { position: absolute; top: -10px; right: -10px; background: #ff5252; color: white; border-radius: 50%; width: 28px; height: 28px; font-size: 14px; border: 2px solid white; cursor: pointer; display: flex; justify-content: center; align-items: center; z-index: 15; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
 
-        /* Capas com Textura (URLs de Alta Qualidade) */
+        /* --- NOVAS CLASSES DE CAPA (LINKS DE EXEMPLO - SUBSTITUA PELOS SEUS PNGs SEM FUNDO) --- */
+        .bg-sticker { background-image: url('https://i.imgur.com/12345.png'); } /* Exemplo: Capa de Adesivos */
+        .bg-camo    { background-image: url('https://i.imgur.com/67890.png'); } /* Exemplo: Capa Camuflada */
+        .bg-denim   { background-image: url('https://i.imgur.com/abcde.png'); } /* Exemplo: Capa Jeans */
+        .bg-monster { background-image: url('https://i.imgur.com/fghij.png'); } /* Exemplo: Capa Monstro */
+        .bg-leopard { background-image: url('https://i.imgur.com/klmno.png'); } /* Exemplo: Capa Leopardo */
+        .bg-alien   { background-image: url('https://i.imgur.com/pqrst.png'); } /* Exemplo: Capa Alien */
+        
+        /* Capas Clássicas (Mantidas como fallback) */
         .bg-blue   { background-image: url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=300&q=80'); }
-        .bg-purple { background-image: url('https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=300&q=80'); }
         .bg-pink   { background-image: url('https://images.unsplash.com/photo-1554189097-ffe88e998a2b?auto=format&fit=crop&w=300&q=80'); }
-        .bg-orange { background-image: url('https://images.unsplash.com/photo-1505330622279-bf7d7fc918f4?auto=format&fit=crop&w=300&q=80'); }
-        .bg-teal   { background-image: url('https://images.unsplash.com/photo-1550684847-75bdda21cc95?auto=format&fit=crop&w=300&q=80'); }
-        .bg-black  { background-image: url('https://images.unsplash.com/photo-1621360841013-c768371e93cf?auto=format&fit=crop&w=300&q=80'); }
-        .bg-white  { background-image: url('https://images.unsplash.com/photo-1586075010923-2dd4570fb338?auto=format&fit=crop&w=300&q=80'); }
-        .bg-brown  { background-image: url('https://images.unsplash.com/photo-1544078751-58fee2d8a03b?auto=format&fit=crop&w=300&q=80'); }
 
-        /* --- UI PAPEL (ALINHAMENTO V9.0) --- */
+
+        /* --- UI PAPEL (CORREÇÃO DEFINITIVA DE ALINHAMENTO) --- */
         .paper { 
             width: 90%; max-width: 700px; min-height: 800px; 
             background-color: #fdfbf7; 
@@ -139,66 +130,102 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.2); 
             border-radius: 4px; 
             margin: 20px 0; 
-            padding: 50px 50px 50px 90px; /* Margem esquerda maior para os furos */
+            /* Aumentei o padding superior para o título não colar no topo */
+            padding: 60px 50px 50px 90px; 
             
             /* Textura de Papel Real */
             background-image: linear-gradient(90deg, transparent 84px, #ffadad 84px, #ffadad 86px, transparent 86px), 
                               linear-gradient(#fdfbf7 39px, #a5d6a7 40px); /* Linha Verde Pálido */
-            background-size: 100% 100%, 100% 40px; 
+            background-size: 100% 100%, 100% 40px; /* AALTURA DA LINHA = 40px */
             background-attachment: local;
+            /* Garante que o background comece do topo certo */
+            background-position: 0 20px; 
         }
         
         #titulo-caderno {
             font-family: 'Gloria Hallelujah';
             font-size: 36px;
             color: #222;
+            /* Margem inferior de 40px para pular exatamente uma linha */
             margin: 0 0 40px 0; 
-            padding-top: 2px;   
+            /* Altura da linha do título também é 40px para manter o ritmo */
             line-height: 40px;  
             border-bottom: 2px dashed #aaa;
+            /* Ajuste fino para o texto sentar na linha */
+            padding-bottom: 5px; 
         }
 
         .question-list { list-style: none; padding: 0; margin: 0; }
-        .question-item { margin-bottom: 0; position: relative; }
         
-        /* NUMERAÇÃO (SEU ALINHAMENTO PREFERIDO) */
+        /* CADA ITEM DA LISTA (Pergunta + Resposta) */
+        .question-item { 
+            margin-bottom: 0; 
+            /* Removemos position: relative daqui */
+        }
+        
+        /* --- O SEGREDO DO ALINHAMENTO --- */
+        /* Cada "linha" de texto (pergunta, resposta, espaçador) é um container flex de 40px de altura */
+        .line-container {
+            height: 40px;
+            display: flex;
+            align-items: center; /* Centraliza verticalmente o conteúdo na linha */
+        }
+
+        /* NUMERAÇÃO (Agora dentro do fluxo normal) */
         .number-marker { 
-            position: absolute; 
-            left: 13px; /* Mantido conforme seu pedido */
+            font-family: 'Gloria Hallelujah'; 
             color: #0288d1; 
             font-weight: bold; 
-            font-family: 'Gloria Hallelujah'; 
             font-size: 22px; 
-            line-height: 40px; 
-            top: 40px; /* Ajuste vertical para alinhar com o texto da pergunta */
+            /* Largura fixa e alinhamento para ficar organizado */
+            width: 40px; 
+            text-align: right;
+            margin-right: 15px; /* Espaço entre o número e a pergunta */
         }
         
         .question-text { 
-            font-size: 26px; color: #222; 
-            line-height: 40px; display: block; 
-            margin: 0; padding: 0; height: 40px;
+            font-family: 'Patrick Hand';
+            font-size: 26px; 
+            color: #222; 
             font-weight: bold;
+            flex: 1; /* Ocupa o resto da linha */
+        }
+
+        /* RESPOSTAS (Com recuo para alinhar com a pergunta, não com o número) */
+        .answer-container {
+            padding-left: 55px; /* 40px do número + 15px da margem */
         }
 
         .friend-answer-line {
-            font-size: 24px; line-height: 40px; height: 40px;
-            display: flex; align-items: center;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
             font-family: 'Patrick Hand';
+            font-size: 24px; 
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            width: 100%;
         }
 
         .answer-input, .create-input { 
-            width: 100%; height: 40px; 
+            width: 100%; height: 40px; /* Altura total da linha */
             background: transparent; border: none; outline: none; 
-            font-family: 'Patrick Hand'; font-size: 26px; line-height: 40px; 
-            margin: 0; padding: 0; display: block; 
-            color: #0d47a1; vertical-align: bottom;
+            font-family: 'Patrick Hand'; font-size: 26px; 
+            color: #0d47a1;
+            padding: 0; margin: 0;
         }
         .create-input { border-bottom: 2px dashed #e91e63; color: #e91e63; }
         
+        /* Bolinhas do seletor de CAPAS */
         .color-options { display: flex; gap: 15px; justify-content: center; margin-bottom: 30px; flex-wrap: wrap; }
-        .color-circle { width: 40px; height: 40px; border-radius: 50%; cursor: pointer; border: 3px solid white; box-shadow: 0 3px 6px rgba(0,0,0,0.3); transition: transform 0.2s; background-size: cover; }
+        .color-circle { width: 40px; height: 40px; border-radius: 50%; cursor: pointer; border: 3px solid white; box-shadow: 0 3px 6px rgba(0,0,0,0.3); transition: transform 0.2s; background-size: cover; background-position: center; background-color: #ddd; }
         .color-circle:hover, .color-circle.selected { transform: scale(1.15); border-color: #333; }
+
+        /* Aplica as imagens nas bolinhas também */
+        .color-circle.bg-sticker { background-image: url('https://i.imgur.com/12345.png'); }
+        .color-circle.bg-camo    { background-image: url('https://i.imgur.com/67890.png'); }
+        .color-circle.bg-denim   { background-image: url('https://i.imgur.com/abcde.png'); }
+        .color-circle.bg-monster { background-image: url('https://i.imgur.com/fghij.png'); }
+        .color-circle.bg-leopard { background-image: url('https://i.imgur.com/klmno.png'); }
+        .color-circle.bg-alien   { background-image: url('https://i.imgur.com/pqrst.png'); }
+        .color-circle.bg-blue    { background-image: url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=300&q=80'); }
+        .color-circle.bg-pink    { background-image: url('https://images.unsplash.com/photo-1554189097-ffe88e998a2b?auto=format&fit=crop&w=300&q=80'); }
 
         /* CHAT & FERRAMENTAS */
         .chat-modal { position: fixed; bottom: 20px; right: 20px; width: 320px; height: 450px; background: white; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: none; flex-direction: column; z-index: 2500; overflow: hidden; font-family: 'Inter', sans-serif; }
@@ -325,27 +352,34 @@
                 <span class="pen-icon">✏️</span>
                 <input type="color" id="colorPickerCriacao" class="color-input-hidden" value="#d81b60">
             </div>
-            <h1 style="border-bottom: 2px dashed #ccc;">Novo Caderno</h1>
+            <h1 style="border-bottom: 2px dashed #ccc; padding-bottom: 5px; margin-bottom: 40px; line-height: 40px;">Novo Caderno</h1>
             
-            <div style="text-align: center; margin-bottom: 20px;">
-                <label style="color:#777; font-size:16px;">Apelido na capa:</label><br>
-                <input type="text" id="input-meu-nome" style="border:none; border-bottom: 2px solid #ccc; padding:5px; font-family:'Patrick Hand'; font-size: 20px; width: 250px; text-align:center; background: transparent;">
+            <div style="text-align: center; margin-bottom: 40px;">
+                <label style="color:#777; font-size:16px; font-family: 'Patrick Hand';">Apelido na capa:</label><br>
+                <input type="text" id="input-meu-nome" style="border:none; border-bottom: 2px solid #ccc; padding:5px; font-family:'Patrick Hand'; font-size: 24px; width: 250px; text-align:center; background: transparent; color: #d81b60;">
             </div>
 
             <div class="color-options">
-                <div class="color-circle bg-blue selected" onclick="selecionarCorCapa('bg-blue', this)"></div>
-                <div class="color-circle bg-purple" onclick="selecionarCorCapa('bg-purple', this)"></div>
-                <div class="color-circle bg-pink" onclick="selecionarCorCapa('bg-pink', this)"></div>
-                <div class="color-circle bg-orange" onclick="selecionarCorCapa('bg-orange', this)"></div>
-                <div class="color-circle bg-teal" onclick="selecionarCorCapa('bg-teal', this)"></div>
-                <div class="color-circle bg-black" onclick="selecionarCorCapa('bg-black', this)"></div>
-                <div class="color-circle bg-white" onclick="selecionarCorCapa('bg-white', this)"></div>
-                <div class="color-circle bg-brown" onclick="selecionarCorCapa('bg-brown', this)"></div>
+                <div class="color-circle bg-sticker selected" onclick="selecionarCorCapa('bg-sticker', this)" title="Adesivos"></div>
+                <div class="color-circle bg-camo" onclick="selecionarCorCapa('bg-camo', this)" title="Camuflado"></div>
+                <div class="color-circle bg-denim" onclick="selecionarCorCapa('bg-denim', this)" title="Jeans"></div>
+                <div class="color-circle bg-monster" onclick="selecionarCorCapa('bg-monster', this)" title="Monstro"></div>
+                <div class="color-circle bg-leopard" onclick="selecionarCorCapa('bg-leopard', this)" title="Leopardo"></div>
+                <div class="color-circle bg-alien" onclick="selecionarCorCapa('bg-alien', this)" title="Alien"></div>
+                <div class="color-circle bg-blue" onclick="selecionarCorCapa('bg-blue', this)" title="Azul"></div>
+                <div class="color-circle bg-pink" onclick="selecionarCorCapa('bg-pink', this)" title="Rosa"></div>
             </div>
-            <input type="hidden" id="input-cor-capa" value="bg-blue">
+            <input type="hidden" id="input-cor-capa" value="bg-sticker">
+            
             <ul class="question-list" id="lista-criacao"></ul>
-            <button onclick="adicionarNovaLinha()" style="margin: 20px auto; display:block; border: 1px dashed #999; background:none; padding: 10px; cursor: pointer; font-family: 'Patrick Hand'; font-size: 18px;">+ Adicionar Linha</button>
-            <button onclick="salvarNovoCadernoNoBanco()" style="margin: 20px auto; display:block; background: #4caf50; color: white; border: none; padding: 12px 40px; border-radius: 30px; cursor: pointer; font-family: 'Patrick Hand'; font-size: 22px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">💾 Publicar Caderno</button>
+            
+            <div class="line-container" style="justify-content: center; margin-top: 20px;">
+                <button onclick="adicionarNovaLinha()" style="border: 1px dashed #999; background:none; padding: 5px 15px; cursor: pointer; font-family: 'Patrick Hand'; font-size: 18px; color: #555;">+ Adicionar Pergunta</button>
+            </div>
+            
+            <div class="line-container" style="justify-content: center; margin-top: 20px; height: auto;">
+                <button onclick="salvarNovoCadernoNoBanco()" style="background: #4caf50; color: white; border: none; padding: 12px 40px; border-radius: 30px; cursor: pointer; font-family: 'Patrick Hand'; font-size: 22px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">💾 Publicar Caderno</button>
+            </div>
         </div>
     </div>
 
@@ -369,14 +403,13 @@
         let unsubscribeChat = null;
         let mapaNomesAmigos = {}; 
 
-        // LOGIN PERSISTENTE
         auth.onAuthStateChanged(user => {
             if (user) {
                 usuarioAtual = user;
                 carregarMeusAmigosDoBanco();
                 atualizarUIUsuario();
                 navegarPara('screen-feed');
-                monitorarNotificacoes(); // Inicia o listener de notificações
+                monitorarNotificacoes();
             } else {
                 navegarPara('screen-login');
             }
@@ -395,7 +428,6 @@
             }
         }
 
-        // --- SISTEMA DE AMIZADE V2 (COM ACEITE/RECUSA) ---
         function carregarMeusAmigosDoBanco() {
             db.collection('usuarios').doc(usuarioAtual.uid).onSnapshot(doc => {
                 if (doc.exists && doc.data().amigos) {
@@ -403,11 +435,10 @@
                 } else {
                     meusAmigos = [];
                 }
-                carregarFeed(); // Recarrega feed quando lista de amigos muda
+                carregarFeed();
             });
         }
 
-        // Enviar Pedido (Cria notificação para o outro)
         function enviarPedidoAmizade() {
             const input = document.getElementById('input-friend-email');
             const emailDestino = input.value.trim().toLowerCase();
@@ -415,7 +446,6 @@
             if (!emailDestino || emailDestino === usuarioAtual.email) return alert("Email inválido.");
             if (meusAmigos.includes(emailDestino)) return alert("Vocês já são amigos!");
 
-            // Cria documento na coleção 'notificacoes'
             db.collection('notificacoes').add({
                 de: usuarioAtual.email,
                 deNome: usuarioAtual.displayName,
@@ -426,10 +456,9 @@
             }).then(() => {
                 alert("Pedido enviado para " + emailDestino);
                 input.value = "";
-            }).catch(err => alert("Erro ao enviar: " + err.message));
+            }).catch(err => alert("Erro ao enviar. Verifique o email."));
         }
 
-        // Monitorar Notificações (Sino Vermelho)
         function monitorarNotificacoes() {
             db.collection('notificacoes')
                 .where('para', '==', usuarioAtual.email)
@@ -468,35 +497,20 @@
             modal.style.display = (modal.style.display === 'block') ? 'none' : 'block';
         }
 
-        // Aceitar ou Recusar
         function responderAmizade(idNotificacao, emailAmigo, aceitou) {
             const batch = db.batch();
             const notifRef = db.collection('notificacoes').doc(idNotificacao);
-
-            // 1. Atualiza notificação
             batch.update(notifRef, { status: aceitou ? 'aceito' : 'recusado' });
 
             if (aceitou) {
-                // 2. Adiciona nos MEUS amigos
                 const meuRef = db.collection('usuarios').doc(usuarioAtual.uid);
                 batch.set(meuRef, { 
                     amigos: firebase.firestore.FieldValue.arrayUnion(emailAmigo),
                     email: usuarioAtual.email
                 }, { merge: true });
-
-                // 3. O chato é adicionar no amigo SEM saber o UID dele (Firestore limita isso).
-                // SOLUÇÃO SIMPLIFICADA V9: O amigo só será adicionado na MINHA lista. 
-                // Para aparecer na dele, ele teria que me adicionar ou teríamos que varrer users (caro).
-                // TRUQUE: Vamos salvar um documento auxiliar 'conexoes' se quiser bidirecional, 
-                // mas por enquanto, ao aceitar, você vê ele. Ele receberá o aviso e te adiciona de volta? 
-                // MELHOR: Vamos tentar achar o UID dele pelo email (Requer query, pode falhar sem indice)
-                // Para MVP manteremos unidirecional no aceite imediato, mas idealmente seria bidirecional.
                 alert("Amizade aceita! Você agora segue " + emailAmigo);
             }
-
-            batch.commit().then(() => {
-                toggleNotificacoes();
-            });
+            batch.commit().then(() => { toggleNotificacoes(); });
         }
 
         function removerAmigo(email) {
@@ -529,7 +543,6 @@
             });
         }
 
-        // --- RESTANTE (CHAT, FEED, ETC) ---
         function abrirChat(emailAmigo, nomeAmigo) {
             const emails = [usuarioAtual.email, emailAmigo].sort();
             chatAtualId = emails[0].replace(/\./g, '_') + "-" + emails[1].replace(/\./g, '_');
@@ -589,6 +602,7 @@
 
                     if (ehMeu || ehAmigo) {
                         const div = document.createElement('div');
+                        // Usa a classe de cor salva ou 'bg-blue' como padrão
                         div.className = `friend-book ${dados.corCapa || 'bg-blue'}`;
                         div.onclick = (e) => {
                             if (e.target.className.includes('btn-delete-book')) return;
@@ -609,10 +623,10 @@
                 donoNome: "Tutorial",
                 perguntas: [
                     "Bem-vindo ao My Ask Book!",
-                    "Você irá descobrir diversas curiosidades sobre seus amigos.",
                     "Crie o seu caderno e comece a interagir.",
-                    "Adicione amigos no menu lateral e converse com eles em tempo real.",
-                    "Não esqueça de responder os cadernos de seus amigos, entre na brincadeira!"
+                    "Adicione amigos pelo e-mail no menu.",
+                    "Eles precisam aceitar seu pedido de amizade.",
+                    "Responda os cadernos deles e divirta-se!"
                 ]
             };
             abrirCadernoParaResponder("tutorial", dadosFake);
@@ -636,18 +650,23 @@
                 adicionarNovaLinha("Uma música que te lembra de mim?");
             }
         }
+
+        // --- FUNÇÃO CORRIGIDA PARA CRIAR LINHAS ALINHADAS ---
         function adicionarNovaLinha(textoPadrao = "") {
             const lista = document.getElementById('lista-criacao');
             const num = lista.children.length + 1;
             const li = document.createElement('li');
             li.className = 'question-item';
+            // Estrutura Flexbox: Uma linha de 40px com número e input alinhados
             li.innerHTML = `
-                <div style="height: 40px;"></div>
-                <span class="number-marker" style="top:40px;">${num < 10 ? '0'+num : num}.</span>
-                <input type="text" class="create-input" value="${textoPadrao}" style="color:${document.getElementById('colorPickerCriacao').value}" placeholder="Sua pergunta aqui...">
+                <div class="line-container">
+                    <span class="number-marker">${num < 10 ? '0'+num : num}.</span>
+                    <input type="text" class="create-input" value="${textoPadrao}" style="color:${document.getElementById('colorPickerCriacao').value}" placeholder="Sua pergunta aqui...">
+                </div>
             `;
             lista.appendChild(li);
         }
+
         function salvarNovoCadernoNoBanco() {
             const inputs = document.querySelectorAll('.create-input');
             const cor = document.getElementById('input-cor-capa').value;
@@ -693,6 +712,7 @@
             });
         }
 
+        // --- FUNÇÃO CORRIGIDA PARA RENDERIZAR RESPOSTAS ALINHADAS ---
         function renderizarPerguntasERespostas(dadosCaderno, todasRespostas) {
             const lista = document.getElementById('lista-perguntas-leitura');
             lista.innerHTML = "";
@@ -701,30 +721,37 @@
                 const num = index + 1;
                 const perguntaID = `resp_${index}`;
                 
+                // 1. Linha da Pergunta (Flexbox container de 40px)
                 const liPergunta = document.createElement('li');
                 liPergunta.className = 'question-item';
                 liPergunta.innerHTML = `
-                    <div style="height: 40px;"></div>
-                    <span class="number-marker" style="top:40px;">${num < 10 ? '0'+num : num}.</span>
-                    <span class="question-text">${pergunta}</span>
+                    <div class="line-container">
+                        <span class="number-marker">${num < 10 ? '0'+num : num}.</span>
+                        <span class="question-text">${pergunta}</span>
+                    </div>
                 `;
                 lista.appendChild(liPergunta);
 
+                // 2. Respostas dos Amigos
                 todasRespostas.forEach(registro => {
                     if (registro.uid !== usuarioAtual.uid && registro.dados[perguntaID]) {
                         const resp = registro.dados[perguntaID];
                         const liAmigo = document.createElement('li');
                         liAmigo.className = 'question-item';
                         const nomeAmigo = registro.dados.nomeQuemRespondeu || "Anônimo";
+                        // Container de resposta com recuo
                         liAmigo.innerHTML = `
-                            <div class="friend-answer-line" style="color:${resp.cor || '#333'}">
-                                <strong style="color:#555; margin-right:5px; font-size:18px;">${nomeAmigo}:</strong> ${resp.texto}
+                            <div class="line-container answer-container">
+                                <div class="friend-answer-line" style="color:${resp.cor || '#333'}">
+                                    <strong style="color:#555; margin-right:5px; font-size:18px;">${nomeAmigo}:</strong> ${resp.texto}
+                                </div>
                             </div>
                         `;
                         lista.appendChild(liAmigo);
                     }
                 });
 
+                // 3. Meu Input de Resposta
                 if (idCadernoAberto !== 'tutorial') {
                     const liMeuInput = document.createElement('li');
                     liMeuInput.className = 'question-item';
@@ -735,10 +762,13 @@
                         meuTexto = minhaRespostaSalva.dados[perguntaID].texto;
                         minhaCor = minhaRespostaSalva.dados[perguntaID].cor;
                     }
+                    // Container de resposta com recuo
                     liMeuInput.innerHTML = `
-                        <input type="text" class="answer-input" id="${perguntaID}" 
-                               value="${meuTexto}" style="color:${minhaCor}" 
-                               placeholder="Sua resposta..." oninput="salvarResposta(this)">
+                        <div class="line-container answer-container">
+                            <input type="text" class="answer-input" id="${perguntaID}" 
+                                   value="${meuTexto}" style="color:${minhaCor}" 
+                                   placeholder="Sua resposta..." oninput="salvarResposta(this)">
+                        </div>
                     `;
                     lista.appendChild(liMeuInput);
                 }
