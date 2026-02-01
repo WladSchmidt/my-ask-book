@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Ask Book - V9.5</title>
+    <title>My Ask Book - V9.6</title>
     <link href="https://fonts.googleapis.com/css2?family=Gloria+Hallelujah&family=Patrick+Hand&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -28,15 +28,28 @@
         }
 
         .screen { display: none; width: 100%; min-height: 100vh; justify-content: center; align-items: center; flex-direction: column; padding-bottom: 50px; box-sizing: border-box; }
-        #screen-loading { display: flex; font-family: 'Gloria Hallelujah'; color: white; font-size: 24px; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
+        
+        /* HEADER & LOGO */
+        .feed-container { width: 90%; max-width: 900px; text-align: center; padding: 20px; }
+        .feed-header { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 40px; position: relative; }
+        .header-center { display: flex; flex-direction: column; align-items: center; margin-top: -20px; }
+        
+        .main-logo { 
+            font-family: 'Gloria Hallelujah'; font-size: 55px; 
+            background: -webkit-linear-gradient(45deg, #ffeb3b, #ff80ab, #4fc3f7);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(2px 2px 0px rgba(0,0,0,0.5)); line-height: 1.2; margin: 0; 
+        }
+        
+        .sub-logo { 
+            font-family: 'Patrick Hand'; font-size: 26px; 
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.9); margin-top: 0px; 
+            
+            /* --- AQUI: COR DO TEXTO 'COLECIONE MEMÓRIAS' --- */
+            color: #ffeb3b; /* Amarelo */
+        }
 
-        /* Login */
-        .login-card { background: rgba(255, 255, 255, 0.95); width: 320px; padding: 40px; border-radius: 15px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); text-align: center; border-top: 5px solid #d81b60; backdrop-filter: blur(10px); }
-        .login-title { font-family: 'Gloria Hallelujah', cursive; font-size: 32px; color: #333; margin-bottom: 10px; }
-        .btn-google { background-color: #fff; color: #444; display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px; margin: 20px 0; border: 1px solid #ddd; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; font-family: 'Inter', sans-serif; font-size: 16px; }
-        .btn-google:hover { background-color: #f8f8f8; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-
-        /* Sidebar */
+        /* Sidebar & Menus */
         .sidebar { position: fixed; left: -320px; top: 0; width: 300px; height: 100%; background: #222; color: #eee; transition: 0.3s; z-index: 2000; box-shadow: 5px 0 15px rgba(0,0,0,0.5); padding: 20px; display: flex; flex-direction: column; box-sizing: border-box; }
         .sidebar.open { left: 0; }
         .sidebar-title { font-family: 'Gloria Hallelujah'; font-size: 24px; border-bottom: 1px solid #444; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;}
@@ -53,7 +66,115 @@
         .btn-logout { background-color: #444; color: #ff5252; border: 1px solid #ff5252; padding: 8px; border-radius: 5px; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 12px; width: 100%; transition: 0.2s; }
         .btn-logout:hover { background-color: #ff5252; color: white; }
 
-        /* Notificações */
+        /* Login */
+        .login-card { background: rgba(255, 255, 255, 0.95); width: 320px; padding: 40px; border-radius: 15px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); text-align: center; border-top: 5px solid #d81b60; backdrop-filter: blur(10px); }
+        .login-title { font-family: 'Gloria Hallelujah', cursive; font-size: 32px; color: #333; margin-bottom: 10px; }
+        .btn-google { background-color: #fff; color: #444; display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px; margin: 20px 0; border: 1px solid #ddd; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; font-family: 'Inter', sans-serif; font-size: 16px; }
+        .btn-google:hover { background-color: #f8f8f8; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+
+        /* Botões Menu */
+        .btn-menu { 
+            font-size: 28px; background: #ffffff; width: 55px; height: 55px; 
+            border-radius: 50%; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            cursor: pointer; color: #d81b60; display: flex; justify-content: center; align-items: center; 
+            transition: 0.2s; 
+        }
+        .btn-menu:hover { transform: scale(1.1); background-color: #f0f0f0; }
+        .btn-create-main { background-color: #d81b60; color: #fff; border: none; padding: 12px 30px; font-family: 'Gloria Hallelujah'; font-size: 22px; border-radius: 50px; cursor: pointer; margin-bottom: 40px; box-shadow: 0 5px 15px rgba(216, 27, 96, 0.4); transition: 0.2s; }
+        .btn-create-main:hover { transform: scale(1.05); background-color: #c2185b; }
+
+        /* --- LIVROS SEM BORDA --- */
+        .friends-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 40px; justify-items: center; padding-bottom: 40px; }
+        
+        .friend-book { 
+            width: 150px; height: 210px; cursor: pointer; 
+            display: flex; justify-content: center; align-items: center; 
+            transition: transform 0.3s ease; position: relative; 
+            /* Sombras realistas baseadas na imagem (PNG) */
+            filter: drop-shadow(5px 10px 10px rgba(0,0,0,0.5));
+            background-size: contain; background-repeat: no-repeat; background-position: center;
+        }
+        .friend-book:hover { transform: translateY(-10px) scale(1.02); z-index: 10; filter: drop-shadow(10px 20px 20px rgba(0,0,0,0.6)); }
+        
+        .book-label { 
+            background: #fff; color: #111; padding: 8px 10px; 
+            font-family: 'Patrick Hand', cursive; font-size: 18px; font-weight: bold;
+            width: 80%; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.3); 
+            transform: rotate(-2deg); border: 1px solid #ccc;
+        }
+        .btn-delete-book { position: absolute; top: 0px; right: 0px; background: #ff5252; color: white; border-radius: 50%; width: 28px; height: 28px; font-size: 14px; border: 2px solid white; cursor: pointer; display: flex; justify-content: center; align-items: center; z-index: 15; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+
+        /* IMAGENS LOCAIS */
+        .bg-draft   { background-image: url('imagens/Draft.png'); } 
+        .bg-games   { background-image: url('imagens/Games.png'); } 
+        .bg-jeans   { background-image: url('imagens/Jeans.png'); } 
+        .bg-monstro { background-image: url('imagens/Monstro.png'); } 
+        .bg-oncinha { background-image: url('imagens/Oncinha.png'); } 
+        .bg-alien   { background-image: url('imagens/Alien.png'); } 
+        /* Fallback */
+        .bg-blue   { background-color: #3b82f6; }
+
+        /* --- PAPEL E ALINHAMENTO --- */
+        .paper { 
+            width: 90%; max-width: 700px; min-height: 800px; background-color: #fdfbf7; position: relative; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2); border-radius: 4px; margin: 20px 0; 
+            padding: 60px 50px 50px 90px; /* Margem esquerda maior (90px) */
+            background-image: linear-gradient(90deg, transparent 84px, #ffadad 84px, #ffadad 86px, transparent 86px), 
+                              linear-gradient(#fdfbf7 39px, #a5d6a7 40px);
+            background-size: 100% 100%, 100% 40px; background-attachment: local; background-position: 0 20px; 
+        }
+        
+        #titulo-caderno {
+            font-family: 'Gloria Hallelujah'; font-size: 36px; color: #222;
+            margin: 0 0 40px 0; line-height: 40px; border-bottom: 2px dashed #aaa; padding-bottom: 5px; 
+        }
+
+        /* CSS PARA CENTRALIZAR O TÍTULO DE CRIAÇÃO (Novo Caderno) */
+        .creation-title {
+            font-family: 'Gloria Hallelujah'; font-size: 36px; color: #000;
+            margin: 0 0 40px 0; line-height: 40px; border-bottom: 2px dashed #ccc; padding-bottom: 5px;
+            /* Compensação para centralizar visualmente na folha (ignora a margem dos furos) */
+            margin-left: -20px; 
+            text-align: left; /* Alinha com o início da pauta */
+        }
+        
+        .creation-subtitle-box {
+            text-align: center; margin-bottom: 20px;
+            margin-left: -40px; /* Puxa para o centro visual da folha */
+        }
+
+        .question-list { list-style: none; padding: 0; margin: 0; }
+        .question-item { margin-bottom: 0; }
+        .line-container { height: 40px; display: flex; align-items: center; }
+        .number-marker { font-family: 'Gloria Hallelujah'; color: #0288d1; font-weight: bold; font-size: 22px; width: 40px; text-align: right; margin-right: 15px; }
+        .question-text { font-family: 'Patrick Hand'; font-size: 26px; color: #222; font-weight: bold; flex: 1; }
+        .answer-container { padding-left: 55px; }
+        .friend-answer-line { font-family: 'Patrick Hand'; font-size: 24px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+        .answer-input, .create-input { width: 100%; height: 40px; background: transparent; border: none; outline: none; font-family: 'Patrick Hand'; font-size: 26px; color: #0d47a1; padding: 0; margin: 0; }
+        .create-input { border-bottom: 2px dashed #e91e63; color: #e91e63; }
+        
+        /* SELETOR DE CAPAS EM GRADE */
+        .cover-selector-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; justify-items: center; margin-bottom: 30px;
+            margin-left: -40px; /* Centraliza a grade no papel */
+        }
+        
+        .mini-book {
+            width: 90px; height: 120px; border-radius: 4px; cursor: pointer;
+            background-size: contain; background-repeat: no-repeat; background-position: center;
+            filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.3)); border: 2px solid transparent; transition: all 0.2s;
+        }
+        .mini-book:hover { transform: scale(1.1); }
+        .mini-book.selected { filter: drop-shadow(0 0 5px #d81b60); transform: scale(1.15); }
+
+        .mini-book.bg-draft { background-image: url('imagens/Draft.png'); }
+        .mini-book.bg-games { background-image: url('imagens/Games.png'); }
+        .mini-book.bg-jeans { background-image: url('imagens/Jeans.png'); }
+        .mini-book.bg-monstro { background-image: url('imagens/Monstro.png'); }
+        .mini-book.bg-oncinha { background-image: url('imagens/Oncinha.png'); }
+        .mini-book.bg-alien { background-image: url('imagens/Alien.png'); }
+
+        /* Chat & Notificações */
         .notification-badge { position: absolute; top: -5px; right: -5px; background: red; color: white; font-size: 10px; width: 18px; height: 18px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-family: sans-serif; border: 2px solid #fff; z-index: 100; }
         .notif-modal { position: fixed; top: 80px; right: 20px; width: 300px; background: white; border-radius: 8px; box-shadow: 0 5px 20px rgba(0,0,0,0.3); z-index: 2100; display: none; overflow: hidden; font-family: 'Inter', sans-serif; }
         .notif-header { background: #f5f5f5; padding: 10px; font-weight: bold; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; }
@@ -65,149 +186,14 @@
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1500; display: none; backdrop-filter: blur(3px); }
         .overlay.visible { display: block; }
 
-        /* Header */
-        .feed-container { width: 90%; max-width: 900px; text-align: center; padding: 20px; }
-        .feed-header { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 40px; position: relative; }
-        .header-center { display: flex; flex-direction: column; align-items: center; margin-top: -20px; }
-        .main-logo { 
-            font-family: 'Gloria Hallelujah'; font-size: 55px; 
-            background: -webkit-linear-gradient(45deg, #ffeb3b, #ff80ab, #4fc3f7);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(2px 2px 0px rgba(0,0,0,0.5)); line-height: 1.2; margin: 0; 
-        }
-        .sub-logo { font-family: 'Patrick Hand'; font-size: 24px; color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); margin-top: 0px; opacity: 0.9; }
-        
-        /* Botões Menu (Ícones VISÍVEIS) */
-        .btn-menu { 
-            font-size: 28px; 
-            background: #ffffff; /* Fundo branco sólido */
-            width: 55px; height: 55px; 
-            border-radius: 50%; 
-            border: none;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            cursor: pointer; 
-            color: #d81b60; /* Ícone rosa para destaque */
-            display: flex; justify-content: center; align-items: center; 
-            transition: 0.2s; 
-        }
-        .btn-menu:hover { transform: scale(1.1); background-color: #f0f0f0; }
-        .btn-create-main { background-color: #d81b60; color: #fff; border: none; padding: 12px 30px; font-family: 'Gloria Hallelujah'; font-size: 22px; border-radius: 50px; cursor: pointer; margin-bottom: 40px; box-shadow: 0 5px 15px rgba(216, 27, 96, 0.4); transition: 0.2s; }
-        .btn-create-main:hover { transform: scale(1.05); background-color: #c2185b; }
-
-        /* --- CORREÇÃO DOS LIVROS (Sem borda branca) --- */
-        .friends-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 40px; justify-items: center; padding-bottom: 40px; }
-        
-        .friend-book { 
-            width: 150px; height: 210px; 
-            cursor: pointer; 
-            display: flex; justify-content: center; align-items: center; 
-            transition: transform 0.3s ease; 
-            position: relative; 
-            /* REMOVIDO: background-color, border-left e box-shadow CSS puro */
-            /* ADICIONADO: Sombra que segue o contorno da imagem */
-            filter: drop-shadow(5px 5px 10px rgba(0,0,0,0.5));
-            background-size: contain; /* Ajusta a imagem sem cortar */
-            background-repeat: no-repeat;
-            background-position: center;
-        }
-        
-        /* REMOVIDO: A "lombada" CSS artificial, pois a imagem já tem espiral */
-        .friend-book::before { display: none; }
-        
-        .friend-book:hover { transform: translateY(-10px) scale(1.02); z-index: 10; filter: drop-shadow(10px 15px 15px rgba(0,0,0,0.6)); }
-        
-        .book-label { 
-            background: #fff; color: #111; padding: 8px 10px; 
-            font-family: 'Patrick Hand', cursive; font-size: 18px; font-weight: bold;
-            width: 80%; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.3); 
-            transform: rotate(-2deg);
-            border: 1px solid #ccc;
-        }
-        .btn-delete-book { position: absolute; top: 0px; right: 0px; background: #ff5252; color: white; border-radius: 50%; width: 28px; height: 28px; font-size: 14px; border: 2px solid white; cursor: pointer; display: flex; justify-content: center; align-items: center; z-index: 15; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
-
-        /* --- CLASSES MAPEAR PARA ARQUIVOS (Seus nomes exatos) --- */
-        .bg-draft   { background-image: url('imagens/Draft.png'); } 
-        .bg-games   { background-image: url('imagens/Games.png'); } 
-        .bg-jeans   { background-image: url('imagens/Jeans.png'); } 
-        .bg-monstro { background-image: url('imagens/Monstro.png'); } 
-        .bg-oncinha { background-image: url('imagens/Oncinha.png'); } 
-        .bg-alien   { background-image: url('imagens/Alien.png'); } 
-        
-        /* Fallback */
-        .bg-blue   { background-color: #3b82f6; }
-
-        /* --- PAPEL E LINHAS --- */
-        .paper { 
-            width: 90%; max-width: 700px; min-height: 800px; background-color: #fdfbf7; position: relative; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2); border-radius: 4px; margin: 20px 0; 
-            padding: 60px 50px 50px 90px; 
-            background-image: linear-gradient(90deg, transparent 84px, #ffadad 84px, #ffadad 86px, transparent 86px), 
-                              linear-gradient(#fdfbf7 39px, #a5d6a7 40px);
-            background-size: 100% 100%, 100% 40px; background-attachment: local; background-position: 0 20px; 
-        }
-        #titulo-caderno {
-            font-family: 'Gloria Hallelujah'; font-size: 36px; color: #222;
-            margin: 0 0 40px 0; line-height: 40px; border-bottom: 2px dashed #aaa; padding-bottom: 5px; 
-        }
-        .question-list { list-style: none; padding: 0; margin: 0; }
-        .question-item { margin-bottom: 0; }
-        .line-container { height: 40px; display: flex; align-items: center; }
-        .number-marker { font-family: 'Gloria Hallelujah'; color: #0288d1; font-weight: bold; font-size: 22px; width: 40px; text-align: right; margin-right: 15px; }
-        .question-text { font-family: 'Patrick Hand'; font-size: 26px; color: #222; font-weight: bold; flex: 1; }
-        .answer-container { padding-left: 55px; }
-        .friend-answer-line { font-family: 'Patrick Hand'; font-size: 24px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
-        .answer-input, .create-input { width: 100%; height: 40px; background: transparent; border: none; outline: none; font-family: 'Patrick Hand'; font-size: 26px; color: #0d47a1; padding: 0; margin: 0; }
-        .create-input { border-bottom: 2px dashed #e91e63; color: #e91e63; }
-        
-        /* --- SELETOR DE CAPAS (AUMENTADO) --- */
-        .cover-selector-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px; /* Mais espaço */
-            justify-items: center;
-            margin-bottom: 30px;
-        }
-        
-        .mini-book {
-            width: 90px; height: 120px; /* AUMENTADO PARA VER MELHOR */
-            border-radius: 4px;
-            cursor: pointer;
-            background-size: contain; background-repeat: no-repeat; background-position: center;
-            /* Filter shadow em vez de box-shadow para o formato correto */
-            filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.3));
-            border: 2px solid transparent; /* Borda invisível para reservar espaço */
-            transition: all 0.2s;
-        }
-        .mini-book:hover { transform: scale(1.1); }
-        .mini-book.selected { 
-            /* Borda colorida em volta */
-            filter: drop-shadow(0 0 5px #d81b60); 
-            transform: scale(1.15);
-        }
-
-        .mini-book.bg-draft { background-image: url('imagens/Draft.png'); }
-        .mini-book.bg-games { background-image: url('imagens/Games.png'); }
-        .mini-book.bg-jeans { background-image: url('imagens/Jeans.png'); }
-        .mini-book.bg-monstro { background-image: url('imagens/Monstro.png'); }
-        .mini-book.bg-oncinha { background-image: url('imagens/Oncinha.png'); }
-        .mini-book.bg-alien { background-image: url('imagens/Alien.png'); }
-
-        /* Chat (CORRIGIDO ALINHAMENTO) */
         .chat-modal { position: fixed; bottom: 20px; right: 20px; width: 340px; height: 450px; background: white; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: none; flex-direction: column; z-index: 2500; overflow: hidden; font-family: 'Inter', sans-serif; }
         .chat-header { background: #d81b60; color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
         .chat-body { flex: 1; padding: 15px; overflow-y: auto; background: #f5f5f5; display: flex; flex-direction: column; gap: 8px; }
         .chat-msg { padding: 8px 12px; border-radius: 12px; max-width: 80%; font-size: 14px; word-wrap: break-word; }
         .msg-me { background: #d81b60; color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
         .msg-friend { background: white; color: #333; align-self: flex-start; border-bottom-left-radius: 2px; border: 1px solid #ddd; }
-        
-        /* FLEXBOX FOOTER PARA CORRIGIR ALINHAMENTO DO INPUT */
-        .chat-footer { 
-            display: flex; align-items: center; gap: 10px; padding: 10px; border-top: 1px solid #eee; background: white;
-        }
-        .chat-input { 
-            flex: 1; /* Ocupa todo espaço restante */
-            padding: 10px; border: 1px solid #ccc; border-radius: 20px; outline: none; font-family: 'Inter'; font-size: 14px;
-        }
+        .chat-footer { display: flex; align-items: center; gap: 10px; padding: 10px; border-top: 1px solid #eee; background: white; }
+        .chat-input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 20px; outline: none; font-family: 'Inter'; font-size: 14px; }
         
         .btn-back { position: fixed; top: 20px; left: 20px; width: 50px; height: 50px; border-radius: 50%; background-color: #fff; color: #333; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.2); font-size: 24px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 1000; transition: 0.2s; }
         .btn-back:hover { transform: scale(1.1); }
@@ -316,14 +302,14 @@
                 <input type="color" id="colorPickerCriacao" class="color-input-hidden" value="#d81b60">
             </div>
             
-            <h1 style="border-bottom: 2px dashed #ccc; padding-bottom: 5px; margin-bottom: 40px; line-height: 40px;">Novo Caderno</h1>
+            <h1 class="creation-title">Novo Caderno</h1>
             
-            <div style="text-align: center; margin-bottom: 20px;">
+            <div class="creation-subtitle-box">
                 <label style="color:#777; font-size:16px; font-family: 'Patrick Hand';">Apelido na capa:</label><br>
                 <input type="text" id="input-meu-nome" style="border:none; border-bottom: 2px solid #ccc; padding:5px; font-family:'Patrick Hand'; font-size: 24px; width: 250px; text-align:center; background: transparent; color: #d81b60;">
             </div>
 
-            <div style="text-align:center; margin-bottom: 15px; font-family:'Patrick Hand'; color:#555;">Escolha uma capa:</div>
+            <div style="text-align:center; margin-bottom: 15px; font-family:'Patrick Hand'; color:#555; margin-left: -40px;">Escolha uma capa:</div>
             
             <div class="cover-selector-grid">
                 <div class="mini-book bg-draft selected" onclick="selecionarCorCapa('bg-draft', this)"></div>
@@ -503,12 +489,17 @@
             });
         }
 
+        // --- TUTORIAL FIXO (INTOCÁVEL) ---
         function abrirTutorial() {
-            abrirCadernoParaResponder("tutorial", { donoNome: "Tutorial", perguntas: 
-                ["Bem-vindo!",
-                "Adicione amigos no menu lateral e divirta-se!",
-                "Você irá descobrir diversas curiosidades sobre seus amigos",
-                "Crie seu próprio caderno e seja criativo nas suas perguntas"] });
+            abrirCadernoParaResponder("tutorial", { 
+                donoNome: "Tutorial", 
+                perguntas: [
+                    "Bem-vindo!", 
+                    "Adicione amigos no menu lateral e divirta-se!", 
+                    "Você irá descobrir diversas curiosidades sobre seus amigos", 
+                    "Crie seu próprio caderno e seja criativo nas suas perguntas"
+                ] 
+            });
         }
         function excluirCaderno(id) { if (confirm("Apagar?")) db.collection('cadernos').doc(id).delete(); }
 
@@ -592,4 +583,3 @@
     </script>
 </body>
 </html>
-
