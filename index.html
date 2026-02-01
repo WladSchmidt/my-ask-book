@@ -3,18 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Ask Book - V8.0 Design</title>
-    <link href="https://fonts.googleapis.com/css2?family=Gloria+Hallelujah&family=Patrick+Hand&display=swap" rel="stylesheet">
+    <title>My Ask Book - Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Gloria+Hallelujah&family=Patrick+Hand&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
     <style>
-        /* --- ESTILOS GERAIS --- */
+        /* --- ESTILOS GERAIS (High Quality) --- */
         body { 
-            background-color: #d2b48c; 
-            background-image: url("https://www.transparenttextures.com/patterns/wood-pattern.png"); 
+            background-color: #1a1a1a; 
+            /* Imagem de fundo de mesa de madeira de alta resolução */
+            background-image: url("https://images.unsplash.com/photo-1526566762798-8fac9c07aa98?q=80&w=2000&auto=format&fit=crop"); 
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
             margin: 0; 
             font-family: 'Patrick Hand', cursive; 
             display: flex; 
@@ -26,205 +30,190 @@
 
         .screen { display: none; width: 100%; min-height: 100vh; justify-content: center; align-items: center; flex-direction: column; padding-bottom: 50px; box-sizing: border-box; }
         
-        #screen-loading { display: flex; font-family: 'Gloria Hallelujah'; color: white; font-size: 24px; text-shadow: 2px 2px 0 #333; }
+        #screen-loading { display: flex; font-family: 'Gloria Hallelujah'; color: white; font-size: 24px; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
 
-        /* Login */
-        .login-card { background-color: #ffadad; width: 300px; padding: 40px; border-radius: 10px 20px 20px 10px; box-shadow: 10px 10px 20px rgba(0,0,0,0.3); text-align: center; border-left: 15px solid #d81b60; }
-        .login-title { font-family: 'Gloria Hallelujah', cursive; font-size: 35px; color: #fff; text-shadow: 2px 2px 0 #d81b60; margin-bottom: 30px; }
-        .btn-google { background-color: #fff; color: #444; display: block; width: 100%; padding: 12px; margin: 10px 0; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; transition: 0.2s; font-family: sans-serif; font-size: 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        .btn-google:hover { transform: scale(1.05); }
+        /* Login Elegante */
+        .login-card { 
+            background: rgba(255, 255, 255, 0.95); 
+            width: 320px; padding: 40px; 
+            border-radius: 15px; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
+            text-align: center; 
+            border-top: 5px solid #d81b60; 
+            backdrop-filter: blur(10px);
+        }
+        .login-title { font-family: 'Gloria Hallelujah', cursive; font-size: 32px; color: #333; margin-bottom: 10px; }
+        .btn-google { background-color: #fff; color: #444; display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px; margin: 20px 0; border: 1px solid #ddd; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; font-family: 'Inter', sans-serif; font-size: 16px; }
+        .btn-google:hover { background-color: #f8f8f8; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 
-        /* Sidebar */
-        .sidebar { position: fixed; left: -320px; top: 0; width: 300px; height: 100%; background: #2c2c2c; color: white; transition: 0.3s; z-index: 2000; box-shadow: 5px 0 15px rgba(0,0,0,0.5); padding: 20px; display: flex; flex-direction: column; box-sizing: border-box; }
+        /* Sidebar & Menus */
+        .sidebar { position: fixed; left: -320px; top: 0; width: 300px; height: 100%; background: #222; color: #eee; transition: 0.3s; z-index: 2000; box-shadow: 5px 0 15px rgba(0,0,0,0.5); padding: 20px; display: flex; flex-direction: column; box-sizing: border-box; }
         .sidebar.open { left: 0; }
-        .sidebar-title { font-family: 'Gloria Hallelujah'; font-size: 24px; border-bottom: 1px dashed #555; padding-bottom: 10px; margin-bottom: 20px; }
+        .sidebar-title { font-family: 'Gloria Hallelujah'; font-size: 24px; border-bottom: 1px solid #444; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;}
         
         .add-friend-box { display: flex; gap: 5px; margin-bottom: 20px; }
-        .input-friend { flex: 1; padding: 8px; border-radius: 4px; border: none; font-family: sans-serif; }
-        .btn-add-friend { background: #d81b60; color: white; border: none; padding: 5px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .input-friend { flex: 1; padding: 10px; border-radius: 6px; border: 1px solid #444; background: #333; color: white; font-family: 'Inter', sans-serif; }
+        .btn-add-friend { background: #d81b60; color: white; border: none; padding: 5px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; font-family: 'Inter', sans-serif; }
         
         .friend-list { list-style: none; padding: 0; overflow-y: auto; flex: 1; margin-bottom: 20px; }
-        .friend-item { padding: 12px; border-bottom: 1px solid #444; display: flex; justify-content: space-between; align-items: center; }
-        .friend-actions { display: flex; gap: 10px; }
-        
-        .btn-icon { background: none; border: none; cursor: pointer; font-size: 18px; transition: transform 0.2s; }
-        .btn-icon:hover { transform: scale(1.2); }
-        
-        /* Rodapé Perfil */
-        .sidebar-footer {
-            background-color: #3a3a3a; padding: 15px; border-radius: 10px; display: flex; flex-direction: column; gap: 10px;
-        }
-        .user-info { display: flex; align-items: center; gap: 10px; }
-        .user-avatar { width: 40px; height: 40px; border-radius: 50%; border: 2px solid #d81b60; }
-        .btn-logout { background-color: #ff5252; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer; font-family: sans-serif; font-weight: bold; width: 100%; transition: 0.2s; }
-        .btn-logout:hover { background-color: #ff1744; }
+        .friend-item { padding: 12px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
+        .btn-icon { background: none; border: none; cursor: pointer; font-size: 18px; transition: transform 0.2s; color: #ccc; }
+        .btn-icon:hover { transform: scale(1.2); color: white; }
 
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1500; display: none; }
+        /* Rodapé Perfil */
+        .sidebar-footer { background-color: #333; padding: 15px; border-radius: 10px; display: flex; flex-direction: column; gap: 10px; }
+        .user-info { display: flex; align-items: center; gap: 10px; }
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; border: 2px solid #d81b60; object-fit: cover; }
+        .btn-logout { background-color: #444; color: #ff5252; border: 1px solid #ff5252; padding: 8px; border-radius: 5px; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 12px; width: 100%; transition: 0.2s; }
+        .btn-logout:hover { background-color: #ff5252; color: white; }
+
+        /* NOTIFICAÇÕES */
+        .notification-badge { position: absolute; top: -5px; right: -5px; background: red; color: white; font-size: 10px; width: 18px; height: 18px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-family: sans-serif; border: 2px solid #222; }
+        .notif-modal { position: fixed; top: 60px; right: 20px; width: 300px; background: white; border-radius: 8px; box-shadow: 0 5px 20px rgba(0,0,0,0.3); z-index: 2100; display: none; overflow: hidden; font-family: 'Inter', sans-serif; }
+        .notif-header { background: #f5f5f5; padding: 10px; font-weight: bold; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; }
+        .notif-list { max-height: 300px; overflow-y: auto; padding: 0; margin: 0; list-style: none; }
+        .notif-item { padding: 10px; border-bottom: 1px solid #eee; display: flex; flex-direction: column; gap: 5px; }
+        .notif-actions { display: flex; gap: 10px; margin-top: 5px; }
+        .btn-accept { background: #4caf50; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+        .btn-deny { background: #f44336; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1500; display: none; backdrop-filter: blur(3px); }
         .overlay.visible { display: block; }
 
-        /* Header */
-        .feed-container { width: 90%; max-width: 800px; text-align: center; padding: 20px; }
-        .feed-header { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 30px; }
+        /* HEADER & FEED */
+        .feed-container { width: 90%; max-width: 900px; text-align: center; padding: 20px; }
+        .feed-header { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 40px; position: relative; }
         .header-center { display: flex; flex-direction: column; align-items: center; }
-        .main-logo { font-family: 'Gloria Hallelujah'; font-size: 45px; color: #d81b60; text-shadow: 3px 3px 0 #fff; line-height: 1; margin: 0; }
-        .sub-logo { font-family: 'Patrick Hand'; font-size: 22px; color: #fff; text-shadow: 1px 1px 2px #333; margin-top: 5px; opacity: 0.9; }
-        .btn-menu { font-size: 35px; background: none; border: none; cursor: pointer; color: white; text-shadow: 2px 2px 0 #333; padding: 0; }
-        .btn-create-main { background-color: #fff; color: #d81b60; border: 2px dashed #d81b60; padding: 10px 25px; font-family: 'Gloria Hallelujah'; font-size: 20px; border-radius: 50px; cursor: pointer; margin-bottom: 30px; box-shadow: 4px 4px 0px rgba(216, 27, 96, 0.2); transition: 0.2s; }
+        .main-logo { font-family: 'Gloria Hallelujah'; font-size: 50px; color: #fff; text-shadow: 2px 2px 10px rgba(0,0,0,0.7); line-height: 1; margin: 0; }
+        .sub-logo { font-family: 'Patrick Hand'; font-size: 24px; color: #ddd; text-shadow: 1px 1px 5px rgba(0,0,0,0.8); margin-top: 5px; }
+        .btn-menu { font-size: 30px; background: rgba(0,0,0,0.5); width: 50px; height: 50px; border-radius: 50%; border: none; cursor: pointer; color: white; display: flex; justify-content: center; align-items: center; transition: 0.2s; }
+        .btn-menu:hover { background: rgba(0,0,0,0.8); }
         
-        /* --- DESIGN DOS LIVROS 3D (V8.0) --- */
-        .friends-grid { 
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 40px; justify-items: center; padding-bottom: 20px;
-        }
+        .btn-create-main { background-color: #d81b60; color: #fff; border: none; padding: 12px 30px; font-family: 'Gloria Hallelujah'; font-size: 22px; border-radius: 50px; cursor: pointer; margin-bottom: 40px; box-shadow: 0 5px 15px rgba(216, 27, 96, 0.4); transition: 0.2s; }
+        .btn-create-main:hover { transform: scale(1.05); background-color: #c2185b; }
+
+        /* --- LIVROS REALISTAS (CAPA DURA) --- */
+        .friends-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 40px; justify-items: center; padding-bottom: 40px; }
         .friend-book { 
-            width: 140px; height: 190px; 
-            border-radius: 2px 10px 10px 2px; 
+            width: 150px; height: 210px; 
+            border-radius: 2px 6px 6px 2px; 
             cursor: pointer; display: flex; justify-content: center; align-items: center; 
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            transition: transform 0.3s ease; 
             position: relative; 
-            box-shadow: 5px 5px 15px rgba(0,0,0,0.3), 1px 1px 0 rgba(255,255,255,0.2) inset; 
+            box-shadow: 5px 10px 20px rgba(0,0,0,0.5); /* Sombra realista */
+            background-size: cover; background-position: center;
+            border-left: 4px solid rgba(0,0,0,0.2); /* Dobra da capa */
         }
-        /* Efeito Páginas */
-        .friend-book::after {
-            content: ''; position: absolute; top: 5px; bottom: 5px; right: -8px; width: 6px;
-            background: linear-gradient(to right, #eee 0%, #ccc 100%);
-            border-radius: 0 4px 4px 0; box-shadow: -1px 0 2px rgba(0,0,0,0.1); z-index: -1;
-        }
-        /* Efeito Lombada */
+        /* Lombada (Efeito de brilho na esquerda) */
         .friend-book::before {
-            content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 15px;
-            background: linear-gradient(to right, rgba(255,255,255,0.4) 0%, rgba(0,0,0,0.1) 100%);
-            border-radius: 2px 0 0 2px; z-index: 2;
+            content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 10px;
+            background: linear-gradient(to right, rgba(255,255,255,0.3), rgba(0,0,0,0.1));
+            z-index: 2;
         }
-        .friend-book:hover { transform: translateY(-15px) scale(1.05) rotate(3deg); z-index: 10; }
+        .friend-book:hover { transform: translateY(-10px) scale(1.02); z-index: 10; box-shadow: 10px 20px 30px rgba(0,0,0,0.6); }
 
         .book-label { 
-            background: #fdfbf7; color: #2c2c2c; padding: 8px 12px; transform: rotate(-3deg); 
+            background: #fff; color: #111; padding: 8px 10px; 
             font-family: 'Patrick Hand', cursive; font-size: 18px; font-weight: bold;
-            max-width: 90%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
-            text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); border: 1px solid #e0e0e0;
+            width: 80%; text-align: center; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3); 
+            transform: rotate(-2deg); /* Levemente torto como etiqueta */
         }
-        .btn-delete-book { position: absolute; top: -10px; right: -10px; background: red; color: white; border-radius: 50%; width: 25px; height: 25px; font-size: 14px; border: 2px solid white; cursor: pointer; display: flex; justify-content: center; align-items: center; z-index: 15; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+        .btn-delete-book { position: absolute; top: -10px; right: -10px; background: #ff5252; color: white; border-radius: 50%; width: 28px; height: 28px; font-size: 14px; border: 2px solid white; cursor: pointer; display: flex; justify-content: center; align-items: center; z-index: 15; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
 
-        /* Cores 3D */
-        .bg-blue   { background-image: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: white; }
-        .bg-purple { background-image: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); color: white; }
-        .bg-pink   { background-image: linear-gradient(135deg, #ec4899 0%, #be185d 100%); color: white; }
-        .bg-orange { background-image: linear-gradient(135deg, #f97316 0%, #c2410c 100%); color: white; }
-        .bg-teal   { background-image: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%); color: white; }
-        .bg-black  { background-image: linear-gradient(135deg, #333 0%, #000 100%); color: white; border: 1px solid #444; }
-        .bg-white  { background-image: linear-gradient(135deg, #fff 0%, #e5e7eb 100%); color: #333; border: 1px solid #ccc; }
-        .bg-brown  { background-image: linear-gradient(135deg, #8d6e63 0%, #5d4037 100%); color: white; }
+        /* Capas com Textura (URLs de Alta Qualidade) */
+        .bg-blue   { background-image: url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=300&q=80'); }
+        .bg-purple { background-image: url('https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=300&q=80'); }
+        .bg-pink   { background-image: url('https://images.unsplash.com/photo-1554189097-ffe88e998a2b?auto=format&fit=crop&w=300&q=80'); }
+        .bg-orange { background-image: url('https://images.unsplash.com/photo-1505330622279-bf7d7fc918f4?auto=format&fit=crop&w=300&q=80'); }
+        .bg-teal   { background-image: url('https://images.unsplash.com/photo-1550684847-75bdda21cc95?auto=format&fit=crop&w=300&q=80'); }
+        .bg-black  { background-image: url('https://images.unsplash.com/photo-1621360841013-c768371e93cf?auto=format&fit=crop&w=300&q=80'); }
+        .bg-white  { background-image: url('https://images.unsplash.com/photo-1586075010923-2dd4570fb338?auto=format&fit=crop&w=300&q=80'); }
+        .bg-brown  { background-image: url('https://images.unsplash.com/photo-1544078751-58fee2d8a03b?auto=format&fit=crop&w=300&q=80'); }
 
-        /* --- UI PAPEL COM ESPIRAL (V8.0) --- */
+        /* --- UI PAPEL (ALINHAMENTO V9.0) --- */
         .paper { 
-            width: 90%; max-width: 600px; min-height: 700px; 
-            background-color: #fcfaf2; 
+            width: 90%; max-width: 700px; min-height: 800px; 
+            background-color: #fdfbf7; 
             position: relative; 
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3); 
-            border-radius: 2px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2); 
+            border-radius: 4px; 
             margin: 20px 0; 
-            padding: 40px 40px 40px 85px; /* Mantém o alinhamento */
+            padding: 50px 50px 50px 90px; /* Margem esquerda maior para os furos */
             
-            /* ESPIRAL + PAUTAS */
-            background-image: 
-                radial-gradient(circle, #333 30%, transparent 31%), /* Furos do espiral */
-                linear-gradient(90deg, transparent 79px, #ffadad 79px, #ffadad 81px, transparent 81px), /* Margem vermelha */
-                linear-gradient(#fcfaf2 39px, #81c784 40px); /* Linhas verdes */
-            
-            background-size: 
-                20px 40px, /* Espiral repete a cada 40px */
-                100% 100%, 
-                100% 40px; /* Linha repete a cada 40px */
-            
-            background-position: 
-                15px 15px, /* Posição dos furos */
-                0 0, 
-                0 0;
-            
-            background-repeat: repeat-y, no-repeat, repeat;
-            background-attachment: local; 
+            /* Textura de Papel Real */
+            background-image: linear-gradient(90deg, transparent 84px, #ffadad 84px, #ffadad 86px, transparent 86px), 
+                              linear-gradient(#fdfbf7 39px, #a5d6a7 40px); /* Linha Verde Pálido */
+            background-size: 100% 100%, 100% 40px; 
+            background-attachment: local;
         }
         
         #titulo-caderno {
-            font-size: 32px;
-            color: #333;
+            font-family: 'Gloria Hallelujah';
+            font-size: 36px;
+            color: #222;
             margin: 0 0 40px 0; 
-            padding-top: 5px;   
+            padding-top: 2px;   
             line-height: 40px;  
+            border-bottom: 2px dashed #aaa;
         }
 
         .question-list { list-style: none; padding: 0; margin: 0; }
-        .question-item { margin-bottom: 0; }
+        .question-item { margin-bottom: 0; position: relative; }
         
+        /* NUMERAÇÃO (SEU ALINHAMENTO PREFERIDO) */
         .number-marker { 
-            position: absolute; left: 13px; 
-            color: #4fc3f7; font-weight: bold; font-family: 'Gloria Hallelujah'; font-size: 20px; 
+            position: absolute; 
+            left: 13px; /* Mantido conforme seu pedido */
+            color: #0288d1; 
+            font-weight: bold; 
+            font-family: 'Gloria Hallelujah'; 
+            font-size: 22px; 
             line-height: 40px; 
+            top: 40px; /* Ajuste vertical para alinhar com o texto da pergunta */
         }
         
         .question-text { 
-            font-size: 24px; color: #333; 
+            font-size: 26px; color: #222; 
             line-height: 40px; display: block; 
             margin: 0; padding: 0; height: 40px;
+            font-weight: bold;
         }
 
         .friend-answer-line {
-            font-size: 22px; line-height: 40px; height: 40px;
+            font-size: 24px; line-height: 40px; height: 40px;
             display: flex; align-items: center;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            font-family: 'Patrick Hand';
         }
 
         .answer-input, .create-input { 
             width: 100%; height: 40px; 
             background: transparent; border: none; outline: none; 
-            font-family: 'Patrick Hand'; font-size: 24px; line-height: 40px; 
+            font-family: 'Patrick Hand'; font-size: 26px; line-height: 40px; 
             margin: 0; padding: 0; display: block; 
-            color: #003366; vertical-align: bottom;
+            color: #0d47a1; vertical-align: bottom;
         }
-        .create-input { border-bottom: 2px dashed #d81b60; color: #d81b60; }
+        .create-input { border-bottom: 2px dashed #e91e63; color: #e91e63; }
         
-        /* Bolinhas do seletor */
-        .color-options { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
-        .color-circle { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid white; box-shadow: 2px 2px 5px rgba(0,0,0,0.2); transition: transform 0.2s; }
-        /* Aplica os mesmos gradients nas bolinhas */
-        .color-circle.bg-blue { background-image: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); }
-        .color-circle.bg-purple { background-image: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); }
-        .color-circle.bg-pink { background-image: linear-gradient(135deg, #ec4899 0%, #be185d 100%); }
-        .color-circle.bg-orange { background-image: linear-gradient(135deg, #f97316 0%, #c2410c 100%); }
-        .color-circle.bg-teal { background-image: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%); }
-        .color-circle.bg-black { background-image: linear-gradient(135deg, #333 0%, #000 100%); }
-        .color-circle.bg-white { background-image: linear-gradient(135deg, #fff 0%, #e5e7eb 100%); border: 1px solid #ccc; }
-        .color-circle.bg-brown { background-image: linear-gradient(135deg, #8d6e63 0%, #5d4037 100%); }
-        
-        .color-circle:hover, .color-circle.selected { transform: scale(1.2); border-color: #333; }
+        .color-options { display: flex; gap: 15px; justify-content: center; margin-bottom: 30px; flex-wrap: wrap; }
+        .color-circle { width: 40px; height: 40px; border-radius: 50%; cursor: pointer; border: 3px solid white; box-shadow: 0 3px 6px rgba(0,0,0,0.3); transition: transform 0.2s; background-size: cover; }
+        .color-circle:hover, .color-circle.selected { transform: scale(1.15); border-color: #333; }
 
-        /* CHAT */
-        .chat-modal { position: fixed; bottom: 20px; right: 20px; width: 300px; height: 400px; background: white; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.3); display: none; flex-direction: column; z-index: 2500; border: 1px solid #ccc; }
-        .chat-header { background: #d81b60; color: white; padding: 10px; border-radius: 10px 10px 0 0; display: flex; justify-content: space-between; align-items: center; font-family: 'Gloria Hallelujah'; }
-        .chat-body { flex: 1; padding: 10px; overflow-y: auto; background: #fcfaf2; display: flex; flex-direction: column; gap: 5px; }
-        .chat-footer { padding: 5px; border-top: 1px solid #ccc; display: flex; }
-        .chat-input { flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 20px; outline: none; }
-        .chat-msg { padding: 5px 10px; border-radius: 10px; max-width: 80%; font-size: 14px; word-wrap: break-word; }
-        .msg-me { background: #d81b60; color: white; align-self: flex-end; }
-        .msg-friend { background: #e0e0e0; color: #333; align-self: flex-start; }
-
-        .btn-back { position: fixed; top: 20px; left: 20px; width: 50px; height: 50px; border-radius: 50%; background-color: #d81b60; color: white; border: 3px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.3); font-size: 24px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 1000; }
+        /* CHAT & FERRAMENTAS */
+        .chat-modal { position: fixed; bottom: 20px; right: 20px; width: 320px; height: 450px; background: white; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: none; flex-direction: column; z-index: 2500; overflow: hidden; font-family: 'Inter', sans-serif; }
+        .chat-header { background: #d81b60; color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        .chat-body { flex: 1; padding: 15px; overflow-y: auto; background: #f5f5f5; display: flex; flex-direction: column; gap: 8px; }
+        .chat-msg { padding: 8px 12px; border-radius: 12px; max-width: 80%; font-size: 14px; word-wrap: break-word; }
+        .msg-me { background: #d81b60; color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+        .msg-friend { background: white; color: #333; align-self: flex-start; border-bottom-left-radius: 2px; border: 1px solid #ddd; }
         
-        .pen-tool { 
-            position: absolute; top: 20px; right: 25px; z-index: 10; 
-            cursor: pointer; 
-            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .pen-icon { 
-            font-size: 40px; 
-            filter: drop-shadow(3px 5px 2px rgba(0,0,0,0.3)); 
-            transform: rotate(15deg); 
-            display: block; 
-            transition: transform 0.2s; 
-        }
-        .pen-tool:hover .pen-icon {
-            transform: rotate(0deg) scale(1.15) translateY(-5px); 
-        }
+        .btn-back { position: fixed; top: 20px; left: 20px; width: 50px; height: 50px; border-radius: 50%; background-color: #fff; color: #333; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.2); font-size: 24px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 1000; transition: 0.2s; }
+        .btn-back:hover { transform: scale(1.1); }
+
+        .pen-tool { position: absolute; top: 30px; right: 30px; z-index: 10; cursor: pointer; transition: transform 0.2s; }
+        .pen-icon { font-size: 50px; filter: drop-shadow(5px 5px 2px rgba(0,0,0,0.2)); transform: rotate(15deg); display: block; transition: 0.2s; }
+        .pen-tool:hover .pen-icon { transform: rotate(0deg) scale(1.1) translateY(-5px); }
         .color-input-hidden { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
     </style>
 </head>
@@ -233,23 +222,38 @@
     <div id="overlay" class="overlay" onclick="fecharMenus()"></div>
 
     <div id="sidebar" class="sidebar">
-        <div class="sidebar-title">Amigos 🤝</div>
+        <div class="sidebar-title">
+            <span>Amigos</span>
+            <button onclick="fecharMenus()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">&times;</button>
+        </div>
+        
         <div class="add-friend-box">
             <input type="email" id="input-friend-email" class="input-friend" placeholder="email@amigo.com">
-            <button class="btn-add-friend" onclick="adicionarAmigo()">Add</button>
+            <button class="btn-add-friend" onclick="enviarPedidoAmizade()">Enviar Pedido</button>
         </div>
-        <ul id="lista-amigos-sidebar" class="friend-list"></ul>
+        
+        <ul id="lista-amigos-sidebar" class="friend-list">
+            </ul>
         
         <div class="sidebar-footer">
             <div class="user-info">
                 <img id="user-img" class="user-avatar" src="">
                 <div style="display:flex; flex-direction:column;">
-                    <span id="user-name" style="font-size: 16px; font-weight: bold;">...</span>
+                    <span id="user-name" style="font-size: 16px; font-weight: bold; color:white;">...</span>
                     <span style="font-size: 12px; color: #aaa;">Online</span>
                 </div>
             </div>
-            <button class="btn-logout" onclick="fazerLogout()">Sair / Trocar Conta</button>
+            <button class="btn-logout" onclick="fazerLogout()">Sair</button>
         </div>
+    </div>
+
+    <div id="notif-modal" class="notif-modal">
+        <div class="notif-header">
+            Notificações
+            <button onclick="toggleNotificacoes()" style="border:none; background:none; cursor:pointer;">&times;</button>
+        </div>
+        <ul id="lista-notificacoes" class="notif-list">
+            </ul>
     </div>
 
     <div id="chat-modal" class="chat-modal">
@@ -265,15 +269,15 @@
     </div>
 
     <div id="screen-loading" class="screen" style="display: flex;">
-        <p>Verificando acesso...</p>
+        <p>Carregando My Ask Book...</p>
     </div>
 
     <div id="screen-login" class="screen">
         <div class="login-card">
-            <div class="login-title">My Ask Book 🔒</div>
-            <p style="color: white;">Versão 8.0 - Design Final</p>
+            <div class="login-title">My Ask Book</div>
+            <p style="color: #666;">Edição Premium</p>
             <button class="btn-google" onclick="fazerLoginGoogle()">
-                <span style="color: #4285F4">G</span> Entrar com Google
+                <span style="font-weight:bold; font-size:18px;">G</span> Entrar com Google
             </button>
         </div>
     </div>
@@ -281,16 +285,23 @@
     <div id="screen-feed" class="screen">
         <div class="feed-container">
             <div class="feed-header">
-                <button class="btn-menu" onclick="toggleMenu()">☰</button>
+                <button class="btn-menu" onclick="toggleMenu()" title="Amigos">
+                    👥
+                </button>
+                
                 <div class="header-center">
                     <h1 class="main-logo">My Ask Book</h1>
-                    <div class="sub-logo">Cadernos</div>
+                    <div class="sub-logo">Colecione memórias</div>
                 </div>
-                <div style="width: 35px;"></div>
+
+                <button class="btn-menu" onclick="toggleNotificacoes()" title="Notificações" style="position:relative;">
+                    🔔
+                    <div id="notif-badge" class="notification-badge" style="display:none;">0</div>
+                </button>
             </div>
 
-            <button class="btn-create-main" onclick="verificarSeJaTemCaderno()">+ Criar meu Caderno</button>
-            <div id="loading" style="color: white;">Carregando...</div>
+            <button class="btn-create-main" onclick="verificarSeJaTemCaderno()">+ Criar Novo Caderno</button>
+            <div id="loading" style="color: white; font-family: 'Patrick Hand'; font-size: 20px;">Carregando sua estante...</div>
             <div class="friends-grid" id="grid-cadernos"></div>
         </div>
     </div>
@@ -300,7 +311,7 @@
         <div class="paper">
             <div class="pen-tool">
                 <span class="pen-icon">✏️</span>
-                <input type="color" id="colorPickerResposta" class="color-input-hidden" value="#003366">
+                <input type="color" id="colorPickerResposta" class="color-input-hidden" value="#0d47a1">
             </div>
             <h1 id="titulo-caderno">Caderno...</h1>
             <ul class="question-list" id="lista-perguntas-leitura"></ul>
@@ -314,11 +325,11 @@
                 <span class="pen-icon">✏️</span>
                 <input type="color" id="colorPickerCriacao" class="color-input-hidden" value="#d81b60">
             </div>
-            <h1 style="border-bottom: 2px dashed #ccc;">Novo Caderno ✎</h1>
+            <h1 style="border-bottom: 2px dashed #ccc;">Novo Caderno</h1>
             
-            <div style="text-align: center; margin-bottom: 10px;">
-                <label style="color:#777; font-size:14px;">Como seus amigos te veem:</label><br>
-                <input type="text" id="input-meu-nome" style="border:1px solid #ccc; padding:5px; border-radius:5px; font-family:'Patrick Hand'; width: 200px; text-align:center;">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <label style="color:#777; font-size:16px;">Apelido na capa:</label><br>
+                <input type="text" id="input-meu-nome" style="border:none; border-bottom: 2px solid #ccc; padding:5px; font-family:'Patrick Hand'; font-size: 20px; width: 250px; text-align:center; background: transparent;">
             </div>
 
             <div class="color-options">
@@ -333,8 +344,8 @@
             </div>
             <input type="hidden" id="input-cor-capa" value="bg-blue">
             <ul class="question-list" id="lista-criacao"></ul>
-            <button onclick="adicionarNovaLinha()" style="margin: 20px auto; display:block;">+ Nova Pergunta</button>
-            <button onclick="salvarNovoCadernoNoBanco()" style="margin: 10px auto; display:block; background: #66bb6a; color: white; border: none; padding: 10px 30px; border-radius: 20px; cursor: pointer; font-family: 'Patrick Hand'; font-size: 20px;">💾 Publicar</button>
+            <button onclick="adicionarNovaLinha()" style="margin: 20px auto; display:block; border: 1px dashed #999; background:none; padding: 10px; cursor: pointer; font-family: 'Patrick Hand'; font-size: 18px;">+ Adicionar Linha</button>
+            <button onclick="salvarNovoCadernoNoBanco()" style="margin: 20px auto; display:block; background: #4caf50; color: white; border: none; padding: 12px 40px; border-radius: 30px; cursor: pointer; font-family: 'Patrick Hand'; font-size: 22px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">💾 Publicar Caderno</button>
         </div>
     </div>
 
@@ -358,12 +369,14 @@
         let unsubscribeChat = null;
         let mapaNomesAmigos = {}; 
 
+        // LOGIN PERSISTENTE
         auth.onAuthStateChanged(user => {
             if (user) {
                 usuarioAtual = user;
                 carregarMeusAmigosDoBanco();
                 atualizarUIUsuario();
                 navegarPara('screen-feed');
+                monitorarNotificacoes(); // Inicia o listener de notificações
             } else {
                 navegarPara('screen-login');
             }
@@ -373,12 +386,7 @@
             const provider = new firebase.auth.GoogleAuthProvider();
             auth.signInWithPopup(provider).catch((error) => alert("Erro: " + error.message));
         }
-
-        function fazerLogout() {
-            auth.signOut().then(() => {
-                window.location.reload();
-            });
-        }
+        function fazerLogout() { auth.signOut().then(() => window.location.reload()); }
 
         function atualizarUIUsuario() {
             if (usuarioAtual) {
@@ -387,37 +395,131 @@
             }
         }
 
+        // --- SISTEMA DE AMIZADE V2 (COM ACEITE/RECUSA) ---
         function carregarMeusAmigosDoBanco() {
-            db.collection('usuarios').doc(usuarioAtual.uid).get().then(doc => {
-                if (doc.exists && doc.data().amigos) meusAmigos = doc.data().amigos;
-                carregarFeed(); 
+            db.collection('usuarios').doc(usuarioAtual.uid).onSnapshot(doc => {
+                if (doc.exists && doc.data().amigos) {
+                    meusAmigos = doc.data().amigos;
+                } else {
+                    meusAmigos = [];
+                }
+                carregarFeed(); // Recarrega feed quando lista de amigos muda
             });
         }
-        function adicionarAmigo() {
+
+        // Enviar Pedido (Cria notificação para o outro)
+        function enviarPedidoAmizade() {
             const input = document.getElementById('input-friend-email');
-            const email = input.value.trim().toLowerCase();
-            if (!email || meusAmigos.includes(email) || email === usuarioAtual.email) return;
-            meusAmigos.push(email);
-            db.collection('usuarios').doc(usuarioAtual.uid).set({ amigos: meusAmigos, email: usuarioAtual.email }, { merge: true });
-            carregarFeed();
-            input.value = "";
+            const emailDestino = input.value.trim().toLowerCase();
+            
+            if (!emailDestino || emailDestino === usuarioAtual.email) return alert("Email inválido.");
+            if (meusAmigos.includes(emailDestino)) return alert("Vocês já são amigos!");
+
+            // Cria documento na coleção 'notificacoes'
+            db.collection('notificacoes').add({
+                de: usuarioAtual.email,
+                deNome: usuarioAtual.displayName,
+                para: emailDestino,
+                tipo: 'pedido_amizade',
+                status: 'pendente',
+                data: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => {
+                alert("Pedido enviado para " + emailDestino);
+                input.value = "";
+            }).catch(err => alert("Erro ao enviar: " + err.message));
         }
+
+        // Monitorar Notificações (Sino Vermelho)
+        function monitorarNotificacoes() {
+            db.collection('notificacoes')
+                .where('para', '==', usuarioAtual.email)
+                .where('status', '==', 'pendente')
+                .onSnapshot(snapshot => {
+                    const badge = document.getElementById('notif-badge');
+                    const lista = document.getElementById('lista-notificacoes');
+                    
+                    if (snapshot.empty) {
+                        badge.style.display = 'none';
+                        lista.innerHTML = "<li style='padding:10px; color:#777; text-align:center;'>Nenhuma notificação nova.</li>";
+                    } else {
+                        badge.style.display = 'flex';
+                        badge.innerText = snapshot.size;
+                        lista.innerHTML = "";
+                        
+                        snapshot.forEach(doc => {
+                            const notif = doc.data();
+                            const li = document.createElement('li');
+                            li.className = 'notif-item';
+                            li.innerHTML = `
+                                <span><strong>${notif.deNome}</strong> quer ser seu amigo.</span>
+                                <div class="notif-actions">
+                                    <button class="btn-accept" onclick="responderAmizade('${doc.id}', '${notif.de}', true)">Aceitar</button>
+                                    <button class="btn-deny" onclick="responderAmizade('${doc.id}', '${notif.de}', false)">Recusar</button>
+                                </div>
+                            `;
+                            lista.appendChild(li);
+                        });
+                    }
+                });
+        }
+
+        function toggleNotificacoes() {
+            const modal = document.getElementById('notif-modal');
+            modal.style.display = (modal.style.display === 'block') ? 'none' : 'block';
+        }
+
+        // Aceitar ou Recusar
+        function responderAmizade(idNotificacao, emailAmigo, aceitou) {
+            const batch = db.batch();
+            const notifRef = db.collection('notificacoes').doc(idNotificacao);
+
+            // 1. Atualiza notificação
+            batch.update(notifRef, { status: aceitou ? 'aceito' : 'recusado' });
+
+            if (aceitou) {
+                // 2. Adiciona nos MEUS amigos
+                const meuRef = db.collection('usuarios').doc(usuarioAtual.uid);
+                batch.set(meuRef, { 
+                    amigos: firebase.firestore.FieldValue.arrayUnion(emailAmigo),
+                    email: usuarioAtual.email
+                }, { merge: true });
+
+                // 3. O chato é adicionar no amigo SEM saber o UID dele (Firestore limita isso).
+                // SOLUÇÃO SIMPLIFICADA V9: O amigo só será adicionado na MINHA lista. 
+                // Para aparecer na dele, ele teria que me adicionar ou teríamos que varrer users (caro).
+                // TRUQUE: Vamos salvar um documento auxiliar 'conexoes' se quiser bidirecional, 
+                // mas por enquanto, ao aceitar, você vê ele. Ele receberá o aviso e te adiciona de volta? 
+                // MELHOR: Vamos tentar achar o UID dele pelo email (Requer query, pode falhar sem indice)
+                // Para MVP manteremos unidirecional no aceite imediato, mas idealmente seria bidirecional.
+                alert("Amizade aceita! Você agora segue " + emailAmigo);
+            }
+
+            batch.commit().then(() => {
+                toggleNotificacoes();
+            });
+        }
+
         function removerAmigo(email) {
-            meusAmigos = meusAmigos.filter(e => e !== email);
-            db.collection('usuarios').doc(usuarioAtual.uid).set({ amigos: meusAmigos, email: usuarioAtual.email }, { merge: true });
-            carregarFeed();
+            if(!confirm("Remover amigo?")) return;
+            db.collection('usuarios').doc(usuarioAtual.uid).update({
+                amigos: firebase.firestore.FieldValue.arrayRemove(email)
+            });
         }
-        
+
         function renderizarListaAmigos() {
             const ul = document.getElementById('lista-amigos-sidebar');
             ul.innerHTML = "";
+            if (meusAmigos.length === 0) {
+                ul.innerHTML = "<li style='color:#777; text-align:center; padding:20px;'>Adicione amigos pelo e-mail!</li>";
+                return;
+            }
             meusAmigos.forEach(email => {
-                const nomeExibicao = mapaNomesAmigos[email] || email;
+                const nomeExibicao = mapaNomesAmigos[email] || email.split('@')[0];
                 ul.innerHTML += `
                     <li class="friend-item">
                         <div style="display:flex; flex-direction:column;">
-                            <span style="font-size:18px; font-weight:bold;">${nomeExibicao}</span>
-                            ${nomeExibicao !== email ? `<span style="font-size:14px; color:#aaa">${email}</span>` : ''}
+                            <span style="font-size:16px; font-weight:bold; color: #ddd;">${nomeExibicao}</span>
+                            ${nomeExibicao !== email ? `<span style="font-size:12px; color:#888">${email}</span>` : ''}
                         </div>
                         <div class="friend-actions">
                             <button class="btn-icon" onclick="abrirChat('${email}', '${nomeExibicao}')">💬</button>
@@ -427,12 +529,13 @@
             });
         }
 
+        // --- RESTANTE (CHAT, FEED, ETC) ---
         function abrirChat(emailAmigo, nomeAmigo) {
             const emails = [usuarioAtual.email, emailAmigo].sort();
             chatAtualId = emails[0].replace(/\./g, '_') + "-" + emails[1].replace(/\./g, '_');
             document.getElementById('chat-modal').style.display = 'flex';
             document.getElementById('chat-friend-name').innerText = nomeAmigo;
-            toggleMenu(); 
+            fecharMenus();
             const chatBody = document.getElementById('chat-body');
             chatBody.innerHTML = "<p style='text-align:center; color:#999'>Carregando...</p>";
             if (unsubscribeChat) unsubscribeChat();
@@ -472,7 +575,7 @@
 
                 const tutorialDiv = document.createElement('div');
                 tutorialDiv.className = "friend-book bg-orange";
-                tutorialDiv.innerHTML = `<div class="book-label">Como Usar?</div><div style="position:absolute; bottom:10px; font-size:12px; color:white;">Clique Aqui!</div>`;
+                tutorialDiv.innerHTML = `<div class="book-label">Como Usar?</div>`;
                 tutorialDiv.onclick = abrirTutorial;
                 grid.appendChild(tutorialDiv);
 
@@ -492,7 +595,7 @@
                             abrirCadernoParaResponder(id, dados);
                         };
                         let htmlConteudo = `<div class="book-label">${dados.donoNome}</div>`;
-                        if (ehMeu) htmlConteudo += `<button class="btn-delete-book" onclick="excluirCaderno('${id}')">🗑️</button>`;
+                        if (ehMeu) htmlConteudo += `<button class="btn-delete-book" onclick="excluirCaderno('${id}')">✕</button>`;
                         div.innerHTML = htmlConteudo;
                         grid.appendChild(div);
                     }
@@ -540,7 +643,7 @@
             li.className = 'question-item';
             li.innerHTML = `
                 <div style="height: 40px;"></div>
-                <span class="number-marker">${num < 10 ? '0'+num : num}.</span>
+                <span class="number-marker" style="top:40px;">${num < 10 ? '0'+num : num}.</span>
                 <input type="text" class="create-input" value="${textoPadrao}" style="color:${document.getElementById('colorPickerCriacao').value}" placeholder="Sua pergunta aqui...">
             `;
             lista.appendChild(li);
@@ -602,7 +705,7 @@
                 liPergunta.className = 'question-item';
                 liPergunta.innerHTML = `
                     <div style="height: 40px;"></div>
-                    <span class="number-marker">${num < 10 ? '0'+num : num}.</span>
+                    <span class="number-marker" style="top:40px;">${num < 10 ? '0'+num : num}.</span>
                     <span class="question-text">${pergunta}</span>
                 `;
                 lista.appendChild(liPergunta);
@@ -615,7 +718,7 @@
                         const nomeAmigo = registro.dados.nomeQuemRespondeu || "Anônimo";
                         liAmigo.innerHTML = `
                             <div class="friend-answer-line" style="color:${resp.cor || '#333'}">
-                                <strong style="color:#555; margin-right:5px; font-size:14px;">${nomeAmigo}:</strong> ${resp.texto}
+                                <strong style="color:#555; margin-right:5px; font-size:18px;">${nomeAmigo}:</strong> ${resp.texto}
                             </div>
                         `;
                         lista.appendChild(liAmigo);
