@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Ask Book - V9.6</title>
+    <title>My Ask Book - V9.7</title>
     <link href="https://fonts.googleapis.com/css2?family=Gloria+Hallelujah&family=Patrick+Hand&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -266,14 +266,17 @@
     <div id="screen-feed" class="screen">
         <div class="feed-container">
             <div class="feed-header">
-                <button class="btn-menu" onclick="toggleMenu()" title="Amigos">👥</button>
-                <div class="header-center">
+                <div class="header-center" style="text-align: left; margin-top: 0;">
                     <h1 class="main-logo">My Ask Book</h1>
                     <div class="sub-logo">Colecione memórias</div>
                 </div>
-                <button class="btn-menu" onclick="toggleNotificacoes()" title="Notificações" style="position:relative;">
-                    🔔 <div id="notif-badge" class="notification-badge" style="display:none;">0</div>
-                </button>
+
+                <div style="display: flex; gap: 15px;">
+                    <button class="btn-menu" onclick="toggleMenu()" title="Amigos">👥</button>
+                    <button class="btn-menu" onclick="toggleNotificacoes()" title="Notificações" style="position:relative;">
+                        🔔 <div id="notif-badge" class="notification-badge" style="display:none;">0</div>
+                    </button>
+                </div>
             </div>
 
             <button class="btn-create-main" onclick="verificarSeJaTemCaderno()">+ Criar Novo Caderno</button>
@@ -583,5 +586,3 @@
     </script>
 </body>
 </html>
-
-
