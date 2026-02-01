@@ -504,7 +504,11 @@
         }
 
         function abrirTutorial() {
-            abrirCadernoParaResponder("tutorial", { donoNome: "Tutorial", perguntas: ["Bem-vindo!", "Adicione amigos e divirta-se!"] });
+            abrirCadernoParaResponder("tutorial", { donoNome: "Tutorial", perguntas: 
+                ["Bem-vindo!",
+                "Adicione amigos no menu lateral e divirta-se!",
+                "Você irá descobrir diversas curiosidades sobre seus amigos",
+                "Crie seu próprio caderno e seja criativo nas suas perguntas"] });
         }
         function excluirCaderno(id) { if (confirm("Apagar?")) db.collection('cadernos').doc(id).delete(); }
 
@@ -588,3 +592,4 @@
     </script>
 </body>
 </html>
+
