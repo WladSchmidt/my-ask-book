@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Ask Book - V9.1 Fix</title>
+    <title>My Ask Book - V9.2</title>
     <link href="https://fonts.googleapis.com/css2?family=Gloria+Hallelujah&family=Patrick+Hand&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -14,9 +14,8 @@
         /* --- ESTILOS GERAIS --- */
         body { 
             background-color: #1a1a1a; 
-            /* --- COLOQUE AQUI O LINK DA SUA NOVA IMAGEM DE FUNDO --- */
-            /* Exemplo usando a imagem que você mandou (você precisa hospedar ela e por o link) */
-            background-image: url("https://i.imgur.com/Su4x85g.jpeg"); /* <-- SUBSTITUA ESTE LINK */
+            /* CAMINHO DA SUA IMAGEM LOCAL */
+            background-image: url('imagens/planodefundo.jpg'); 
             background-size: cover;
             background-attachment: fixed;
             background-position: center;
@@ -81,7 +80,7 @@
         .btn-create-main { background-color: #d81b60; color: #fff; border: none; padding: 12px 30px; font-family: 'Gloria Hallelujah'; font-size: 22px; border-radius: 50px; cursor: pointer; margin-bottom: 40px; box-shadow: 0 5px 15px rgba(216, 27, 96, 0.4); transition: 0.2s; }
         .btn-create-main:hover { transform: scale(1.05); background-color: #c2185b; }
 
-        /* --- LIVROS (CAPAS NOVAS) --- */
+        /* --- LIVROS (CAPAS LOCAIS) --- */
         .friends-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 40px; justify-items: center; padding-bottom: 40px; }
         .friend-book { 
             width: 150px; height: 210px; 
@@ -92,7 +91,6 @@
             box-shadow: 5px 10px 20px rgba(0,0,0,0.5);
             background-size: cover; background-position: center;
             border-left: 4px solid rgba(0,0,0,0.2);
-            /* Cor de fundo padrão caso a imagem não carregue ou seja transparente */
             background-color: #f0f0f0; 
         }
         .friend-book::before {
@@ -109,20 +107,20 @@
         }
         .btn-delete-book { position: absolute; top: -10px; right: -10px; background: #ff5252; color: white; border-radius: 50%; width: 28px; height: 28px; font-size: 14px; border: 2px solid white; cursor: pointer; display: flex; justify-content: center; align-items: center; z-index: 15; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
 
-        /* --- NOVAS CLASSES DE CAPA (LINKS DE EXEMPLO - SUBSTITUA PELOS SEUS PNGs SEM FUNDO) --- */
-        .bg-sticker { background-image: url('https://i.imgur.com/12345.png'); } /* Exemplo: Capa de Adesivos */
-        .bg-camo    { background-image: url('https://i.imgur.com/67890.png'); } /* Exemplo: Capa Camuflada */
-        .bg-denim   { background-image: url('https://i.imgur.com/abcde.png'); } /* Exemplo: Capa Jeans */
-        .bg-monster { background-image: url('https://i.imgur.com/fghij.png'); } /* Exemplo: Capa Monstro */
-        .bg-leopard { background-image: url('https://i.imgur.com/klmno.png'); } /* Exemplo: Capa Leopardo */
-        .bg-alien   { background-image: url('https://i.imgur.com/pqrst.png'); } /* Exemplo: Capa Alien */
+        /* --- MAPA DAS SUAS IMAGENS (Pasta 'imagens/') --- */
+        .bg-sticker { background-image: url('imagens/Draft.png'); } 
+        .bg-camo    { background-image: url('imagens/Games.png'); } 
+        .bg-denim   { background-image: url('imagens/Jeans.png'); } 
+        .bg-monster { background-image: url('imagens/Monstro.png'); } 
+        .bg-leopard { background-image: url('imagens/Oncinha.png'); } 
+        .bg-alien   { background-image: url('imagens/Alien.png'); } 
         
-        /* Capas Clássicas (Mantidas como fallback) */
-        .bg-blue   { background-image: url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=300&q=80'); }
-        .bg-pink   { background-image: url('https://images.unsplash.com/photo-1554189097-ffe88e998a2b?auto=format&fit=crop&w=300&q=80'); }
+        /* Fallbacks se a imagem falhar */
+        .bg-blue   { background-color: #3b82f6; }
+        .bg-pink   { background-color: #ec4899; }
 
 
-        /* --- UI PAPEL (CORREÇÃO DEFINITIVA DE ALINHAMENTO) --- */
+        /* --- UI PAPEL (ALINHAMENTO V9.1) --- */
         .paper { 
             width: 90%; max-width: 700px; min-height: 800px; 
             background-color: #fdfbf7; 
@@ -130,15 +128,13 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.2); 
             border-radius: 4px; 
             margin: 20px 0; 
-            /* Aumentei o padding superior para o título não colar no topo */
             padding: 60px 50px 50px 90px; 
             
-            /* Textura de Papel Real */
+            /* Textura de Papel */
             background-image: linear-gradient(90deg, transparent 84px, #ffadad 84px, #ffadad 86px, transparent 86px), 
-                              linear-gradient(#fdfbf7 39px, #a5d6a7 40px); /* Linha Verde Pálido */
-            background-size: 100% 100%, 100% 40px; /* AALTURA DA LINHA = 40px */
+                              linear-gradient(#fdfbf7 39px, #a5d6a7 40px);
+            background-size: 100% 100%, 100% 40px; 
             background-attachment: local;
-            /* Garante que o background comece do topo certo */
             background-position: 0 20px; 
         }
         
@@ -146,41 +142,30 @@
             font-family: 'Gloria Hallelujah';
             font-size: 36px;
             color: #222;
-            /* Margem inferior de 40px para pular exatamente uma linha */
             margin: 0 0 40px 0; 
-            /* Altura da linha do título também é 40px para manter o ritmo */
             line-height: 40px;  
             border-bottom: 2px dashed #aaa;
-            /* Ajuste fino para o texto sentar na linha */
             padding-bottom: 5px; 
         }
 
         .question-list { list-style: none; padding: 0; margin: 0; }
+        .question-item { margin-bottom: 0; }
         
-        /* CADA ITEM DA LISTA (Pergunta + Resposta) */
-        .question-item { 
-            margin-bottom: 0; 
-            /* Removemos position: relative daqui */
-        }
-        
-        /* --- O SEGREDO DO ALINHAMENTO --- */
-        /* Cada "linha" de texto (pergunta, resposta, espaçador) é um container flex de 40px de altura */
+        /* LINHAS FLEXBOX (Alinhamento Perfeito) */
         .line-container {
             height: 40px;
             display: flex;
-            align-items: center; /* Centraliza verticalmente o conteúdo na linha */
+            align-items: center; 
         }
 
-        /* NUMERAÇÃO (Agora dentro do fluxo normal) */
         .number-marker { 
             font-family: 'Gloria Hallelujah'; 
             color: #0288d1; 
             font-weight: bold; 
             font-size: 22px; 
-            /* Largura fixa e alinhamento para ficar organizado */
             width: 40px; 
             text-align: right;
-            margin-right: 15px; /* Espaço entre o número e a pergunta */
+            margin-right: 15px;
         }
         
         .question-text { 
@@ -188,13 +173,10 @@
             font-size: 26px; 
             color: #222; 
             font-weight: bold;
-            flex: 1; /* Ocupa o resto da linha */
+            flex: 1;
         }
 
-        /* RESPOSTAS (Com recuo para alinhar com a pergunta, não com o número) */
-        .answer-container {
-            padding-left: 55px; /* 40px do número + 15px da margem */
-        }
+        .answer-container { padding-left: 55px; }
 
         .friend-answer-line {
             font-family: 'Patrick Hand';
@@ -204,7 +186,7 @@
         }
 
         .answer-input, .create-input { 
-            width: 100%; height: 40px; /* Altura total da linha */
+            width: 100%; height: 40px; 
             background: transparent; border: none; outline: none; 
             font-family: 'Patrick Hand'; font-size: 26px; 
             color: #0d47a1;
@@ -212,20 +194,20 @@
         }
         .create-input { border-bottom: 2px dashed #e91e63; color: #e91e63; }
         
-        /* Bolinhas do seletor de CAPAS */
+        /* Bolinhas do Seletor */
         .color-options { display: flex; gap: 15px; justify-content: center; margin-bottom: 30px; flex-wrap: wrap; }
         .color-circle { width: 40px; height: 40px; border-radius: 50%; cursor: pointer; border: 3px solid white; box-shadow: 0 3px 6px rgba(0,0,0,0.3); transition: transform 0.2s; background-size: cover; background-position: center; background-color: #ddd; }
         .color-circle:hover, .color-circle.selected { transform: scale(1.15); border-color: #333; }
 
-        /* Aplica as imagens nas bolinhas também */
-        .color-circle.bg-sticker { background-image: url('https://i.imgur.com/12345.png'); }
-        .color-circle.bg-camo    { background-image: url('https://i.imgur.com/67890.png'); }
-        .color-circle.bg-denim   { background-image: url('https://i.imgur.com/abcde.png'); }
-        .color-circle.bg-monster { background-image: url('https://i.imgur.com/fghij.png'); }
-        .color-circle.bg-leopard { background-image: url('https://i.imgur.com/klmno.png'); }
-        .color-circle.bg-alien   { background-image: url('https://i.imgur.com/pqrst.png'); }
-        .color-circle.bg-blue    { background-image: url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=300&q=80'); }
-        .color-circle.bg-pink    { background-image: url('https://images.unsplash.com/photo-1554189097-ffe88e998a2b?auto=format&fit=crop&w=300&q=80'); }
+        /* Imagens nas bolinhas */
+        .color-circle.bg-sticker { background-image: url('imagens/Livro Draft.jpg'); }
+        .color-circle.bg-camo    { background-image: url('imagens/Livro Games.jpg'); }
+        .color-circle.bg-denim   { background-image: url('imagens/Livro Jeans.jpg'); }
+        .color-circle.bg-monster { background-image: url('imagens/Livro Montros.jpg'); }
+        .color-circle.bg-leopard { background-image: url('imagens/Livro Oncinha.jpg'); }
+        .color-circle.bg-alien   { background-image: url('imagens/Livro rosa.jpg'); }
+        .color-circle.bg-blue    { background-color: #3b82f6; }
+        .color-circle.bg-pink    { background-color: #ec4899; }
 
         /* CHAT & FERRAMENTAS */
         .chat-modal { position: fixed; bottom: 20px; right: 20px; width: 320px; height: 450px; background: white; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: none; flex-direction: column; z-index: 2500; overflow: hidden; font-family: 'Inter', sans-serif; }
@@ -366,8 +348,6 @@
                 <div class="color-circle bg-monster" onclick="selecionarCorCapa('bg-monster', this)" title="Monstro"></div>
                 <div class="color-circle bg-leopard" onclick="selecionarCorCapa('bg-leopard', this)" title="Leopardo"></div>
                 <div class="color-circle bg-alien" onclick="selecionarCorCapa('bg-alien', this)" title="Alien"></div>
-                <div class="color-circle bg-blue" onclick="selecionarCorCapa('bg-blue', this)" title="Azul"></div>
-                <div class="color-circle bg-pink" onclick="selecionarCorCapa('bg-pink', this)" title="Rosa"></div>
             </div>
             <input type="hidden" id="input-cor-capa" value="bg-sticker">
             
@@ -602,7 +582,6 @@
 
                     if (ehMeu || ehAmigo) {
                         const div = document.createElement('div');
-                        // Usa a classe de cor salva ou 'bg-blue' como padrão
                         div.className = `friend-book ${dados.corCapa || 'bg-blue'}`;
                         div.onclick = (e) => {
                             if (e.target.className.includes('btn-delete-book')) return;
@@ -651,13 +630,12 @@
             }
         }
 
-        // --- FUNÇÃO CORRIGIDA PARA CRIAR LINHAS ALINHADAS ---
         function adicionarNovaLinha(textoPadrao = "") {
             const lista = document.getElementById('lista-criacao');
             const num = lista.children.length + 1;
             const li = document.createElement('li');
             li.className = 'question-item';
-            // Estrutura Flexbox: Uma linha de 40px com número e input alinhados
+            // ESTRUTURA FLEXBOX V9.1 (CORRIGIDO)
             li.innerHTML = `
                 <div class="line-container">
                     <span class="number-marker">${num < 10 ? '0'+num : num}.</span>
@@ -712,7 +690,6 @@
             });
         }
 
-        // --- FUNÇÃO CORRIGIDA PARA RENDERIZAR RESPOSTAS ALINHADAS ---
         function renderizarPerguntasERespostas(dadosCaderno, todasRespostas) {
             const lista = document.getElementById('lista-perguntas-leitura');
             lista.innerHTML = "";
@@ -721,7 +698,7 @@
                 const num = index + 1;
                 const perguntaID = `resp_${index}`;
                 
-                // 1. Linha da Pergunta (Flexbox container de 40px)
+                // 1. Linha da Pergunta (FLEXBOX CONTAINER)
                 const liPergunta = document.createElement('li');
                 liPergunta.className = 'question-item';
                 liPergunta.innerHTML = `
@@ -739,7 +716,6 @@
                         const liAmigo = document.createElement('li');
                         liAmigo.className = 'question-item';
                         const nomeAmigo = registro.dados.nomeQuemRespondeu || "Anônimo";
-                        // Container de resposta com recuo
                         liAmigo.innerHTML = `
                             <div class="line-container answer-container">
                                 <div class="friend-answer-line" style="color:${resp.cor || '#333'}">
@@ -762,7 +738,6 @@
                         meuTexto = minhaRespostaSalva.dados[perguntaID].texto;
                         minhaCor = minhaRespostaSalva.dados[perguntaID].cor;
                     }
-                    // Container de resposta com recuo
                     liMeuInput.innerHTML = `
                         <div class="line-container answer-container">
                             <input type="text" class="answer-input" id="${perguntaID}" 
