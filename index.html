@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Ask Book - V9.2</title>
+    <title>My Ask Book - V9.4 Final</title>
     <link href="https://fonts.googleapis.com/css2?family=Gloria+Hallelujah&family=Patrick+Hand&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -14,7 +14,7 @@
         /* --- ESTILOS GERAIS --- */
         body { 
             background-color: #1a1a1a; 
-            /* CAMINHO DA SUA IMAGEM LOCAL */
+            /* CAMINHO CORRIGIDO DO FUNDO */
             background-image: url('imagens/planodefundo.jpg'); 
             background-size: cover;
             background-attachment: fixed;
@@ -37,7 +37,7 @@
         .btn-google { background-color: #fff; color: #444; display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px; margin: 20px 0; border: 1px solid #ddd; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; font-family: 'Inter', sans-serif; font-size: 16px; }
         .btn-google:hover { background-color: #f8f8f8; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 
-        /* Sidebar & Menus */
+        /* Sidebar */
         .sidebar { position: fixed; left: -320px; top: 0; width: 300px; height: 100%; background: #222; color: #eee; transition: 0.3s; z-index: 2000; box-shadow: 5px 0 15px rgba(0,0,0,0.5); padding: 20px; display: flex; flex-direction: column; box-sizing: border-box; }
         .sidebar.open { left: 0; }
         .sidebar-title { font-family: 'Gloria Hallelujah'; font-size: 24px; border-bottom: 1px solid #444; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;}
@@ -48,15 +48,13 @@
         .friend-item { padding: 12px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
         .btn-icon { background: none; border: none; cursor: pointer; font-size: 18px; transition: transform 0.2s; color: #ccc; }
         .btn-icon:hover { transform: scale(1.2); color: white; }
-
-        /* Rodapé Perfil */
         .sidebar-footer { background-color: #333; padding: 15px; border-radius: 10px; display: flex; flex-direction: column; gap: 10px; }
         .user-info { display: flex; align-items: center; gap: 10px; }
         .user-avatar { width: 40px; height: 40px; border-radius: 50%; border: 2px solid #d81b60; object-fit: cover; }
         .btn-logout { background-color: #444; color: #ff5252; border: 1px solid #ff5252; padding: 8px; border-radius: 5px; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 12px; width: 100%; transition: 0.2s; }
         .btn-logout:hover { background-color: #ff5252; color: white; }
 
-        /* NOTIFICAÇÕES */
+        /* Notificações */
         .notification-badge { position: absolute; top: -5px; right: -5px; background: red; color: white; font-size: 10px; width: 18px; height: 18px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-family: sans-serif; border: 2px solid #222; }
         .notif-modal { position: fixed; top: 60px; right: 20px; width: 300px; background: white; border-radius: 8px; box-shadow: 0 5px 20px rgba(0,0,0,0.3); z-index: 2100; display: none; overflow: hidden; font-family: 'Inter', sans-serif; }
         .notif-header { background: #f5f5f5; padding: 10px; font-weight: bold; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; }
@@ -65,33 +63,40 @@
         .notif-actions { display: flex; gap: 10px; margin-top: 5px; }
         .btn-accept { background: #4caf50; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; }
         .btn-deny { background: #f44336; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; }
-
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1500; display: none; backdrop-filter: blur(3px); }
         .overlay.visible { display: block; }
 
-        /* HEADER & FEED */
+        /* Header */
         .feed-container { width: 90%; max-width: 900px; text-align: center; padding: 20px; }
         .feed-header { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 40px; position: relative; }
-        .header-center { display: flex; flex-direction: column; align-items: center; }
-        .main-logo { font-family: 'Gloria Hallelujah'; font-size: 50px; color: #fff; text-shadow: 2px 2px 10px rgba(0,0,0,0.7); line-height: 1; margin: 0; }
-        .sub-logo { font-family: 'Patrick Hand'; font-size: 24px; color: #ddd; text-shadow: 1px 1px 5px rgba(0,0,0,0.8); margin-top: 5px; }
-        .btn-menu { font-size: 30px; background: rgba(0,0,0,0.5); width: 50px; height: 50px; border-radius: 50%; border: none; cursor: pointer; color: white; display: flex; justify-content: center; align-items: center; transition: 0.2s; }
-        .btn-menu:hover { background: rgba(0,0,0,0.8); }
+        .header-center { display: flex; flex-direction: column; align-items: center; margin-top: -20px; }
+        .main-logo { 
+            font-family: 'Gloria Hallelujah'; font-size: 55px; 
+            background: -webkit-linear-gradient(45deg, #ffeb3b, #ff80ab, #4fc3f7);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(2px 2px 0px rgba(0,0,0,0.5)); line-height: 1.2; margin: 0; 
+        }
+        .sub-logo { font-family: 'Patrick Hand'; font-size: 24px; color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); margin-top: 0px; opacity: 0.9; }
+        
+        /* Botões Menu */
+        .btn-menu { 
+            font-size: 28px; background: rgba(255,255,255,0.2); width: 50px; height: 50px; 
+            border-radius: 50%; border: 2px solid rgba(255,255,255,0.4); 
+            cursor: pointer; color: white; display: flex; justify-content: center; align-items: center; 
+            transition: 0.2s; backdrop-filter: blur(5px);
+        }
+        .btn-menu:hover { background: rgba(255,255,255,0.4); transform: scale(1.1); }
         .btn-create-main { background-color: #d81b60; color: #fff; border: none; padding: 12px 30px; font-family: 'Gloria Hallelujah'; font-size: 22px; border-radius: 50px; cursor: pointer; margin-bottom: 40px; box-shadow: 0 5px 15px rgba(216, 27, 96, 0.4); transition: 0.2s; }
         .btn-create-main:hover { transform: scale(1.05); background-color: #c2185b; }
 
-        /* --- LIVROS (CAPAS LOCAIS) --- */
+        /* --- LIVROS E CAPAS --- */
         .friends-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 40px; justify-items: center; padding-bottom: 40px; }
         .friend-book { 
-            width: 150px; height: 210px; 
-            border-radius: 2px 6px 6px 2px; 
-            cursor: pointer; display: flex; justify-content: center; align-items: center; 
-            transition: transform 0.3s ease; 
-            position: relative; 
-            box-shadow: 5px 10px 20px rgba(0,0,0,0.5);
+            width: 150px; height: 210px; border-radius: 2px 6px 6px 2px; cursor: pointer; 
+            display: flex; justify-content: center; align-items: center; transition: transform 0.3s ease; 
+            position: relative; box-shadow: 5px 10px 20px rgba(0,0,0,0.5);
             background-size: cover; background-position: center;
-            border-left: 4px solid rgba(0,0,0,0.2);
-            background-color: #f0f0f0; 
+            border-left: 4px solid rgba(0,0,0,0.2); background-color: #f0f0f0; 
         }
         .friend-book::before {
             content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 10px;
@@ -101,125 +106,82 @@
         .book-label { 
             background: #fff; color: #111; padding: 8px 10px; 
             font-family: 'Patrick Hand', cursive; font-size: 18px; font-weight: bold;
-            width: 80%; text-align: center; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3); 
-            transform: rotate(-2deg);
+            width: 80%; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.3); transform: rotate(-2deg);
         }
         .btn-delete-book { position: absolute; top: -10px; right: -10px; background: #ff5252; color: white; border-radius: 50%; width: 28px; height: 28px; font-size: 14px; border: 2px solid white; cursor: pointer; display: flex; justify-content: center; align-items: center; z-index: 15; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
 
-        /* --- MAPA DAS SUAS IMAGENS (Pasta 'imagens/') --- */
-        .bg-sticker { background-image: url('imagens/Draft.png'); } 
-        .bg-camo    { background-image: url('imagens/Games.png'); } 
-        .bg-denim   { background-image: url('imagens/Jeans.png'); } 
-        .bg-monster { background-image: url('imagens/Monstro.png'); } 
-        .bg-leopard { background-image: url('imagens/Oncinha.png'); } 
+        /* --- CLASSES MAPEAR PARA ARQUIVOS (CASE SENSITIVE) --- */
+        .bg-draft   { background-image: url('imagens/Draft.png'); } 
+        .bg-games   { background-image: url('imagens/Games.png'); } 
+        .bg-jeans   { background-image: url('imagens/Jeans.png'); } 
+        .bg-monstro { background-image: url('imagens/Monstro.png'); } 
+        .bg-oncinha { background-image: url('imagens/Oncinha.png'); } 
         .bg-alien   { background-image: url('imagens/Alien.png'); } 
         
-        /* Fallbacks se a imagem falhar */
+        /* Fallbacks */
         .bg-blue   { background-color: #3b82f6; }
-        .bg-pink   { background-color: #ec4899; }
 
-
-        /* --- UI PAPEL (ALINHAMENTO V9.1) --- */
+        /* --- PAPEL E LINHAS --- */
         .paper { 
-            width: 90%; max-width: 700px; min-height: 800px; 
-            background-color: #fdfbf7; 
-            position: relative; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2); 
-            border-radius: 4px; 
-            margin: 20px 0; 
+            width: 90%; max-width: 700px; min-height: 800px; background-color: #fdfbf7; position: relative; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2); border-radius: 4px; margin: 20px 0; 
             padding: 60px 50px 50px 90px; 
-            
-            /* Textura de Papel */
             background-image: linear-gradient(90deg, transparent 84px, #ffadad 84px, #ffadad 86px, transparent 86px), 
                               linear-gradient(#fdfbf7 39px, #a5d6a7 40px);
-            background-size: 100% 100%, 100% 40px; 
-            background-attachment: local;
-            background-position: 0 20px; 
+            background-size: 100% 100%, 100% 40px; background-attachment: local; background-position: 0 20px; 
         }
-        
         #titulo-caderno {
-            font-family: 'Gloria Hallelujah';
-            font-size: 36px;
-            color: #222;
-            margin: 0 0 40px 0; 
-            line-height: 40px;  
-            border-bottom: 2px dashed #aaa;
-            padding-bottom: 5px; 
+            font-family: 'Gloria Hallelujah'; font-size: 36px; color: #222;
+            margin: 0 0 40px 0; line-height: 40px; border-bottom: 2px dashed #aaa; padding-bottom: 5px; 
         }
-
         .question-list { list-style: none; padding: 0; margin: 0; }
         .question-item { margin-bottom: 0; }
-        
-        /* LINHAS FLEXBOX (Alinhamento Perfeito) */
-        .line-container {
-            height: 40px;
-            display: flex;
-            align-items: center; 
-        }
-
-        .number-marker { 
-            font-family: 'Gloria Hallelujah'; 
-            color: #0288d1; 
-            font-weight: bold; 
-            font-size: 22px; 
-            width: 40px; 
-            text-align: right;
-            margin-right: 15px;
-        }
-        
-        .question-text { 
-            font-family: 'Patrick Hand';
-            font-size: 26px; 
-            color: #222; 
-            font-weight: bold;
-            flex: 1;
-        }
-
+        .line-container { height: 40px; display: flex; align-items: center; }
+        .number-marker { font-family: 'Gloria Hallelujah'; color: #0288d1; font-weight: bold; font-size: 22px; width: 40px; text-align: right; margin-right: 15px; }
+        .question-text { font-family: 'Patrick Hand'; font-size: 26px; color: #222; font-weight: bold; flex: 1; }
         .answer-container { padding-left: 55px; }
-
-        .friend-answer-line {
-            font-family: 'Patrick Hand';
-            font-size: 24px; 
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-            width: 100%;
-        }
-
-        .answer-input, .create-input { 
-            width: 100%; height: 40px; 
-            background: transparent; border: none; outline: none; 
-            font-family: 'Patrick Hand'; font-size: 26px; 
-            color: #0d47a1;
-            padding: 0; margin: 0;
-        }
+        .friend-answer-line { font-family: 'Patrick Hand'; font-size: 24px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+        .answer-input, .create-input { width: 100%; height: 40px; background: transparent; border: none; outline: none; font-family: 'Patrick Hand'; font-size: 26px; color: #0d47a1; padding: 0; margin: 0; }
         .create-input { border-bottom: 2px dashed #e91e63; color: #e91e63; }
         
-        /* Bolinhas do Seletor */
-        .color-options { display: flex; gap: 15px; justify-content: center; margin-bottom: 30px; flex-wrap: wrap; }
-        .color-circle { width: 40px; height: 40px; border-radius: 50%; cursor: pointer; border: 3px solid white; box-shadow: 0 3px 6px rgba(0,0,0,0.3); transition: transform 0.2s; background-size: cover; background-position: center; background-color: #ddd; }
-        .color-circle:hover, .color-circle.selected { transform: scale(1.15); border-color: #333; }
+        /* --- SELETOR DE CAPAS (NOVO GRID) --- */
+        .cover-selector-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            justify-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .mini-book {
+            width: 60px; height: 80px;
+            border-radius: 4px;
+            cursor: pointer;
+            background-size: cover; background-position: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            border: 3px solid transparent;
+            transition: transform 0.2s;
+        }
+        .mini-book:hover { transform: scale(1.1); }
+        .mini-book.selected { border-color: #d81b60; transform: scale(1.1); box-shadow: 0 0 10px rgba(216, 27, 96, 0.5); }
 
-        /* Imagens nas bolinhas */
-        .color-circle.bg-sticker { background-image: url('imagens/Livro Draft.jpg'); }
-        .color-circle.bg-camo    { background-image: url('imagens/Livro Games.jpg'); }
-        .color-circle.bg-denim   { background-image: url('imagens/Livro Jeans.jpg'); }
-        .color-circle.bg-monster { background-image: url('imagens/Livro Montros.jpg'); }
-        .color-circle.bg-leopard { background-image: url('imagens/Livro Oncinha.jpg'); }
-        .color-circle.bg-alien   { background-image: url('imagens/Livro rosa.jpg'); }
-        .color-circle.bg-blue    { background-color: #3b82f6; }
-        .color-circle.bg-pink    { background-color: #ec4899; }
+        /* Classes para os Mini Books */
+        .mini-book.bg-draft { background-image: url('imagens/Draft.png'); }
+        .mini-book.bg-games { background-image: url('imagens/Games.png'); }
+        .mini-book.bg-jeans { background-image: url('imagens/Jeans.png'); }
+        .mini-book.bg-monstro { background-image: url('imagens/Monstro.png'); }
+        .mini-book.bg-oncinha { background-image: url('imagens/Oncinha.png'); }
+        .mini-book.bg-alien { background-image: url('imagens/Alien.png'); }
 
-        /* CHAT & FERRAMENTAS */
+        /* Chat */
         .chat-modal { position: fixed; bottom: 20px; right: 20px; width: 320px; height: 450px; background: white; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: none; flex-direction: column; z-index: 2500; overflow: hidden; font-family: 'Inter', sans-serif; }
         .chat-header { background: #d81b60; color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
         .chat-body { flex: 1; padding: 15px; overflow-y: auto; background: #f5f5f5; display: flex; flex-direction: column; gap: 8px; }
         .chat-msg { padding: 8px 12px; border-radius: 12px; max-width: 80%; font-size: 14px; word-wrap: break-word; }
         .msg-me { background: #d81b60; color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
         .msg-friend { background: white; color: #333; align-self: flex-start; border-bottom-left-radius: 2px; border: 1px solid #ddd; }
-        
         .btn-back { position: fixed; top: 20px; left: 20px; width: 50px; height: 50px; border-radius: 50%; background-color: #fff; color: #333; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.2); font-size: 24px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 1000; transition: 0.2s; }
         .btn-back:hover { transform: scale(1.1); }
-
         .pen-tool { position: absolute; top: 30px; right: 30px; z-index: 10; cursor: pointer; transition: transform 0.2s; }
         .pen-icon { font-size: 50px; filter: drop-shadow(5px 5px 2px rgba(0,0,0,0.2)); transform: rotate(15deg); display: block; transition: 0.2s; }
         .pen-tool:hover .pen-icon { transform: rotate(0deg) scale(1.1) translateY(-5px); }
@@ -235,15 +197,11 @@
             <span>Amigos</span>
             <button onclick="fecharMenus()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">&times;</button>
         </div>
-        
         <div class="add-friend-box">
             <input type="email" id="input-friend-email" class="input-friend" placeholder="email@amigo.com">
-            <button class="btn-add-friend" onclick="enviarPedidoAmizade()">Enviar Pedido</button>
+            <button class="btn-add-friend" onclick="enviarPedidoAmizade()">Enviar</button>
         </div>
-        
-        <ul id="lista-amigos-sidebar" class="friend-list">
-            </ul>
-        
+        <ul id="lista-amigos-sidebar" class="friend-list"></ul>
         <div class="sidebar-footer">
             <div class="user-info">
                 <img id="user-img" class="user-avatar" src="">
@@ -261,8 +219,7 @@
             Notificações
             <button onclick="toggleNotificacoes()" style="border:none; background:none; cursor:pointer;">&times;</button>
         </div>
-        <ul id="lista-notificacoes" class="notif-list">
-            </ul>
+        <ul id="lista-notificacoes" class="notif-list"></ul>
     </div>
 
     <div id="chat-modal" class="chat-modal">
@@ -294,18 +251,13 @@
     <div id="screen-feed" class="screen">
         <div class="feed-container">
             <div class="feed-header">
-                <button class="btn-menu" onclick="toggleMenu()" title="Amigos">
-                    👥
-                </button>
-                
+                <button class="btn-menu" onclick="toggleMenu()" title="Amigos">👥</button>
                 <div class="header-center">
                     <h1 class="main-logo">My Ask Book</h1>
                     <div class="sub-logo">Colecione memórias</div>
                 </div>
-
                 <button class="btn-menu" onclick="toggleNotificacoes()" title="Notificações" style="position:relative;">
-                    🔔
-                    <div id="notif-badge" class="notification-badge" style="display:none;">0</div>
+                    🔔 <div id="notif-badge" class="notification-badge" style="display:none;">0</div>
                 </button>
             </div>
 
@@ -334,22 +286,25 @@
                 <span class="pen-icon">✏️</span>
                 <input type="color" id="colorPickerCriacao" class="color-input-hidden" value="#d81b60">
             </div>
+            
             <h1 style="border-bottom: 2px dashed #ccc; padding-bottom: 5px; margin-bottom: 40px; line-height: 40px;">Novo Caderno</h1>
             
-            <div style="text-align: center; margin-bottom: 40px;">
+            <div style="text-align: center; margin-bottom: 20px;">
                 <label style="color:#777; font-size:16px; font-family: 'Patrick Hand';">Apelido na capa:</label><br>
                 <input type="text" id="input-meu-nome" style="border:none; border-bottom: 2px solid #ccc; padding:5px; font-family:'Patrick Hand'; font-size: 24px; width: 250px; text-align:center; background: transparent; color: #d81b60;">
             </div>
 
-            <div class="color-options">
-                <div class="color-circle bg-sticker selected" onclick="selecionarCorCapa('bg-sticker', this)" title="Adesivos"></div>
-                <div class="color-circle bg-camo" onclick="selecionarCorCapa('bg-camo', this)" title="Camuflado"></div>
-                <div class="color-circle bg-denim" onclick="selecionarCorCapa('bg-denim', this)" title="Jeans"></div>
-                <div class="color-circle bg-monster" onclick="selecionarCorCapa('bg-monster', this)" title="Monstro"></div>
-                <div class="color-circle bg-leopard" onclick="selecionarCorCapa('bg-leopard', this)" title="Leopardo"></div>
-                <div class="color-circle bg-alien" onclick="selecionarCorCapa('bg-alien', this)" title="Alien"></div>
+            <div style="text-align:center; margin-bottom: 15px; font-family:'Patrick Hand'; color:#555;">Escolha uma capa:</div>
+            
+            <div class="cover-selector-grid">
+                <div class="mini-book bg-draft selected" onclick="selecionarCorCapa('bg-draft', this)"></div>
+                <div class="mini-book bg-games" onclick="selecionarCorCapa('bg-games', this)"></div>
+                <div class="mini-book bg-jeans" onclick="selecionarCorCapa('bg-jeans', this)"></div>
+                <div class="mini-book bg-monstro" onclick="selecionarCorCapa('bg-monstro', this)"></div>
+                <div class="mini-book bg-oncinha" onclick="selecionarCorCapa('bg-oncinha', this)"></div>
+                <div class="mini-book bg-alien" onclick="selecionarCorCapa('bg-alien', this)"></div>
             </div>
-            <input type="hidden" id="input-cor-capa" value="bg-sticker">
+            <input type="hidden" id="input-cor-capa" value="bg-draft">
             
             <ul class="question-list" id="lista-criacao"></ul>
             
@@ -422,174 +377,96 @@
         function enviarPedidoAmizade() {
             const input = document.getElementById('input-friend-email');
             const emailDestino = input.value.trim().toLowerCase();
-            
             if (!emailDestino || emailDestino === usuarioAtual.email) return alert("Email inválido.");
             if (meusAmigos.includes(emailDestino)) return alert("Vocês já são amigos!");
-
             db.collection('notificacoes').add({
-                de: usuarioAtual.email,
-                deNome: usuarioAtual.displayName,
-                para: emailDestino,
-                tipo: 'pedido_amizade',
-                status: 'pendente',
-                data: firebase.firestore.FieldValue.serverTimestamp()
-            }).then(() => {
-                alert("Pedido enviado para " + emailDestino);
-                input.value = "";
-            }).catch(err => alert("Erro ao enviar. Verifique o email."));
+                de: usuarioAtual.email, deNome: usuarioAtual.displayName, para: emailDestino,
+                tipo: 'pedido_amizade', status: 'pendente', data: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => { alert("Pedido enviado!"); input.value = ""; }).catch(err => alert("Erro ao enviar."));
         }
 
         function monitorarNotificacoes() {
-            db.collection('notificacoes')
-                .where('para', '==', usuarioAtual.email)
-                .where('status', '==', 'pendente')
+            db.collection('notificacoes').where('para', '==', usuarioAtual.email).where('status', '==', 'pendente')
                 .onSnapshot(snapshot => {
                     const badge = document.getElementById('notif-badge');
                     const lista = document.getElementById('lista-notificacoes');
-                    
                     if (snapshot.empty) {
                         badge.style.display = 'none';
-                        lista.innerHTML = "<li style='padding:10px; color:#777; text-align:center;'>Nenhuma notificação nova.</li>";
+                        lista.innerHTML = "<li style='padding:10px; color:#777;'>Nenhuma notificação nova.</li>";
                     } else {
-                        badge.style.display = 'flex';
-                        badge.innerText = snapshot.size;
-                        lista.innerHTML = "";
-                        
+                        badge.style.display = 'flex'; badge.innerText = snapshot.size; lista.innerHTML = "";
                         snapshot.forEach(doc => {
                             const notif = doc.data();
-                            const li = document.createElement('li');
-                            li.className = 'notif-item';
-                            li.innerHTML = `
-                                <span><strong>${notif.deNome}</strong> quer ser seu amigo.</span>
-                                <div class="notif-actions">
-                                    <button class="btn-accept" onclick="responderAmizade('${doc.id}', '${notif.de}', true)">Aceitar</button>
-                                    <button class="btn-deny" onclick="responderAmizade('${doc.id}', '${notif.de}', false)">Recusar</button>
-                                </div>
-                            `;
+                            const li = document.createElement('li'); li.className = 'notif-item';
+                            li.innerHTML = `<span><strong>${notif.deNome}</strong> quer ser amigo.</span>
+                                <div class="notif-actions"><button class="btn-accept" onclick="responderAmizade('${doc.id}', '${notif.de}', true)">Aceitar</button><button class="btn-deny" onclick="responderAmizade('${doc.id}', '${notif.de}', false)">Recusar</button></div>`;
                             lista.appendChild(li);
                         });
                     }
                 });
         }
-
         function toggleNotificacoes() {
             const modal = document.getElementById('notif-modal');
             modal.style.display = (modal.style.display === 'block') ? 'none' : 'block';
         }
-
-        function responderAmizade(idNotificacao, emailAmigo, aceitou) {
+        function responderAmizade(id, email, aceitou) {
             const batch = db.batch();
-            const notifRef = db.collection('notificacoes').doc(idNotificacao);
+            const notifRef = db.collection('notificacoes').doc(id);
             batch.update(notifRef, { status: aceitou ? 'aceito' : 'recusado' });
-
             if (aceitou) {
                 const meuRef = db.collection('usuarios').doc(usuarioAtual.uid);
-                batch.set(meuRef, { 
-                    amigos: firebase.firestore.FieldValue.arrayUnion(emailAmigo),
-                    email: usuarioAtual.email
-                }, { merge: true });
-                alert("Amizade aceita! Você agora segue " + emailAmigo);
+                batch.set(meuRef, { amigos: firebase.firestore.FieldValue.arrayUnion(email), email: usuarioAtual.email }, { merge: true });
+                alert("Amizade aceita!");
             }
-            batch.commit().then(() => { toggleNotificacoes(); });
-        }
-
-        function removerAmigo(email) {
-            if(!confirm("Remover amigo?")) return;
-            db.collection('usuarios').doc(usuarioAtual.uid).update({
-                amigos: firebase.firestore.FieldValue.arrayRemove(email)
-            });
+            batch.commit().then(() => toggleNotificacoes());
         }
 
         function renderizarListaAmigos() {
-            const ul = document.getElementById('lista-amigos-sidebar');
-            ul.innerHTML = "";
-            if (meusAmigos.length === 0) {
-                ul.innerHTML = "<li style='color:#777; text-align:center; padding:20px;'>Adicione amigos pelo e-mail!</li>";
-                return;
-            }
+            const ul = document.getElementById('lista-amigos-sidebar'); ul.innerHTML = "";
             meusAmigos.forEach(email => {
-                const nomeExibicao = mapaNomesAmigos[email] || email.split('@')[0];
-                ul.innerHTML += `
-                    <li class="friend-item">
-                        <div style="display:flex; flex-direction:column;">
-                            <span style="font-size:16px; font-weight:bold; color: #ddd;">${nomeExibicao}</span>
-                            ${nomeExibicao !== email ? `<span style="font-size:12px; color:#888">${email}</span>` : ''}
-                        </div>
-                        <div class="friend-actions">
-                            <button class="btn-icon" onclick="abrirChat('${email}', '${nomeExibicao}')">💬</button>
-                            <button class="btn-icon" style="color:#ff5252" onclick="removerAmigo('${email}')">🗑️</button>
-                        </div>
-                    </li>`;
+                const nome = mapaNomesAmigos[email] || email.split('@')[0];
+                ul.innerHTML += `<li class="friend-item"><div><span style="font-size:16px; font-weight:bold; color:#ddd;">${nome}</span></div><div class="friend-actions"><button class="btn-icon" onclick="abrirChat('${email}', '${nome}')">💬</button></div></li>`;
             });
         }
 
-        function abrirChat(emailAmigo, nomeAmigo) {
-            const emails = [usuarioAtual.email, emailAmigo].sort();
+        function abrirChat(email, nome) {
+            const emails = [usuarioAtual.email, email].sort();
             chatAtualId = emails[0].replace(/\./g, '_') + "-" + emails[1].replace(/\./g, '_');
             document.getElementById('chat-modal').style.display = 'flex';
-            document.getElementById('chat-friend-name').innerText = nomeAmigo;
+            document.getElementById('chat-friend-name').innerText = nome;
             fecharMenus();
-            const chatBody = document.getElementById('chat-body');
-            chatBody.innerHTML = "<p style='text-align:center; color:#999'>Carregando...</p>";
             if (unsubscribeChat) unsubscribeChat();
             unsubscribeChat = db.collection('chats').doc(chatAtualId).collection('mensagens').orderBy('data', 'asc').onSnapshot(snapshot => {
-                chatBody.innerHTML = "";
+                const b = document.getElementById('chat-body'); b.innerHTML = "";
                 snapshot.forEach(doc => {
-                    const msg = doc.data();
-                    const div = document.createElement('div');
-                    div.className = `chat-msg ${msg.email === usuarioAtual.email ? 'msg-me' : 'msg-friend'}`;
-                    div.innerText = msg.texto;
-                    chatBody.appendChild(div);
+                    const msg = doc.data(); const d = document.createElement('div');
+                    d.className = `chat-msg ${msg.email === usuarioAtual.email ? 'msg-me' : 'msg-friend'}`; d.innerText = msg.texto;
+                    b.appendChild(d);
                 });
-                chatBody.scrollTop = chatBody.scrollHeight;
+                b.scrollTop = b.scrollHeight;
             });
         }
         function enviarMensagemChat() {
-            const input = document.getElementById('chat-input');
-            const texto = input.value.trim();
-            if (!texto || !chatAtualId) return;
-            db.collection('chats').doc(chatAtualId).collection('mensagens').add({
-                texto: texto, email: usuarioAtual.email, data: firebase.firestore.FieldValue.serverTimestamp()
-            });
-            input.value = "";
+            const i = document.getElementById('chat-input'); const t = i.value.trim(); if (!t) return;
+            db.collection('chats').doc(chatAtualId).collection('mensagens').add({ texto: t, email: usuarioAtual.email, data: firebase.firestore.FieldValue.serverTimestamp() });
+            i.value = "";
         }
-        function fecharChat() {
-            document.getElementById('chat-modal').style.display = 'none';
-            if (unsubscribeChat) unsubscribeChat();
-        }
+        function fecharChat() { document.getElementById('chat-modal').style.display = 'none'; }
 
         function carregarFeed() {
             const grid = document.getElementById('grid-cadernos');
-            const loading = document.getElementById('loading');
             db.collection('cadernos').onSnapshot((snapshot) => {
-                loading.style.display = 'none';
-                grid.innerHTML = "";
-                mapaNomesAmigos = {}; 
-
-                const tutorialDiv = document.createElement('div');
-                tutorialDiv.className = "friend-book bg-orange";
-                tutorialDiv.innerHTML = `<div class="book-label">Como Usar?</div>`;
-                tutorialDiv.onclick = abrirTutorial;
-                grid.appendChild(tutorialDiv);
-
+                document.getElementById('loading').style.display = 'none'; grid.innerHTML = ""; mapaNomesAmigos = {}; 
+                const tut = document.createElement('div'); tut.className = "friend-book bg-jeans";
+                tut.innerHTML = `<div class="book-label">Como Usar?</div>`; tut.onclick = abrirTutorial;
+                grid.appendChild(tut);
                 snapshot.forEach((doc) => {
-                    const dados = doc.data();
-                    const id = doc.id;
-                    if (!dados.donoNome) return;
-                    mapaNomesAmigos[dados.donoEmail] = dados.donoNome;
-                    const ehMeu = (dados.donoEmail === usuarioAtual.email);
-                    const ehAmigo = meusAmigos.includes(dados.donoEmail);
-
-                    if (ehMeu || ehAmigo) {
-                        const div = document.createElement('div');
-                        div.className = `friend-book ${dados.corCapa || 'bg-blue'}`;
-                        div.onclick = (e) => {
-                            if (e.target.className.includes('btn-delete-book')) return;
-                            abrirCadernoParaResponder(id, dados);
-                        };
-                        let htmlConteudo = `<div class="book-label">${dados.donoNome}</div>`;
-                        if (ehMeu) htmlConteudo += `<button class="btn-delete-book" onclick="excluirCaderno('${id}')">✕</button>`;
-                        div.innerHTML = htmlConteudo;
+                    const d = doc.data(); if (!d.donoNome) return;
+                    mapaNomesAmigos[d.donoEmail] = d.donoNome;
+                    if (d.donoEmail === usuarioAtual.email || meusAmigos.includes(d.donoEmail)) {
+                        const div = document.createElement('div'); div.className = `friend-book ${d.corCapa || 'bg-draft'}`;
+                        div.innerHTML = `<div class="book-label">${d.donoNome}</div>${d.donoEmail === usuarioAtual.email ? `<button class="btn-delete-book" onclick="excluirCaderno('${doc.id}')">✕</button>` : ''}`;
+                        div.onclick = (e) => { if(!e.target.className.includes('btn-delete')) abrirCadernoParaResponder(doc.id, d); };
                         grid.appendChild(div);
                     }
                 });
@@ -598,180 +475,87 @@
         }
 
         function abrirTutorial() {
-            const dadosFake = {
-                donoNome: "Tutorial",
-                perguntas: [
-                    "Bem-vindo ao My Ask Book!",
-                    "Crie o seu caderno e comece a interagir.",
-                    "Adicione amigos pelo e-mail no menu.",
-                    "Eles precisam aceitar seu pedido de amizade.",
-                    "Responda os cadernos deles e divirta-se!"
-                ]
-            };
-            abrirCadernoParaResponder("tutorial", dadosFake);
+            abrirCadernoParaResponder("tutorial", { donoNome: "Tutorial", perguntas: ["Bem-vindo!", "Adicione amigos e divirta-se!"] });
         }
-
-        function excluirCaderno(id) {
-            if (confirm("Apagar seu caderno?")) db.collection('cadernos').doc(id).delete();
-        }
-
-        let idCadernoAberto = null;
+        function excluirCaderno(id) { if (confirm("Apagar?")) db.collection('cadernos').doc(id).delete(); }
 
         function verificarSeJaTemCaderno() {
             if (!usuarioAtual) return;
             navegarPara('screen-create');
             document.getElementById('input-meu-nome').value = usuarioAtual.displayName;
-            const pickerCriacao = document.getElementById('colorPickerCriacao');
-            pickerCriacao.addEventListener('input', () => { document.querySelectorAll('.create-input').forEach(inp => inp.style.color = pickerCriacao.value); });
-            const lista = document.getElementById('lista-criacao');
-            if (lista.children.length === 0) {
-                adicionarNovaLinha("Qual seu nome?");
-                adicionarNovaLinha("Uma música que te lembra de mim?");
-            }
+            if (document.getElementById('lista-criacao').children.length === 0) { adicionarNovaLinha("Qual seu nome?"); adicionarNovaLinha("Uma música?"); }
         }
-
-        function adicionarNovaLinha(textoPadrao = "") {
-            const lista = document.getElementById('lista-criacao');
-            const num = lista.children.length + 1;
-            const li = document.createElement('li');
-            li.className = 'question-item';
-            // ESTRUTURA FLEXBOX V9.1 (CORRIGIDO)
-            li.innerHTML = `
-                <div class="line-container">
-                    <span class="number-marker">${num < 10 ? '0'+num : num}.</span>
-                    <input type="text" class="create-input" value="${textoPadrao}" style="color:${document.getElementById('colorPickerCriacao').value}" placeholder="Sua pergunta aqui...">
-                </div>
-            `;
-            lista.appendChild(li);
+        function adicionarNovaLinha(txt = "") {
+            const l = document.getElementById('lista-criacao'); const n = l.children.length + 1;
+            const li = document.createElement('li'); li.className = 'question-item';
+            li.innerHTML = `<div class="line-container"><span class="number-marker">${n < 10 ? '0'+n : n}.</span><input type="text" class="create-input" value="${txt}" style="color:${document.getElementById('colorPickerCriacao').value}" placeholder="..."></div>`;
+            l.appendChild(li);
         }
-
         function salvarNovoCadernoNoBanco() {
-            const inputs = document.querySelectorAll('.create-input');
-            const cor = document.getElementById('input-cor-capa').value;
-            const novoNome = document.getElementById('input-meu-nome').value || usuarioAtual.displayName;
-            const perguntas = [];
-            inputs.forEach(input => { if (input.value.trim()) perguntas.push(input.value); });
-            if (!perguntas.length) return alert("Crie uma pergunta!");
+            const inps = document.querySelectorAll('.create-input'); const p = [];
+            inps.forEach(i => { if (i.value.trim()) p.push(i.value); });
+            if (!p.length) return alert("Crie uma pergunta!");
             db.collection('cadernos').doc(usuarioAtual.uid).set({
-                donoNome: novoNome, donoEmail: usuarioAtual.email, corCapa: cor, perguntas: perguntas, dataCriacao: firebase.firestore.FieldValue.serverTimestamp()
+                donoNome: document.getElementById('input-meu-nome').value, donoEmail: usuarioAtual.email, 
+                corCapa: document.getElementById('input-cor-capa').value, perguntas: p, dataCriacao: firebase.firestore.FieldValue.serverTimestamp()
             }).then(() => { alert("Publicado!"); navegarPara('screen-feed'); });
         }
         function selecionarCorCapa(classe, el) {
             document.getElementById('input-cor-capa').value = classe;
-            document.querySelectorAll('.color-circle').forEach(c => c.classList.remove('selected'));
+            document.querySelectorAll('.mini-book').forEach(c => c.classList.remove('selected'));
             el.classList.add('selected');
         }
 
-        function abrirCadernoParaResponder(idCaderno, dadosCaderno) {
-            idCadernoAberto = idCaderno;
-            navegarPara('screen-notebook');
-            document.getElementById('titulo-caderno').innerText = "Caderno de " + dadosCaderno.donoNome;
-            
-            if (idCaderno === 'tutorial') {
-                document.querySelector('.pen-tool').style.display = 'none';
-            } else {
-                document.querySelector('.pen-tool').style.display = 'block';
-            }
-            
-            const lista = document.getElementById('lista-perguntas-leitura');
-            lista.innerHTML = "<p style='text-align:center'>Carregando respostas...</p>";
-
-            if (idCaderno === 'tutorial') {
-                renderizarPerguntasERespostas(dadosCaderno, []);
-                return;
-            }
-
-            db.collection('cadernos').doc(idCaderno).collection('respostas').get().then(snapshot => {
-                let todasRespostas = [];
-                snapshot.forEach(doc => {
-                    todasRespostas.push({ uid: doc.id, dados: doc.data() });
-                });
-                renderizarPerguntasERespostas(dadosCaderno, todasRespostas);
+        function abrirCadernoParaResponder(id, dados) {
+            idCadernoAberto = id; navegarPara('screen-notebook');
+            document.getElementById('titulo-caderno').innerText = "Caderno de " + dados.donoNome;
+            document.querySelector('.pen-tool').style.display = (id === 'tutorial') ? 'none' : 'block';
+            const lista = document.getElementById('lista-perguntas-leitura'); lista.innerHTML = "<p>Carregando...</p>";
+            if (id === 'tutorial') { renderizarPerguntasERespostas(dados, []); return; }
+            db.collection('cadernos').doc(id).collection('respostas').get().then(snap => {
+                const resps = []; snap.forEach(doc => resps.push({ uid: doc.id, dados: doc.data() }));
+                renderizarPerguntasERespostas(dados, resps);
             });
         }
 
-        function renderizarPerguntasERespostas(dadosCaderno, todasRespostas) {
-            const lista = document.getElementById('lista-perguntas-leitura');
-            lista.innerHTML = "";
-
-            dadosCaderno.perguntas.forEach((pergunta, index) => {
-                const num = index + 1;
-                const perguntaID = `resp_${index}`;
+        function renderizarPerguntasERespostas(caderno, respostas) {
+            const lista = document.getElementById('lista-perguntas-leitura'); lista.innerHTML = "";
+            caderno.perguntas.forEach((perg, idx) => {
+                const pid = `resp_${idx}`; const n = idx + 1;
+                const li = document.createElement('li'); li.className = 'question-item';
+                li.innerHTML = `<div class="line-container"><span class="number-marker">${n < 10 ? '0'+n : n}.</span><span class="question-text">${perg}</span></div>`;
+                lista.appendChild(li);
                 
-                // 1. Linha da Pergunta (FLEXBOX CONTAINER)
-                const liPergunta = document.createElement('li');
-                liPergunta.className = 'question-item';
-                liPergunta.innerHTML = `
-                    <div class="line-container">
-                        <span class="number-marker">${num < 10 ? '0'+num : num}.</span>
-                        <span class="question-text">${pergunta}</span>
-                    </div>
-                `;
-                lista.appendChild(liPergunta);
-
-                // 2. Respostas dos Amigos
-                todasRespostas.forEach(registro => {
-                    if (registro.uid !== usuarioAtual.uid && registro.dados[perguntaID]) {
-                        const resp = registro.dados[perguntaID];
-                        const liAmigo = document.createElement('li');
-                        liAmigo.className = 'question-item';
-                        const nomeAmigo = registro.dados.nomeQuemRespondeu || "Anônimo";
-                        liAmigo.innerHTML = `
-                            <div class="line-container answer-container">
-                                <div class="friend-answer-line" style="color:${resp.cor || '#333'}">
-                                    <strong style="color:#555; margin-right:5px; font-size:18px;">${nomeAmigo}:</strong> ${resp.texto}
-                                </div>
-                            </div>
-                        `;
-                        lista.appendChild(liAmigo);
+                respostas.forEach(r => {
+                    if (r.uid !== usuarioAtual.uid && r.dados[pid]) {
+                        const amg = document.createElement('li'); amg.className = 'question-item';
+                        amg.innerHTML = `<div class="line-container answer-container"><div class="friend-answer-line" style="color:${r.dados[pid].cor}"><strong style="margin-right:5px">${r.dados.nomeQuemRespondeu}:</strong> ${r.dados[pid].texto}</div></div>`;
+                        lista.appendChild(amg);
                     }
                 });
 
-                // 3. Meu Input de Resposta
                 if (idCadernoAberto !== 'tutorial') {
-                    const liMeuInput = document.createElement('li');
-                    liMeuInput.className = 'question-item';
-                    let meuTexto = "";
-                    let minhaCor = document.getElementById('colorPickerResposta').value;
-                    const minhaRespostaSalva = todasRespostas.find(r => r.uid === usuarioAtual.uid);
-                    if (minhaRespostaSalva && minhaRespostaSalva.dados[perguntaID]) {
-                        meuTexto = minhaRespostaSalva.dados[perguntaID].texto;
-                        minhaCor = minhaRespostaSalva.dados[perguntaID].cor;
-                    }
-                    liMeuInput.innerHTML = `
-                        <div class="line-container answer-container">
-                            <input type="text" class="answer-input" id="${perguntaID}" 
-                                   value="${meuTexto}" style="color:${minhaCor}" 
-                                   placeholder="Sua resposta..." oninput="salvarResposta(this)">
-                        </div>
-                    `;
-                    lista.appendChild(liMeuInput);
+                    const meuLi = document.createElement('li'); meuLi.className = 'question-item';
+                    let txt = "", cor = document.getElementById('colorPickerResposta').value;
+                    const minha = respostas.find(r => r.uid === usuarioAtual.uid);
+                    if (minha && minha.dados[pid]) { txt = minha.dados[pid].texto; cor = minha.dados[pid].cor; }
+                    meuLi.innerHTML = `<div class="line-container answer-container"><input type="text" class="answer-input" id="${pid}" value="${txt}" style="color:${cor}" placeholder="Sua resposta..." oninput="salvarResposta(this)"></div>`;
+                    lista.appendChild(meuLi);
                 }
             });
         }
 
-        function salvarResposta(input) {
+        function salvarResposta(inp) {
             if (!usuarioAtual || idCadernoAberto === 'tutorial') return;
-            const picker = document.getElementById('colorPickerResposta');
-            const dados = {};
-            const corFinal = input.style.color || picker.value;
-            dados[input.id] = { texto: input.value, cor: corFinal };
+            const dados = {}; const cor = inp.style.color || document.getElementById('colorPickerResposta').value;
+            dados[inp.id] = { texto: inp.value, cor: cor };
             dados.nomeQuemRespondeu = document.getElementById('input-meu-nome').value || usuarioAtual.displayName;
             db.collection('cadernos').doc(idCadernoAberto).collection('respostas').doc(usuarioAtual.uid).set(dados, { merge: true });
         }
 
-        function toggleMenu() {
-            document.getElementById('sidebar').classList.toggle('open');
-            document.getElementById('overlay').classList.toggle('visible');
-        }
-        function fecharMenus() {
-            document.getElementById('sidebar').classList.remove('open');
-            document.getElementById('overlay').classList.remove('visible');
-        }
-        function navegarPara(id) {
-            document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
-            document.getElementById(id).style.display = 'flex';
-        }
+        function toggleMenu() { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('overlay').classList.toggle('visible'); }
+        function fecharMenus() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('visible'); }
+        function navegarPara(id) { document.querySelectorAll('.screen').forEach(s => s.style.display = 'none'); document.getElementById(id).style.display = 'flex'; }
     </script>
 </body>
 </html>
