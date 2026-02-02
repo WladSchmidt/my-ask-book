@@ -398,7 +398,7 @@ function renderizarPerguntasERespostas(caderno, respostas) {
 
                 const amg = document.createElement('li'); 
                 amg.className = 'question-item';
-                amg.innerHTML = `
+               amg.innerHTML = `
                     <div class="line-container answer-container">
                         <div class="friend-answer-line" style="color:${r.dados[pid].cor}">
                             <strong style="margin-right:5px">${r.dados.nomeQuemRespondeu}:</strong> ${r.dados[pid].texto}
@@ -412,7 +412,11 @@ function renderizarPerguntasERespostas(caderno, respostas) {
                                     <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '🔥')">🔥</span>
                                     <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '😂')">😂</span>
                                     <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '😮')">😮</span>
+                                    
+                                    <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '😢')">😢</span>
                                     <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '👏')">👏</span>
+                                    <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '👍')">👍</span>
+                                    <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '👎')">👎</span>
                                 </div>
                             </div>
                         </div>
@@ -500,3 +504,4 @@ function salvarReacao(cadernoId, respondenteId, perguntaId, emoji) {
         });
     });
 }
+
