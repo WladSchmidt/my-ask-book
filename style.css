@@ -304,25 +304,25 @@ body {
 
 .reaction-picker-popup {
     position: absolute;
-    bottom: 35px; /* Subi um pouco mais */
-    left: -10px;  /* Ajuste leve para esquerda */
+    bottom: 35px;
+    left: -10px;
     background: white;
     border: 1px solid #ccc;
-    border-radius: 15px; /* Bordas um pouco menos redondas para acomodar o quadrado */
+    border-radius: 12px; /* Cantos arredondados */
     padding: 10px;
     
-    /* --- A MÁGICA DO GRID (V12.2) --- */
+    /* --- A CORREÇÃO DO GRID --- */
     display: grid; 
-    grid-template-columns: repeat(4, 1fr); /* 4 colunas (vai gerar 2 linhas) */
-    gap: 8px; /* Espaço entre eles */
-    width: max-content; /* Tamanho ajustado ao conteúdo */
-    max-width: 220px; /* Trava a largura para não estourar no mobile */
+    grid-template-columns: repeat(4, 1fr); /* Cria 4 colunas exatas */
+    gap: 10px; /* Espaço entre os emojis */
     
-    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    width: max-content; /* A caixa cresce o quanto precisar */
+    max-width: 200px; /* Trava a largura pro celular não estourar */
+    
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     z-index: 100;
     animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-
 .reaction-option {
     cursor: pointer;
     font-size: 22px;
@@ -338,4 +338,5 @@ body {
     from { opacity: 0; transform: scale(0.5) translateY(10px); }
     to { opacity: 1; transform: scale(1) translateY(0); }
 }
+
 
