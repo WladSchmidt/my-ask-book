@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>My Ask Book - V11.6</title>
+    <title>My Ask Book - V11.6 </title>
     <link href="https://fonts.googleapis.com/css2?family=Gloria+Hallelujah&family=Patrick+Hand&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -74,16 +74,24 @@
         .btn-menu:hover { transform: scale(1.1); background-color: #f0f0f0; }
         .btn-create-main { background-color: #d81b60; color: #fff; border: none; padding: 12px 30px; font-family: 'Gloria Hallelujah'; font-size: 22px; border-radius: 50px; cursor: pointer; margin-bottom: 40px; box-shadow: 0 5px 15px rgba(216, 27, 96, 0.4); transition: 0.2s; }
         
-        /* Grid de Livros */
-        .friends-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 40px; justify-items: center; padding-bottom: 40px; }
+        /* --- GRID DE LIVROS (AUMENTADO V11.6) --- */
+        .friends-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Aumentado */
+            gap: 40px; 
+            justify-items: center; 
+            padding-bottom: 40px; 
+        }
         .friend-book { 
-            width: 150px; height: 210px; cursor: pointer; 
+            width: 180px; height: 250px; /* Aumentado */
+            cursor: pointer; 
             display: flex; justify-content: center; align-items: center; 
             transition: transform 0.3s ease; position: relative; 
             filter: drop-shadow(5px 10px 10px rgba(0,0,0,0.5));
             background-size: contain; background-repeat: no-repeat; background-position: center;
         }
         .friend-book:hover { transform: translateY(-10px) scale(1.02); z-index: 10; filter: drop-shadow(10px 20px 20px rgba(0,0,0,0.6)); }
+        
         .book-label { 
             background: #fff; color: #111; padding: 8px 10px; 
             font-family: 'Patrick Hand', cursive; font-size: 18px; font-weight: bold;
@@ -133,39 +141,40 @@
         .question-item { margin-bottom: 0; }
         
         .line-container { 
-            min-height: 40px; 
-            height: auto; 
-            display: flex; 
-            align-items: baseline; 
+            min-height: 40px; height: auto; display: flex; align-items: baseline; 
         }
         .number-marker { 
             font-family: 'Gloria Hallelujah'; color: #0288d1; font-weight: bold; font-size: 22px; 
             width: 40px; text-align: right; margin-right: 15px; 
-            line-height: 40px; 
-            flex-shrink: 0;
-            align-self: flex-start;
+            line-height: 40px; flex-shrink: 0; align-self: flex-start;
         }
         .question-text { 
             font-family: 'Patrick Hand'; font-size: 26px; color: #222; font-weight: bold; 
-            flex: 1; 
-            white-space: normal; 
-            word-wrap: break-word; 
-            line-height: 40px; 
-            margin: 0; padding: 0;
+            flex: 1; white-space: normal; word-wrap: break-word; line-height: 40px; margin: 0; padding: 0;
         }
         .answer-container { padding-left: 55px; }
         .friend-answer-line { 
             font-family: 'Patrick Hand'; font-size: 24px; width: 100%; 
-            white-space: normal; 
-            word-wrap: break-word; 
-            line-height: 40px; 
-            margin: 0; padding: 0;
+            white-space: normal; word-wrap: break-word; line-height: 40px; margin: 0; padding: 0;
         }
         .answer-input, .create-input { width: 100%; height: 35px; background: transparent; border: none; outline: none; font-family: 'Patrick Hand'; font-size: 26px; color: #0d47a1; padding: 0; margin: 0; }
         .create-input { border-bottom: 2px dashed #e91e63; color: #e91e63; }
         
-        .cover-selector-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; justify-items: center; margin-bottom: 30px; margin-left: -40px; }
-        .mini-book { width: 90px; height: 120px; border-radius: 4px; cursor: pointer; background-size: contain; background-repeat: no-repeat; background-position: center; filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.3)); border: 2px solid transparent; transition: all 0.2s; }
+        /* --- SELETOR DE CAPAS (AUMENTADO V11.6) --- */
+        .cover-selector-grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 25px; /* Mais espaço */
+            justify-items: center; 
+            margin-bottom: 20px; 
+            margin-left: -40px; 
+        }
+        .mini-book { 
+            width: 110px; height: 155px; /* Aumentado */
+            border-radius: 4px; cursor: pointer; 
+            background-size: contain; background-repeat: no-repeat; background-position: center; 
+            filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.3)); border: 2px solid transparent; transition: all 0.2s; 
+        }
         .mini-book:hover { transform: scale(1.1); }
         .mini-book.selected { filter: drop-shadow(0 0 5px #d81b60); transform: scale(1.15); }
         .mini-book.bg-draft { background-image: url('imagens/Draft.png'); }
@@ -335,7 +344,7 @@
                 </div>
             </div>
 
-            <button class="btn-create-main" onclick="verificarSeJaTemCaderno()">+ Criar Novo Caderno</button>
+            <button class="btn-create-main" onclick="verificarSeJaTemCaderno()">+ Criar Meu Caderno</button>
             <div id="loading" style="color: white; font-family: 'Patrick Hand'; font-size: 20px;">Carregando sua estante...</div>
             <div class="friends-grid" id="grid-cadernos"></div>
         </div>
@@ -361,22 +370,28 @@
                 <input type="color" id="colorPickerCriacao" class="color-input-hidden" value="#d81b60">
             </div>
             
-            <h1 class="creation-title">Novo Caderno</h1>
-            
-            <div class="creation-subtitle-box">
-                <label style="color:#777; font-size:16px; font-family: 'Patrick Hand';">Apelido na capa:</label><br>
-                <input type="text" id="input-meu-nome" style="border:none; border-bottom: 2px solid #ccc; padding:5px; font-family:'Patrick Hand'; font-size: 24px; width: 250px; text-align:center; background: transparent; color: #d81b60;">
-            </div>
+            <div class="creation-container">
+                <h1 class="creation-title">Novo Caderno</h1>
+                
+                <div class="creation-subtitle-box">
+                    <label style="color:#777; font-size:16px; font-family: 'Patrick Hand';">Apelido na capa:</label><br>
+                    <input type="text" id="input-meu-nome" style="border:none; border-bottom: 2px solid #ccc; padding:5px; font-family:'Patrick Hand'; font-size: 24px; width: 250px; text-align:center; background: transparent; color: #d81b60;">
+                </div>
 
-            <div style="text-align:center; margin-bottom: 15px; font-family:'Patrick Hand'; color:#555; margin-left: -40px;">Escolha uma capa:</div>
-            
-            <div class="cover-selector-grid">
-                <div class="mini-book bg-draft selected" onclick="selecionarCorCapa('bg-draft', this)"></div>
-                <div class="mini-book bg-games" onclick="selecionarCorCapa('bg-games', this)"></div>
-                <div class="mini-book bg-jeans" onclick="selecionarCorCapa('bg-jeans', this)"></div>
-                <div class="mini-book bg-monstro" onclick="selecionarCorCapa('bg-monstro', this)"></div>
-                <div class="mini-book bg-oncinha" onclick="selecionarCorCapa('bg-oncinha', this)"></div>
-                <div class="mini-book bg-alien" onclick="selecionarCorCapa('bg-alien', this)"></div>
+                <div style="text-align:center; margin-bottom: 15px; font-family:'Patrick Hand'; color:#555;">Escolha uma capa:</div>
+                
+                <div class="cover-selector-grid">
+                    <div class="mini-book bg-draft selected" onclick="selecionarCorCapa('bg-draft', this)"></div>
+                    <div class="mini-book bg-games" onclick="selecionarCorCapa('bg-games', this)"></div>
+                    <div class="mini-book bg-jeans" onclick="selecionarCorCapa('bg-jeans', this)"></div>
+                    <div class="mini-book bg-monstro" onclick="selecionarCorCapa('bg-monstro', this)"></div>
+                    <div class="mini-book bg-oncinha" onclick="selecionarCorCapa('bg-oncinha', this)"></div>
+                    <div class="mini-book bg-alien" onclick="selecionarCorCapa('bg-alien', this)"></div>
+                </div>
+
+                <div style="text-align:center; color:#555; font-family:'Patrick Hand'; margin-bottom: 20px; font-size: 18px; margin-left: -40px;">
+                    Essas são perguntas modelos, mas você pode editar e adicionar novas perguntas para seus amigos responderem.
+                </div>
             </div>
             <input type="hidden" id="input-cor-capa" value="bg-draft">
             
@@ -419,7 +434,6 @@
         auth.onAuthStateChanged(user => {
             if (user) {
                 usuarioAtual = user;
-                // FIX V11.6: Salva usuário no banco ao logar para garantir descoberta
                 salvarUsuarioNoBanco();
                 carregarMeusAmigosDoBanco();
                 atualizarUIUsuario();
@@ -443,7 +457,6 @@
             }
         }
 
-        // --- CORREÇÃO DE AMIZADE BIDIRECIONAL (V11.6) ---
         function salvarUsuarioNoBanco() {
             db.collection('usuarios').doc(usuarioAtual.uid).set({
                 email: usuarioAtual.email,
@@ -484,11 +497,9 @@
                     
                     snapshot.forEach(doc => {
                         const notif = doc.data();
-                        
                         if(notif.tipo === 'nova_mensagem') {
                             criarOuAtualizarBolha(notif.de, notif.deNome, doc.id);
-                        } 
-                        else {
+                        } else {
                             countSino++;
                             const li = document.createElement('li'); li.className = 'notif-item';
                             li.innerHTML = `<span><strong>${notif.deNome}</strong> quer ser amigo.</span>
@@ -698,7 +709,6 @@
             const lista = document.getElementById('lista-criacao');
             lista.innerHTML = "";
             
-            // --- 5 PERGUNTAS PADRÃO ---
             adicionarNovaLinha("Qual sua banda predileta ?");
             adicionarNovaLinha("Qual seu filme predileto ?");
             adicionarNovaLinha("Qual seu maior sonho ?");
@@ -733,7 +743,6 @@
             }
         }
 
-        // --- TUTORIAL FIXO (TEXTO ORIGINAL) ---
         function abrirTutorial() {
             abrirCadernoParaResponder("tutorial", {
                 donoNome: "Tutorial",
@@ -809,4 +818,3 @@
     </script>
 </body>
 </html>
-
