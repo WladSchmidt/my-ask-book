@@ -23,7 +23,7 @@
             <button onclick="fecharMenus()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">&times;</button>
         </div>
         <div class="add-friend-box" style="position:relative;">
-            <input type="text" id="input-friend-email" class="input-friend" placeholder="Nome ou E-mail..." onkeyup="buscarUsuarios()">
+            <input type="text" id="input-friend-email" class="input-friend" placeholder="Busque por nome..." oninput="buscarUsuarios()" autocomplete="off">
             
             <button class="btn-add-friend" onclick="enviarPedidoAmizade()">Ok</button>
 
@@ -165,4 +165,5 @@
 </body>
 
 </html>
+
 
