@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>My Ask Book - V11.5 Alinhamento</title>
+    <title>My Ask Book - V11.6 Fix</title>
     <link href="https://fonts.googleapis.com/css2?family=Gloria+Hallelujah&family=Patrick+Hand&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -113,7 +113,6 @@
             width: 90%; max-width: 700px; min-height: 800px; background-color: #fdfbf7; position: relative; 
             box-shadow: 0 5px 15px rgba(0,0,0,0.2); border-radius: 4px; margin: 20px 0; 
             padding: 60px 50px 50px 90px; 
-            /* O GRADIENTE MÁGICO: LINHAS A CADA 40PX */
             background-image: linear-gradient(90deg, transparent 84px, #ffadad 84px, #ffadad 86px, transparent 86px), 
                               linear-gradient(#fdfbf7 39px, #a5d6a7 40px);
             background-size: 100% 100%, 100% 40px; background-attachment: local; background-position: 0 20px; 
@@ -133,26 +132,25 @@
         .question-list { list-style: none; padding: 0; margin: 0; }
         .question-item { margin-bottom: 0; }
         
-        /* --- ALINHAMENTO MATEMÁTICO V11.5 --- */
         .line-container { 
             min-height: 40px; 
             height: auto; 
             display: flex; 
-            align-items: baseline; /* Alinha o texto na base da linha */
+            align-items: baseline; 
         }
         .number-marker { 
             font-family: 'Gloria Hallelujah'; color: #0288d1; font-weight: bold; font-size: 22px; 
             width: 40px; text-align: right; margin-right: 15px; 
-            line-height: 40px; /* Alinha o número na primeira linha */
+            line-height: 40px; 
             flex-shrink: 0;
-            align-self: flex-start; /* Mantém o número no topo se o texto quebrar */
+            align-self: flex-start;
         }
         .question-text { 
             font-family: 'Patrick Hand'; font-size: 26px; color: #222; font-weight: bold; 
             flex: 1; 
-            white-space: normal; /* Permite quebra */
+            white-space: normal; 
             word-wrap: break-word; 
-            line-height: 40px; /* SINCRONIA: Altura da linha do texto = Altura da pauta (40px) */
+            line-height: 40px; 
             margin: 0; padding: 0;
         }
         .answer-container { padding-left: 55px; }
@@ -160,13 +158,12 @@
             font-family: 'Patrick Hand'; font-size: 24px; width: 100%; 
             white-space: normal; 
             word-wrap: break-word; 
-            line-height: 40px; /* Sincronia aqui também */
+            line-height: 40px; 
             margin: 0; padding: 0;
         }
         .answer-input, .create-input { width: 100%; height: 35px; background: transparent; border: none; outline: none; font-family: 'Patrick Hand'; font-size: 26px; color: #0d47a1; padding: 0; margin: 0; }
         .create-input { border-bottom: 2px dashed #e91e63; color: #e91e63; }
         
-        /* Seletor de Capas */
         .cover-selector-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; justify-items: center; margin-bottom: 30px; margin-left: -40px; }
         .mini-book { width: 90px; height: 120px; border-radius: 4px; cursor: pointer; background-size: contain; background-repeat: no-repeat; background-position: center; filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.3)); border: 2px solid transparent; transition: all 0.2s; }
         .mini-book:hover { transform: scale(1.1); }
@@ -191,7 +188,7 @@
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1500; display: none; backdrop-filter: blur(3px); }
         .overlay.visible { display: block; }
 
-        /* --- CHAT HEADS --- */
+        /* --- CHAT HEADS (BOLHAS) --- */
         #bubbles-container {
             position: fixed; bottom: 20px; right: 20px; z-index: 2400;
             display: flex; flex-direction: column-reverse; gap: 15px; align-items: flex-end;
@@ -331,6 +328,7 @@
                         🔔 <div id="notif-badge" class="notification-badge" style="display:none;">0</div>
                     </button>
                 </div>
+
                 <div class="header-center">
                     <h1 class="main-logo">My Ask Book</h1>
                     <div class="sub-logo">Colecione memórias</div>
@@ -421,6 +419,8 @@
         auth.onAuthStateChanged(user => {
             if (user) {
                 usuarioAtual = user;
+                // FIX V11.6: Salva usuário no banco ao logar para garantir descoberta
+                salvarUsuarioNoBanco();
                 carregarMeusAmigosDoBanco();
                 atualizarUIUsuario();
                 navegarPara('screen-feed');
@@ -441,6 +441,15 @@
                 document.getElementById('user-name').innerText = usuarioAtual.displayName.split(' ')[0];
                 document.getElementById('user-img').src = usuarioAtual.photoURL;
             }
+        }
+
+        // --- CORREÇÃO DE AMIZADE BIDIRECIONAL (V11.6) ---
+        function salvarUsuarioNoBanco() {
+            db.collection('usuarios').doc(usuarioAtual.uid).set({
+                email: usuarioAtual.email,
+                nome: usuarioAtual.displayName,
+                foto: usuarioAtual.photoURL
+            }, { merge: true });
         }
 
         function carregarMeusAmigosDoBanco() {
@@ -475,9 +484,11 @@
                     
                     snapshot.forEach(doc => {
                         const notif = doc.data();
+                        
                         if(notif.tipo === 'nova_mensagem') {
                             criarOuAtualizarBolha(notif.de, notif.deNome, doc.id);
-                        } else {
+                        } 
+                        else {
                             countSino++;
                             const li = document.createElement('li'); li.className = 'notif-item';
                             li.innerHTML = `<span><strong>${notif.deNome}</strong> quer ser amigo.</span>
@@ -722,7 +733,7 @@
             }
         }
 
-        // --- TUTORIAL ORIGINAL FIXO ---
+        // --- TUTORIAL FIXO (TEXTO ORIGINAL) ---
         function abrirTutorial() {
             abrirCadernoParaResponder("tutorial", {
                 donoNome: "Tutorial",
