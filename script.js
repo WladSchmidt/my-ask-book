@@ -507,21 +507,7 @@ function salvarReacao(cadernoId, respondenteId, perguntaId, emoji) {
     });
 }
 
-// --- SISTEMA DE BUSCA (V13.0) ---
-// --- BUSCA DE AMIGOS (V13.1 - Live Search) ---
-function buscarUsuarios() {
-    const input = document.getElementById('input-friend-email');
-    const termo = input.value.trim().toLowerCase();
-    const resultadosDiv = document.getElementById('lista-resultados-busca');
-    
-    // Se digitou menos de 3 letras, limpa a lista e esconde
-    if (termo.length < 3) {
-        resultadosDiv.style.display = 'none';
-        resultadosDiv.innerHTML = "";
-        return;
-    }
-
- // --- BUSCA CORRIGIDA (V13.3 - Mostra todos) ---
+// --- BUSCA CORRIGIDA (V13.3 - Mostra todos) ---
 function buscarUsuarios() {
     const input = document.getElementById('input-friend-email');
     const termo = input.value.trim().toLowerCase();
@@ -582,11 +568,11 @@ function buscarUsuarios() {
             });
         });
 }
-
 function enviarPedidoPorBusca(emailDestino) {
     document.getElementById('input-friend-email').value = emailDestino;
     enviarPedidoAmizade();
     // Esconde a lista depois de clicar
     document.getElementById('lista-resultados-busca').style.display = 'none';
 }
+
 
