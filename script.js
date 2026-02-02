@@ -351,24 +351,78 @@ function abrirCadernoParaResponder(id, dados) {
     });
 }
 function renderizarPerguntasERespostas(caderno, respostas) {
-    const lista = document.getElementById('lista-perguntas-leitura'); lista.innerHTML = "";
+    const lista = document.getElementById('lista-perguntas-leitura'); 
+    lista.innerHTML = "";
+    
     caderno.perguntas.forEach((perg, idx) => {
-        const pid = `resp_${idx}`; const n = idx + 1;
-        const li = document.createElement('li'); li.className = 'question-item';
+        const pid = `resp_${idx}`; 
+        const n = idx + 1;
+        
+        // 1. Renderiza a Pergunta
+        const li = document.createElement('li'); 
+        li.className = 'question-item';
         li.innerHTML = `<div class="line-container"><span class="number-marker">${n < 10 ? '0'+n : n}.</span><span class="question-text">${perg}</span></div>`;
         lista.appendChild(li);
+        
+        // 2. Renderiza Respostas dos Amigos (Com Reações!)
         respostas.forEach(r => {
-            if (r.uid !== usuarioAtual.uid && r.dados[pid]) {
-                const amg = document.createElement('li'); amg.className = 'question-item';
-                amg.innerHTML = `<div class="line-container answer-container"><div class="friend-answer-line" style="color:${r.dados[pid].cor}"><strong style="margin-right:5px">${r.dados.nomeQuemRespondeu}:</strong> ${r.dados[pid].texto}</div></div>`;
+            // Se a resposta existe e não é vazia
+            if (r.dados[pid]) {
+                const isMeuAmigo = (r.uid !== usuarioAtual.uid); // Mostra nome se não for eu
+                
+                // Prepara as reações existentes para exibir
+                let htmlReacoes = "";
+                if (r.dados[pid].reacoes) {
+                    const listaEmojis = Object.values(r.dados[pid].reacoes);
+                    if (listaEmojis.length > 0) {
+                        // Mostra apenas os 3 últimos ou únicos para não poluir
+                        const unicos = [...new Set(listaEmojis)].slice(0, 4).join('');
+                        htmlReacoes = `<span class="reaction-list">${unicos}${listaEmojis.length > 4 ? '+' : ''}</span>`;
+                    }
+                }
+
+                // ID único para o picker desta resposta específica
+                const pickerId = `picker_${r.uid}_${pid}`;
+
+                const amg = document.createElement('li'); 
+                amg.className = 'question-item';
+                amg.innerHTML = `
+                    <div class="line-container answer-container">
+                        <div class="friend-answer-line" style="color:${r.dados[pid].cor}">
+                            <strong style="margin-right:5px">${r.dados.nomeQuemRespondeu}:</strong> ${r.dados[pid].texto}
+                            
+                            <div class="reaction-wrapper">
+                                ${htmlReacoes}
+                                <button class="btn-add-reaction" onclick="toggleReactionPicker('${pickerId}')">☺+</button>
+                                
+                                <div id="${pickerId}" class="reaction-picker-popup" style="display:none;">
+                                    <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '❤️')">❤️</span>
+                                    <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '🔥')">🔥</span>
+                                    <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '😂')">😂</span>
+                                    <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '😮')">😮</span>
+                                    <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '👏')">👏</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
                 lista.appendChild(amg);
             }
         });
+
+        // 3. Renderiza Minha Linha de Resposta (Se não for tutorial)
         if (idCadernoAberto !== 'tutorial') {
-            const meuLi = document.createElement('li'); meuLi.className = 'question-item';
+            const meuLi = document.createElement('li'); 
+            meuLi.className = 'question-item';
             let txt = "", cor = document.getElementById('colorPickerResposta').value;
             const minha = respostas.find(r => r.uid === usuarioAtual.uid);
-            if (minha && minha.dados[pid]) { txt = minha.dados[pid].texto; cor = minha.dados[pid].cor; }
+            
+            // Recupera texto e cor se já respondi antes
+            if (minha && minha.dados[pid]) { 
+                txt = minha.dados[pid].texto; 
+                cor = minha.dados[pid].cor; 
+            }
+            
+            // Minha linha não tem botão de reagir (não reagimos a nós mesmos geralmente, mas se quiser posso liberar)
             meuLi.innerHTML = `<div class="line-container answer-container"><input type="text" class="answer-input" id="${pid}" value="${txt}" style="color:${cor}" placeholder="Sua resposta..." oninput="salvarResposta(this)" onfocus="ultimoInputFocado = this"></div>`;
             lista.appendChild(meuLi);
         }
@@ -391,4 +445,54 @@ document.querySelectorAll('input[type="color"]').forEach(picker => {
 });
 function toggleMenu() { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('overlay').classList.toggle('visible'); }
 function fecharMenus() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('visible'); }
+
 function navegarPara(id) { document.querySelectorAll('.screen').forEach(s => s.style.display = 'none'); document.getElementById(id).style.display = 'flex'; }
+
+// --- SISTEMA DE REAÇÕES (V12.0) ---
+
+// Abre/Fecha o menu de emojis
+function toggleReactionPicker(elementId) {
+    const picker = document.getElementById(elementId);
+    // Fecha outros abertos
+    document.querySelectorAll('.reaction-picker-popup').forEach(p => {
+        if(p.id !== elementId) p.style.display = 'none';
+    });
+    // Toggle do atual
+    picker.style.display = (picker.style.display === 'flex') ? 'none' : 'flex';
+}
+
+// Salva a reação no Firestore
+function salvarReacao(cadernoId, respondenteId, perguntaId, emoji) {
+    // Esconde o picker
+    document.querySelectorAll('.reaction-picker-popup').forEach(p => p.style.display = 'none');
+
+    // Cria o caminho do objeto: resp_0.reacoes.MEU_UID = emoji
+    // Usamos set com merge para garantir que não apague o texto
+    const updateData = {};
+    const caminhoReacao = `${perguntaId}.reacoes.${usuarioAtual.uid}`;
+    
+    // Precisamos usar notação de colchetes para chaves dinâmicas aninhadas em updates do Firestore
+    // Mas aqui vamos usar um truque com objeto auxiliar para o merge profundo
+    
+    const docRef = db.collection('cadernos').doc(cadernoId).collection('respostas').doc(respondenteId);
+    
+    // Primeiro pegamos o doc para garantir a estrutura
+    docRef.get().then(doc => {
+        if (doc.exists) {
+            const data = doc.data();
+            // Garante que o objeto da pergunta existe
+            if (!data[perguntaId]) return; 
+            
+            // Garante que o campo reacoes existe
+            if (!data[perguntaId].reacoes) data[perguntaId].reacoes = {};
+            
+            // Adiciona/Atualiza a reação
+            data[perguntaId].reacoes[usuarioAtual.uid] = emoji;
+            
+            // Salva de volta
+            docRef.update({
+                [perguntaId]: data[perguntaId]
+            });
+        }
+    });
+}
