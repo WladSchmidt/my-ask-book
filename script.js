@@ -521,20 +521,30 @@ function buscarUsuarios() {
         return;
     }
 
-    // Busca no banco quem tem o nome_busca começando com o termo
-    // O caractere '\uf8ff' faz a mágica de buscar "qualquer coisa que comece com..."
+ // --- BUSCA CORRIGIDA (V13.3 - Mostra todos) ---
+function buscarUsuarios() {
+    const input = document.getElementById('input-friend-email');
+    const termo = input.value.trim().toLowerCase();
+    const resultadosDiv = document.getElementById('lista-resultados-busca');
+    
+    // Limpa se digitar pouco
+    if (termo.length < 3) {
+        resultadosDiv.style.display = 'none';
+        resultadosDiv.innerHTML = "";
+        return;
+    }
+
     db.collection('usuarios')
         .where('nome_busca', '>=', termo)
         .where('nome_busca', '<=', termo + '\uf8ff')
-        .limit(5) // Traz só os 5 primeiros para não travar
+        .limit(5)
         .get()
         .then(snapshot => {
             resultadosDiv.innerHTML = "";
             
             if (snapshot.empty) {
-                // Opcional: Mostrar aviso de "Ninguém encontrado"
                 resultadosDiv.style.display = 'block';
-                resultadosDiv.innerHTML = '<div style="padding:10px; color:#bbb; font-size:12px;">Ninguém encontrado...</div>';
+                resultadosDiv.innerHTML = '<div style="padding:10px; color:#bbb; font-size:12px;">Ninguém encontrado... Tente digitar o e-mail completo e clicar em Ok.</div>';
                 return;
             }
 
@@ -543,8 +553,20 @@ function buscarUsuarios() {
             snapshot.forEach(doc => {
                 const user = doc.data();
                 
-                // Filtro visual: Não mostra eu mesmo nem quem já é amigo
-                if (user.email === usuarioAtual.email || meusAmigos.includes(user.email)) return;
+                // Filtro: Esconde APENAS eu mesmo. Amigos aparecem.
+                if (user.email === usuarioAtual.email) return;
+
+                // LÓGICA DE VERIFICAÇÃO DE AMIZADE
+                const jaEhAmigo = meusAmigos.includes(user.email);
+                let htmlAcao = '';
+
+                if (jaEhAmigo) {
+                    // Se já é amigo, mostra a etiqueta
+                    htmlAcao = '<span class="badge-friend">Amigo ✔</span>';
+                } else {
+                    // Se não é, mostra o botão de adicionar
+                    htmlAcao = `<button class="btn-add-mini" onclick="enviarPedidoPorBusca('${user.email}')" title="Enviar pedido">+</button>`;
+                }
 
                 const div = document.createElement('div');
                 div.className = 'search-result-item';
@@ -554,7 +576,7 @@ function buscarUsuarios() {
                         <span style="font-weight:bold; font-size:14px; color:white;">${user.nome}</span>
                         <span style="font-size:10px; color:#aaa;">${user.email}</span>
                     </div>
-                    <button class="btn-add-mini" onclick="enviarPedidoPorBusca('${user.email}')" title="Adicionar">+</button>
+                    ${htmlAcao}
                 `;
                 resultadosDiv.appendChild(div);
             });
@@ -567,3 +589,4 @@ function enviarPedidoPorBusca(emailDestino) {
     // Esconde a lista depois de clicar
     document.getElementById('lista-resultados-busca').style.display = 'none';
 }
+
