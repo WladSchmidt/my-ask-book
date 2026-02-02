@@ -304,14 +304,20 @@ body {
 
 .reaction-picker-popup {
     position: absolute;
-    bottom: 30px; /* Sobe um pouco mais para não tapar o texto */
-    left: -10px;
+    bottom: 35px; /* Subi um pouco mais */
+    left: -10px;  /* Ajuste leve para esquerda */
     background: white;
     border: 1px solid #ccc;
-    border-radius: 50px; /* Mais arredondado estilo iOS */
-    padding: 5px 10px;
-    display: flex;
-    gap: 10px;
+    border-radius: 15px; /* Bordas um pouco menos redondas para acomodar o quadrado */
+    padding: 10px;
+    
+    /* --- A MÁGICA DO GRID (V12.2) --- */
+    display: grid; 
+    grid-template-columns: repeat(4, 1fr); /* 4 colunas (vai gerar 2 linhas) */
+    gap: 8px; /* Espaço entre eles */
+    width: max-content; /* Tamanho ajustado ao conteúdo */
+    max-width: 220px; /* Trava a largura para não estourar no mobile */
+    
     box-shadow: 0 4px 15px rgba(0,0,0,0.15);
     z-index: 100;
     animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -332,3 +338,4 @@ body {
     from { opacity: 0; transform: scale(0.5) translateY(10px); }
     to { opacity: 1; transform: scale(1) translateY(0); }
 }
+
