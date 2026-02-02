@@ -507,7 +507,7 @@ function salvarReacao(cadernoId, respondenteId, perguntaId, emoji) {
     });
 }
 
-// --- BUSCA CORRIGIDA (V13.3 - Mostra todos) ---
+// --- BUSCA V13.6 (Mostra VOCÊ, Amigos e Desconhecidos) ---
 function buscarUsuarios() {
     const input = document.getElementById('input-friend-email');
     const termo = input.value.trim().toLowerCase();
@@ -527,10 +527,11 @@ function buscarUsuarios() {
         .get()
         .then(snapshot => {
             resultadosDiv.innerHTML = "";
+            let encontrouAlguem = false;
             
             if (snapshot.empty) {
                 resultadosDiv.style.display = 'block';
-                resultadosDiv.innerHTML = '<div style="padding:10px; color:#bbb; font-size:12px;">Ninguém encontrado... Tente digitar o e-mail completo e clicar em Ok.</div>';
+                resultadosDiv.innerHTML = '<div style="padding:10px; color:#bbb; font-size:12px;">Ninguém encontrado...</div>';
                 return;
             }
 
@@ -538,19 +539,20 @@ function buscarUsuarios() {
             
             snapshot.forEach(doc => {
                 const user = doc.data();
-                
-                // Filtro: Esconde APENAS eu mesmo. Amigos aparecem.
-                if (user.email === usuarioAtual.email) return;
+                encontrouAlguem = true; // Achou alguém (pode ser eu ou outro)
 
-                // LÓGICA DE VERIFICAÇÃO DE AMIZADE
-                const jaEhAmigo = meusAmigos.includes(user.email);
                 let htmlAcao = '';
 
-                if (jaEhAmigo) {
-                    // Se já é amigo, mostra a etiqueta
+                // 1. SOU EU?
+                if (user.email === usuarioAtual.email) {
+                    htmlAcao = '<span class="badge-me">Você</span>';
+                } 
+                // 2. É MEU AMIGO?
+                else if (meusAmigos.includes(user.email)) {
                     htmlAcao = '<span class="badge-friend">Amigo ✔</span>';
-                } else {
-                    // Se não é, mostra o botão de adicionar
+                } 
+                // 3. É DESCONHECIDO? (Mostra Botão Adicionar)
+                else {
                     htmlAcao = `<button class="btn-add-mini" onclick="enviarPedidoPorBusca('${user.email}')" title="Enviar pedido">+</button>`;
                 }
 
@@ -566,6 +568,11 @@ function buscarUsuarios() {
                 `;
                 resultadosDiv.appendChild(div);
             });
+
+            // Se por algum motivo bizarro o loop rodar mas não marcar ninguém (difícil acontecer agora sem filtros), avisa.
+            if (!encontrouAlguem) {
+                resultadosDiv.innerHTML = '<div style="padding:10px; color:#bbb; font-size:12px;">Ninguém encontrado...</div>';
+            }
         });
 }
 function enviarPedidoPorBusca(emailDestino) {
@@ -574,5 +581,6 @@ function enviarPedidoPorBusca(emailDestino) {
     // Esconde a lista depois de clicar
     document.getElementById('lista-resultados-busca').style.display = 'none';
 }
+
 
 
