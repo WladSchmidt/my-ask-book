@@ -262,64 +262,70 @@ body {
 
 }
 
-/* --- REAÇÕES (V12.0) --- */
+/* --- REAÇÕES (V12.1 - Ajustado) --- */
 .reaction-wrapper {
     display: inline-flex;
     align-items: center;
     gap: 5px;
     margin-left: 8px;
     position: relative;
-    vertical-align: middle;
+    vertical-align: middle; /* Garante alinhamento com o texto */
+    height: 24px; /* Altura fixa menor que a linha de 40px para não estourar */
 }
 
 .reaction-list {
-    font-size: 14px;
-    background: rgba(255,255,255,0.7);
+    font-size: 16px; /* Emojis um pouco maiores */
+    background: rgba(255,255,255,0.5); /* Fundo mais sutil */
     padding: 0 4px;
     border-radius: 10px;
     display: inline-flex;
+    align-items: center;
     gap: 2px;
+    cursor: pointer; /* Indica que dá para clicar */
 }
 
 .btn-add-reaction {
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 16px;
-    opacity: 0.4;
+    font-size: 20px; /* Ícone ☺ maior */
+    color: #888; /* Cor cinza neutra */
     transition: 0.2s;
     padding: 0;
     line-height: 1;
+    display: flex;
+    align-items: center;
 }
 
 .btn-add-reaction:hover {
-    opacity: 1;
-    transform: scale(1.2);
+    color: #d81b60; /* Rosa ao passar o mouse */
+    transform: scale(1.1);
 }
 
 .reaction-picker-popup {
     position: absolute;
-    bottom: 25px;
+    bottom: 30px; /* Sobe um pouco mais para não tapar o texto */
     left: -10px;
     background: white;
     border: 1px solid #ccc;
-    border-radius: 20px;
-    padding: 5px 8px;
+    border-radius: 50px; /* Mais arredondado estilo iOS */
+    padding: 5px 10px;
     display: flex;
-    gap: 8px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    gap: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
     z-index: 100;
     animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .reaction-option {
     cursor: pointer;
-    font-size: 20px;
+    font-size: 22px;
     transition: transform 0.2s;
+    user-select: none;
 }
 
 .reaction-option:hover {
-    transform: scale(1.4);
+    transform: scale(1.3);
 }
 
 @keyframes popIn {
