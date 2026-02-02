@@ -39,6 +39,8 @@ function salvarUsuarioNoBanco() {
     db.collection('usuarios').doc(usuarioAtual.uid).set({
         email: usuarioAtual.email,
         nome: usuarioAtual.displayName,
+        // CAMPO NOVO: Salva o nome tudo em minúsculo para facilitar a busca
+        nome_busca: usuarioAtual.displayName.toLowerCase(), 
         foto: usuarioAtual.photoURL
     }, { merge: true });
 }
@@ -504,5 +506,62 @@ function salvarReacao(cadernoId, respondenteId, perguntaId, emoji) {
         });
     });
 }
+
+// --- SISTEMA DE BUSCA (V13.0) ---
+function buscarUsuarios() {
+    const input = document.getElementById('input-friend-email');
+    const termo = input.value.trim().toLowerCase();
+    const resultadosDiv = document.getElementById('lista-resultados-busca');
+    
+    // Se digitou pouco, limpa e esconde
+    if (termo.length < 3) {
+        resultadosDiv.style.display = 'none';
+        return;
+    }
+
+    // Busca no banco quem tem o nome_busca começando com o termo
+    // O caractere '\uf8ff' é um truque do Firebase para dizer "e tudo que vem depois"
+    db.collection('usuarios')
+        .where('nome_busca', '>=', termo)
+        .where('nome_busca', '<=', termo + '\uf8ff')
+        .limit(5) // Traz só 5 para não poluir
+        .get()
+        .then(snapshot => {
+            resultadosDiv.innerHTML = "";
+            
+            if (snapshot.empty) {
+                resultadosDiv.style.display = 'none';
+                return;
+            }
+
+            resultadosDiv.style.display = 'block';
+            
+            snapshot.forEach(doc => {
+                const user = doc.data();
+                // Não mostra eu mesmo nem quem já é meu amigo
+                if (user.email === usuarioAtual.email || meusAmigos.includes(user.email)) return;
+
+                const div = document.createElement('div');
+                div.className = 'search-result-item';
+                div.innerHTML = `
+                    <img src="${user.foto}" class="mini-avatar">
+                    <div style="flex:1;">
+                        <div style="font-weight:bold;">${user.nome}</div>
+                        <div style="font-size:10px; color:#aaa;">${user.email}</div>
+                    </div>
+                    <button class="btn-add-mini" onclick="enviarPedidoPorBusca('${user.email}')">+</button>
+                `;
+                resultadosDiv.appendChild(div);
+            });
+        });
+}
+
+function enviarPedidoPorBusca(emailDestino) {
+    // Reutiliza sua lógica de enviar pedido
+    document.getElementById('input-friend-email').value = emailDestino;
+    enviarPedidoAmizade();
+    document.getElementById('lista-resultados-busca').style.display = 'none';
+}
+
 
 
