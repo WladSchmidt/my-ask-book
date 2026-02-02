@@ -304,23 +304,25 @@ body {
 
 .reaction-picker-popup {
     position: absolute;
-    bottom: 35px;
-    left: -10px;
+    bottom: 35px; /* Aparece acima do botão */
+    right: -5px;  /* ALINHAMENTO NOVO: Fixa na direita para não cortar no mobile */
+    left: auto;   /* Ignora a esquerda */
+    
     background: white;
     border: 1px solid #ccc;
-    border-radius: 12px; /* Cantos arredondados */
-    padding: 10px;
+    border-radius: 12px;
+    padding: 8px;
     
-    /* --- A CORREÇÃO DO GRID --- */
+    /* --- O SEGREDO DO QUADRADO --- */
     display: grid; 
-    grid-template-columns: repeat(4, 1fr); /* Cria 4 colunas exatas */
-    gap: 10px; /* Espaço entre os emojis */
+    grid-template-columns: repeat(4, 1fr); /* 4 colunas exatas */
+    gap: 8px; /* Espaço entre os ícones */
     
-    width: max-content; /* A caixa cresce o quanto precisar */
-    max-width: 200px; /* Trava a largura pro celular não estourar */
+    width: max-content;
+    min-width: 140px; /* Garante tamanho mínimo */
     
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    z-index: 100;
+    z-index: 1000;
     animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .reaction-option {
@@ -338,5 +340,6 @@ body {
     from { opacity: 0; transform: scale(0.5) translateY(10px); }
     to { opacity: 1; transform: scale(1) translateY(0); }
 }
+
 
 
