@@ -410,3 +410,16 @@ body {
     border: 1px solid #4caf50;
     white-space: nowrap;
 }
+
+/* Etiqueta para identificar o próprio usuário na busca */
+.badge-me {
+    background-color: #607d8b; /* Cinza azulado (Blue Grey) */
+    color: white;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-family: 'Inter', sans-serif;
+    border: 1px solid #78909c;
+    white-space: nowrap;
+    cursor: default;
+}
