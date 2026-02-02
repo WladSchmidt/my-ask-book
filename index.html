@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>My Ask Book - V11.1</title>
+    <title>My Ask Book - V11.2</title>
     <link href="https://fonts.googleapis.com/css2?family=Gloria+Hallelujah&family=Patrick+Hand&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -31,20 +31,9 @@
         
         /* HEADER */
         .feed-container { width: 90%; max-width: 900px; text-align: center; padding: 20px; }
-        
-        .feed-header { 
-            display: flex; align-items: center; justify-content: center; 
-            width: 100%; margin-bottom: 30px; position: relative; min-height: 80px; 
-        }
-        
-        .header-center { 
-            display: flex; flex-direction: column; align-items: center; 
-            justify-content: center; z-index: 1; text-align: center; 
-        }
-        
-        .header-actions {
-            position: absolute; left: 0; top: 10px; display: flex; gap: 15px; z-index: 10;
-        }
+        .feed-header { display: flex; align-items: center; justify-content: center; width: 100%; margin-bottom: 30px; position: relative; min-height: 80px; }
+        .header-center { display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1; text-align: center; }
+        .header-actions { position: absolute; left: 0; top: 10px; display: flex; gap: 15px; z-index: 10; }
         
         .main-logo { 
             font-family: 'Gloria Hallelujah'; font-size: 55px; 
@@ -52,11 +41,7 @@
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             filter: drop-shadow(2px 2px 0px rgba(0,0,0,0.5)); line-height: 1.1; margin: 0; 
         }
-        
-        .sub-logo { 
-            font-family: 'Patrick Hand'; font-size: 24px; 
-            text-shadow: 1px 1px 4px rgba(0,0,0,0.9); margin-top: 0px; color: #ffeb3b; 
-        }
+        .sub-logo { font-family: 'Patrick Hand'; font-size: 24px; text-shadow: 1px 1px 4px rgba(0,0,0,0.9); margin-top: 0px; color: #ffeb3b; }
 
         /* Sidebar */
         .sidebar { position: fixed; left: -320px; top: 0; width: 300px; height: 100%; background: #222; color: #eee; transition: 0.3s; z-index: 2000; box-shadow: 5px 0 15px rgba(0,0,0,0.5); padding: 20px; display: flex; flex-direction: column; box-sizing: border-box; }
@@ -138,7 +123,6 @@
             font-family: 'Gloria Hallelujah'; font-size: 36px; color: #222;
             margin: 0 0 40px 0; line-height: 40px; border-bottom: 2px dashed #aaa; padding-bottom: 5px; 
         }
-        
         .creation-title {
             font-family: 'Gloria Hallelujah'; font-size: 36px; color: #000;
             margin: 0 0 40px 0; line-height: 40px; border-bottom: 2px dashed #ccc; padding-bottom: 5px;
@@ -148,27 +132,14 @@
 
         .question-list { list-style: none; padding: 0; margin: 0; }
         .question-item { margin-bottom: 0; }
-        
-        .line-container { 
-            height: 40px; display: flex; align-items: center; overflow: hidden; 
-        }
-        .number-marker { 
-            font-family: 'Gloria Hallelujah'; color: #0288d1; font-weight: bold; font-size: 22px; 
-            width: 40px; text-align: right; margin-right: 15px; 
-        }
-        .question-text { 
-            font-family: 'Patrick Hand'; font-size: 26px; color: #222; font-weight: bold; 
-            flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
-        }
+        .line-container { height: 40px; display: flex; align-items: center; overflow: hidden; }
+        .number-marker { font-family: 'Gloria Hallelujah'; color: #0288d1; font-weight: bold; font-size: 22px; width: 40px; text-align: right; margin-right: 15px; }
+        .question-text { font-family: 'Patrick Hand'; font-size: 26px; color: #222; font-weight: bold; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .answer-container { padding-left: 55px; }
-        .friend-answer-line { 
-            font-family: 'Patrick Hand'; font-size: 24px; width: 100%; 
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
-        }
+        .friend-answer-line { font-family: 'Patrick Hand'; font-size: 24px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .answer-input, .create-input { width: 100%; height: 35px; background: transparent; border: none; outline: none; font-family: 'Patrick Hand'; font-size: 26px; color: #0d47a1; padding: 0; margin: 0; }
         .create-input { border-bottom: 2px dashed #e91e63; color: #e91e63; }
         
-        /* Seletor de Capas */
         .cover-selector-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; justify-items: center; margin-bottom: 30px; margin-left: -40px; }
         .mini-book { width: 90px; height: 120px; border-radius: 4px; cursor: pointer; background-size: contain; background-repeat: no-repeat; background-position: center; filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.3)); border: 2px solid transparent; transition: all 0.2s; }
         .mini-book:hover { transform: scale(1.1); }
@@ -193,33 +164,44 @@
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1500; display: none; backdrop-filter: blur(3px); }
         .overlay.visible { display: block; }
 
-        /* --- CHAT HEADS (BOLHAS FLUTUANTES) --- */
+        /* --- CHAT HEADS (BOLHAS) --- */
         #bubbles-container {
             position: fixed; bottom: 20px; right: 20px; z-index: 2400;
             display: flex; flex-direction: column-reverse; gap: 15px; align-items: flex-end;
         }
         .chat-bubble {
-            width: 60px; height: 60px; border-radius: 50%;
-            background-color: #fff;
-            background-size: cover; background-position: center;
-            border: 2px solid #d81b60;
+            width: 55px; height: 55px; border-radius: 50%;
+            background-color: #d81b60; color: white;
             box-shadow: 0 4px 10px rgba(0,0,0,0.4);
             cursor: pointer; position: relative;
             transition: transform 0.2s;
             display: flex; justify-content: center; align-items: center;
-            font-weight: bold; color: #d81b60; font-family: 'Patrick Hand'; font-size: 20px;
+            font-weight: bold; font-family: 'Patrick Hand'; font-size: 20px;
+            border: 2px solid white;
         }
         .chat-bubble:hover { transform: scale(1.1); }
         .bubble-badge {
             position: absolute; top: -5px; right: -5px;
-            background: red; color: white; width: 22px; height: 22px; border-radius: 50%;
+            background: red; color: white; width: 20px; height: 20px; border-radius: 50%;
             display: flex; justify-content: center; align-items: center;
-            font-size: 12px; border: 2px solid white; font-family: sans-serif;
+            font-size: 11px; border: 2px solid white; font-family: sans-serif;
         }
 
-        /* --- CHAT MODAL --- */
-        .chat-modal { position: fixed; bottom: 20px; right: 90px; /* Ao lado das bolhas */ width: 340px; height: 450px; background: white; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: none; flex-direction: column; z-index: 2500; overflow: hidden; font-family: 'Inter', sans-serif; }
-        .chat-header { background: #d81b60; color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        /* --- CHAT DOCKED (FIXO NO CANTO) --- */
+        .chat-modal { 
+            position: fixed; bottom: 0; right: 20px; /* Fixo embaixo */
+            width: 320px; height: 420px; 
+            background: white; 
+            border-radius: 12px 12px 0 0; /* Arredondado só em cima */
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.2); 
+            display: none; flex-direction: column; 
+            z-index: 2500; overflow: hidden; font-family: 'Inter', sans-serif; 
+        }
+        .chat-header { 
+            background: #d81b60; color: white; padding: 10px 15px; font-weight: bold; 
+            display: flex; justify-content: space-between; align-items: center; 
+            cursor: pointer;
+        }
         .chat-body { flex: 1; padding: 15px; overflow-y: auto; background: #f5f5f5; display: flex; flex-direction: column; gap: 8px; }
         .chat-msg { padding: 8px 12px; border-radius: 12px; max-width: 80%; font-size: 14px; word-wrap: break-word; }
         .msg-me { background: #d81b60; color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
@@ -247,8 +229,10 @@
             .answer-container { padding-left: 10px; }
             .friends-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
             .cover-selector-grid { grid-template-columns: repeat(2, 1fr); margin-left: -20px; }
-            .chat-modal { width: 90%; right: 5%; bottom: 85px; /* Acima da bolha */ }
-            #bubbles-container { bottom: 10px; right: 10px; }
+            
+            /* No mobile, chat ocupa tela ou sobe um pouco */
+            .chat-modal { width: 95%; right: 2.5%; bottom: 0; height: 60vh; border-radius: 12px 12px 0 0; }
+            #bubbles-container { bottom: 80px; right: 10px; }
         }
     </style>
 </head>
@@ -289,9 +273,12 @@
     <div id="bubbles-container"></div>
 
     <div id="chat-modal" class="chat-modal">
-        <div class="chat-header">
+        <div class="chat-header" onclick="minimizarChat()">
             <span id="chat-friend-name">Chat</span>
-            <button onclick="fecharChat()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">&times;</button>
+            <div>
+                <button onclick="minimizarChat(); event.stopPropagation();" style="background:none; border:none; color:white; font-size:18px; cursor:pointer; margin-right: 10px;">_</button>
+                <button onclick="fecharChat(); event.stopPropagation();" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">&times;</button>
+            </div>
         </div>
         <div id="chat-body" class="chat-body"></div>
         <div class="chat-footer">
@@ -323,7 +310,6 @@
                         🔔 <div id="notif-badge" class="notification-badge" style="display:none;">0</div>
                     </button>
                 </div>
-
                 <div class="header-center">
                     <h1 class="main-logo">My Ask Book</h1>
                     <div class="sub-logo">Colecione memórias</div>
@@ -404,11 +390,12 @@
         let usuarioAtual = null;
         let meusAmigos = [];
         let chatAtualId = null;
+        let chatAtualEmailAmigo = null; // Guardar email do amigo do chat aberto
         let unsubscribeChat = null;
         let mapaNomesAmigos = {}; 
         let ultimoInputFocado = null; 
         let editandoCadernoId = null; 
-        let bolhasAtivas = {}; // Armazena estado das bolhas
+        let bolhasAtivas = {}; 
 
         auth.onAuthStateChanged(user => {
             if (user) {
@@ -457,7 +444,6 @@
             }).then(() => { alert("Pedido enviado!"); input.value = ""; }).catch(err => alert("Erro ao enviar."));
         }
 
-        // --- SISTEMA UNIFICADO DE NOTIFICAÇÕES (SINO + BOLHAS) ---
         function monitorarNotificacoes() {
             db.collection('notificacoes').where('para', '==', usuarioAtual.email).where('status', '==', 'pendente')
                 .onSnapshot(snapshot => {
@@ -484,7 +470,6 @@
                         }
                     });
 
-                    // Atualiza contador do sino só com amizades
                     if (countSino > 0) {
                         badge.style.display = 'flex'; badge.innerText = countSino;
                     } else {
@@ -494,40 +479,34 @@
                 });
         }
 
-        // --- GERENCIADOR DE CHAT HEADS (BOLHAS) ---
+        // --- SISTEMA DE BOLHAS DE CHAT ---
         function criarOuAtualizarBolha(emailRemetente, nomeRemetente, idNotificacao) {
             const container = document.getElementById('bubbles-container');
             
-            // Verifica se a janela de chat desse user já está aberta
-            const chatAbertoEmail = document.getElementById('chat-friend-name').getAttribute('data-email');
-            if (document.getElementById('chat-modal').style.display === 'flex' && chatAbertoEmail === emailRemetente) {
-                // Se já estiver falando com ele, apenas remove a notificação do banco
+            // Se o chat já está aberto com essa pessoa, remove a notificação do banco e ignora
+            if (document.getElementById('chat-modal').style.display === 'flex' && chatAtualEmailAmigo === emailRemetente) {
                 db.collection('notificacoes').doc(idNotificacao).delete();
                 return;
             }
 
-            // Se já existe bolha pra esse user
+            // Se já tem bolha, atualiza contador
             if (bolhasAtivas[emailRemetente]) {
                 const badge = bolhasAtivas[emailRemetente].querySelector('.bubble-badge');
                 let count = parseInt(badge.innerText) + 1;
                 badge.innerText = count;
-                // Guarda ID da notificação para deletar depois (pilha simplificada: deleta a ultima)
-                bolhasAtivas[emailRemetente].dataset.lastNotifId = idNotificacao;
                 return;
             }
 
             // Cria nova bolha
             const bolha = document.createElement('div');
             bolha.className = 'chat-bubble';
-            // Pega inicial do nome ou imagem se tiver (simplificado para inicial)
-            bolha.innerText = nomeRemetente.charAt(0).toUpperCase();
+            bolha.innerText = nomeRemetente.charAt(0).toUpperCase(); // Inicial do nome
             bolha.onclick = () => {
                 abrirChat(emailRemetente, nomeRemetente);
-                // Remove a bolha visualmente e do mapa
+                // Ao abrir, remove a bolha
                 bolha.remove();
                 delete bolhasAtivas[emailRemetente];
-                // Remove a notificação do banco
-                // Nota: Idealmente removeria todas desse user, mas aqui removemos a atrelada
+                // Limpa notificações deste user no banco
                 db.collection('notificacoes').where('de', '==', emailRemetente).where('tipo', '==', 'nova_mensagem').get().then(snap => {
                     snap.forEach(d => d.ref.delete());
                 });
@@ -539,7 +518,6 @@
             
             bolha.appendChild(badge);
             container.appendChild(bolha);
-            
             bolhasAtivas[emailRemetente] = bolha;
         }
 
@@ -591,10 +569,11 @@
         function abrirChat(email, nome) {
             const emails = [usuarioAtual.email, email].sort();
             chatAtualId = emails[0].replace(/\./g, '_') + "-" + emails[1].replace(/\./g, '_');
-            document.getElementById('chat-modal').style.display = 'flex';
-            const nomeEl = document.getElementById('chat-friend-name');
-            nomeEl.innerText = nome;
-            nomeEl.setAttribute('data-email', email); // Marca qual chat está aberto para a logica das bolhas
+            chatAtualEmailAmigo = email; // Guarda quem é o amigo do chat atual
+
+            const chatModal = document.getElementById('chat-modal');
+            chatModal.style.display = 'flex';
+            document.getElementById('chat-friend-name').innerText = nome;
             
             fecharMenus();
             if (unsubscribeChat) unsubscribeChat();
@@ -609,31 +588,51 @@
             });
         }
 
+        function minimizarChat() {
+            const chatModal = document.getElementById('chat-modal');
+            chatModal.style.display = 'none';
+            // Ao minimizar, cria uma bolha para continuar acessível
+            // Usa o email e nome guardados
+            if (chatAtualEmailAmigo) {
+                const nomeAmigo = document.getElementById('chat-friend-name').innerText;
+                // Cria bolha sem notificação (badge vazio ou 0 se preferir, ou apenas o icone)
+                // Aqui vamos usar a logica de criar bolha manual
+                const container = document.getElementById('bubbles-container');
+                const bolha = document.createElement('div');
+                bolha.className = 'chat-bubble';
+                bolha.innerText = nomeAmigo.charAt(0).toUpperCase();
+                bolha.onclick = () => {
+                    abrirChat(chatAtualEmailAmigo, nomeAmigo);
+                    bolha.remove();
+                };
+                container.appendChild(bolha);
+            }
+        }
+
         function enviarMensagemChat() {
             const i = document.getElementById('chat-input'); const t = i.value.trim(); if (!t) return;
             
-            // 1. Grava a mensagem no chat
+            // 1. Grava msg
             db.collection('chats').doc(chatAtualId).collection('mensagens').add({ texto: t, email: usuarioAtual.email, data: firebase.firestore.FieldValue.serverTimestamp() });
             
-            // 2. Cria Notificação para o destinatário (Para gerar a bolha lá)
-            const emailAmigo = document.getElementById('chat-friend-name').getAttribute('data-email');
-            
-            if (emailAmigo) {
+            // 2. Notifica o amigo para aparecer a bolha pra ele
+            if (chatAtualEmailAmigo) {
                 db.collection('notificacoes').add({
                     de: usuarioAtual.email,
                     deNome: usuarioAtual.displayName,
-                    para: emailAmigo,
+                    para: chatAtualEmailAmigo,
                     tipo: 'nova_mensagem',
                     status: 'pendente',
                     data: firebase.firestore.FieldValue.serverTimestamp()
                 });
             }
-            
             i.value = "";
         }
+        
         function fecharChat() { 
             document.getElementById('chat-modal').style.display = 'none'; 
-            document.getElementById('chat-friend-name').removeAttribute('data-email'); // Limpa status
+            chatAtualEmailAmigo = null;
+            if (unsubscribeChat) unsubscribeChat();
         }
 
         function carregarFeed() {
@@ -684,7 +683,7 @@
             const lista = document.getElementById('lista-criacao');
             lista.innerHTML = "";
             
-            // --- NOVAS PERGUNTAS PADRÃO (V11.1) ---
+            // --- 5 PERGUNTAS PADRÃO (V11.1/11.2) ---
             adicionarNovaLinha("Qual sua banda predileta ?");
             adicionarNovaLinha("Qual seu filme predileto ?");
             adicionarNovaLinha("Qual seu maior sonho ?");
@@ -719,15 +718,16 @@
             }
         }
 
-        // --- TUTORIAL FIXO (RESTAURADO) ---
+        // --- TUTORIAL FIXO (MANTIDO 100%) ---
         function abrirTutorial() {
             abrirCadernoParaResponder("tutorial", {
                 donoNome: "Tutorial",
                 perguntas: [
-                    "Bem-vindo!",
-                    "Adicione amigos no menu lateral e divirta-se!",
-                    "Você irá descobrir diversas curiosidades sobre seus amigos",
-                    "Crie seu próprio caderno e seja criativo nas suas perguntas"
+                    "Bem-vindo ao My Ask Book!",
+                    "Você irá descobrir diversas curiosidades sobre seus amigos.",
+                    "Crie o seu caderno e comece a interagir.",
+                    "Adicione amigos no menu lateral e converse com eles em tempo real.",
+                    "Não esqueça de responder os cadernos de seus amigos, entre na brincadeira!"
                 ]
             });
         }
