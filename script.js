@@ -505,3 +505,4 @@ function salvarReacao(cadernoId, respondenteId, perguntaId, emoji) {
     });
 }
 
+
