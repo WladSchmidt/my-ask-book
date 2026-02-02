@@ -508,29 +508,33 @@ function salvarReacao(cadernoId, respondenteId, perguntaId, emoji) {
 }
 
 // --- SISTEMA DE BUSCA (V13.0) ---
+// --- BUSCA DE AMIGOS (V13.1 - Live Search) ---
 function buscarUsuarios() {
     const input = document.getElementById('input-friend-email');
     const termo = input.value.trim().toLowerCase();
     const resultadosDiv = document.getElementById('lista-resultados-busca');
     
-    // Se digitou pouco, limpa e esconde
+    // Se digitou menos de 3 letras, limpa a lista e esconde
     if (termo.length < 3) {
         resultadosDiv.style.display = 'none';
+        resultadosDiv.innerHTML = "";
         return;
     }
 
     // Busca no banco quem tem o nome_busca começando com o termo
-    // O caractere '\uf8ff' é um truque do Firebase para dizer "e tudo que vem depois"
+    // O caractere '\uf8ff' faz a mágica de buscar "qualquer coisa que comece com..."
     db.collection('usuarios')
         .where('nome_busca', '>=', termo)
         .where('nome_busca', '<=', termo + '\uf8ff')
-        .limit(5) // Traz só 5 para não poluir
+        .limit(5) // Traz só os 5 primeiros para não travar
         .get()
         .then(snapshot => {
             resultadosDiv.innerHTML = "";
             
             if (snapshot.empty) {
-                resultadosDiv.style.display = 'none';
+                // Opcional: Mostrar aviso de "Ninguém encontrado"
+                resultadosDiv.style.display = 'block';
+                resultadosDiv.innerHTML = '<div style="padding:10px; color:#bbb; font-size:12px;">Ninguém encontrado...</div>';
                 return;
             }
 
@@ -538,18 +542,19 @@ function buscarUsuarios() {
             
             snapshot.forEach(doc => {
                 const user = doc.data();
-                // Não mostra eu mesmo nem quem já é meu amigo
+                
+                // Filtro visual: Não mostra eu mesmo nem quem já é amigo
                 if (user.email === usuarioAtual.email || meusAmigos.includes(user.email)) return;
 
                 const div = document.createElement('div');
                 div.className = 'search-result-item';
                 div.innerHTML = `
-                    <img src="${user.foto}" class="mini-avatar">
-                    <div style="flex:1;">
-                        <div style="font-weight:bold;">${user.nome}</div>
-                        <div style="font-size:10px; color:#aaa;">${user.email}</div>
+                    <img src="${user.foto || 'https://via.placeholder.com/30'}" class="mini-avatar">
+                    <div style="flex:1; display:flex; flex-direction:column; align-items:flex-start;">
+                        <span style="font-weight:bold; font-size:14px; color:white;">${user.nome}</span>
+                        <span style="font-size:10px; color:#aaa;">${user.email}</span>
                     </div>
-                    <button class="btn-add-mini" onclick="enviarPedidoPorBusca('${user.email}')">+</button>
+                    <button class="btn-add-mini" onclick="enviarPedidoPorBusca('${user.email}')" title="Adicionar">+</button>
                 `;
                 resultadosDiv.appendChild(div);
             });
@@ -557,11 +562,8 @@ function buscarUsuarios() {
 }
 
 function enviarPedidoPorBusca(emailDestino) {
-    // Reutiliza sua lógica de enviar pedido
     document.getElementById('input-friend-email').value = emailDestino;
     enviarPedidoAmizade();
+    // Esconde a lista depois de clicar
     document.getElementById('lista-resultados-busca').style.display = 'none';
 }
-
-
-
