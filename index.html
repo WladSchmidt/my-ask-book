@@ -22,9 +22,12 @@
             <span>Amigos</span>
             <button onclick="fecharMenus()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">&times;</button>
         </div>
-        <div class="add-friend-box">
-            <input type="email" id="input-friend-email" class="input-friend" placeholder="email@amigo.com">
-            <button class="btn-add-friend" onclick="enviarPedidoAmizade()">Enviar</button>
+        <div class="add-friend-box" style="position:relative;">
+            <input type="text" id="input-friend-email" class="input-friend" placeholder="Nome ou E-mail..." onkeyup="buscarUsuarios()">
+            
+            <button class="btn-add-friend" onclick="enviarPedidoAmizade()">Ok</button>
+
+            <div id="lista-resultados-busca" class="search-dropdown"></div>
         </div>
         <ul id="lista-amigos-sidebar" class="friend-list"></ul>
         <div class="sidebar-footer">
@@ -160,4 +163,5 @@
     <script src="firebase-config.js"></script>
     <script src="script.js"></script>
 </body>
+
 </html>
