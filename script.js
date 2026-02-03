@@ -1,4 +1,4 @@
-let unsubscribeRespostas = null; 
+let unsubscribeRespostas = null; // Para controlar o listener em tempo real
 let usuarioAtual = null;
 let meusAmigos = [];
 let chatAtualId = null;
@@ -8,7 +8,6 @@ let mapaNomesAmigos = {};
 let ultimoInputFocado = null; 
 let editandoCadernoId = null; 
 let bolhasAtivas = {}; 
-let timeoutSalvar = null; // Variável para controlar o tempo de salvar
 
 auth.onAuthStateChanged(user => {
     if (user) {
@@ -40,6 +39,7 @@ function salvarUsuarioNoBanco() {
     db.collection('usuarios').doc(usuarioAtual.uid).set({
         email: usuarioAtual.email,
         nome: usuarioAtual.displayName,
+        // CAMPO NOVO: Salva o nome tudo em minúsculo para facilitar a busca
         nome_busca: usuarioAtual.displayName.toLowerCase(), 
         foto: usuarioAtual.photoURL
     }, { merge: true });
@@ -385,7 +385,8 @@ function renderizarPerguntasERespostas(caderno, respostas) {
         
         respostas.forEach(r => {
             if (r.dados[pid]) {
-                const pickerId = `picker_${r.uid}_${pid}`;
+                const isMeuAmigo = (r.uid !== usuarioAtual.uid);
+                
                 let htmlReacoes = "";
                 if (r.dados[pid].reacoes) {
                     const listaEmojis = Object.values(r.dados[pid].reacoes);
@@ -395,20 +396,25 @@ function renderizarPerguntasERespostas(caderno, respostas) {
                     }
                 }
 
+                const pickerId = `picker_${r.uid}_${pid}`;
+
                 const amg = document.createElement('li'); 
                 amg.className = 'question-item';
-                amg.innerHTML = `
+               amg.innerHTML = `
                     <div class="line-container answer-container">
                         <div class="friend-answer-line" style="color:${r.dados[pid].cor}">
                             <strong style="margin-right:5px">${r.dados.nomeQuemRespondeu}:</strong> ${r.dados[pid].texto}
+                            
                             <div class="reaction-wrapper">
                                 ${htmlReacoes}
                                 <button class="btn-add-reaction" onclick="toggleReactionPicker('${pickerId}')">☺</button> 
+                                
                                 <div id="${pickerId}" class="reaction-picker-popup" style="display:none;">
                                     <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '❤️')">❤️</span>
                                     <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '🔥')">🔥</span>
                                     <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '😂')">😂</span>
                                     <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '😮')">😮</span>
+                                    
                                     <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '😢')">😢</span>
                                     <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '👏')">👏</span>
                                     <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '👍')">👍</span>
@@ -432,39 +438,11 @@ function renderizarPerguntasERespostas(caderno, respostas) {
                 cor = minha.dados[pid].cor; 
             }
             
-            // --- MUDANÇA: textarea + salvarComDelay ---
-            meuLi.innerHTML = `
-                <div class="line-container answer-container">
-                    <textarea class="answer-input" id="${pid}" style="color:${cor}" 
-                        placeholder="Sua resposta..." 
-                        oninput="ajustarAltura(this); salvarComDelay(this)" 
-                        onfocus="ultimoInputFocado = this">${txt}</textarea>
-                </div>`;
+            meuLi.innerHTML = `<div class="line-container answer-container"><input type="text" class="answer-input" id="${pid}" value="${txt}" style="color:${cor}" placeholder="Sua resposta..." oninput="salvarResposta(this)" onfocus="ultimoInputFocado = this"></div>`;
             lista.appendChild(meuLi);
-            
-            // Pequeno ajuste para a altura inicial correta
-            setTimeout(() => {
-                const ta = document.getElementById(pid);
-                if(ta) ajustarAltura(ta);
-            }, 100);
         }
     });
 }
-
-// --- FUNÇÃO PARA SALVAR COM DELAY (EVITA FECHAR TECLADO) ---
-function salvarComDelay(inp) {
-    clearTimeout(timeoutSalvar); // Cancela o envio anterior
-    timeoutSalvar = setTimeout(() => {
-        salvarResposta(inp); // Envia só depois de 1.5s parado
-    }, 1500);
-}
-
-// --- FUNÇÃO PARA O TEXTAREA CRESCER SOZINHO ---
-function ajustarAltura(el) {
-    el.style.height = 'auto';
-    el.style.height = (el.scrollHeight) + 'px';
-}
-
 function salvarResposta(inp) {
     if (!usuarioAtual || idCadernoAberto === 'tutorial') return;
     const dados = {}; const cor = inp.style.color || document.getElementById('colorPickerResposta').value;
@@ -472,7 +450,6 @@ function salvarResposta(inp) {
     dados.nomeQuemRespondeu = document.getElementById('input-meu-nome').value || usuarioAtual.displayName;
     db.collection('cadernos').doc(idCadernoAberto).collection('respostas').doc(usuarioAtual.uid).set(dados, { merge: true });
 }
-
 document.querySelectorAll('input[type="color"]').forEach(picker => {
     picker.addEventListener('input', function() {
         if (ultimoInputFocado) {
@@ -604,3 +581,5 @@ function enviarPedidoPorBusca(emailDestino) {
     // Esconde a lista depois de clicar
     document.getElementById('lista-resultados-busca').style.display = 'none';
 }
+
+
