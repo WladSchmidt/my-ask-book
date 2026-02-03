@@ -1,4 +1,5 @@
-let unsubscribeRespostas = null; // Para controlar o listener em tempo real
+// --- VARIÁVEIS GLOBAIS ---
+let unsubscribeRespostas = null;
 let usuarioAtual = null;
 let meusAmigos = [];
 let chatAtualId = null;
@@ -9,16 +10,20 @@ let ultimoInputFocado = null;
 let editandoCadernoId = null; 
 let bolhasAtivas = {}; 
 
+// Versão do sistema
+const VERSAO_SISTEMA = 'v13_9_manual_save'; 
+
 auth.onAuthStateChanged(user => {
     if (user) {
         usuarioAtual = user;
         salvarUsuarioNoBanco();
         carregarMeusAmigosDoBanco();
         atualizarUIUsuario();
-        navegarPara('screen-feed');
         monitorarNotificacoes();
+        // O loading some quando o feed carrega
     } else {
         navegarPara('screen-login');
+        document.getElementById('screen-loading').style.display = 'none'; 
     }
 });
 
@@ -39,7 +44,6 @@ function salvarUsuarioNoBanco() {
     db.collection('usuarios').doc(usuarioAtual.uid).set({
         email: usuarioAtual.email,
         nome: usuarioAtual.displayName,
-        // CAMPO NOVO: Salva o nome tudo em minúsculo para facilitar a busca
         nome_busca: usuarioAtual.displayName.toLowerCase(), 
         foto: usuarioAtual.photoURL
     }, { merge: true });
@@ -241,13 +245,24 @@ function fecharChat() {
     if (unsubscribeChat) unsubscribeChat();
 }
 
+// --- FUNÇÕES DE FEED E CADERNOS ---
+
 function carregarFeed() {
     const grid = document.getElementById('grid-cadernos');
     db.collection('cadernos').onSnapshot((snapshot) => {
-        document.getElementById('loading').style.display = 'none'; grid.innerHTML = ""; mapaNomesAmigos = {}; 
+        
+        // Remove tela de loading
+        document.getElementById('screen-loading').style.display = 'none';
+        navegarPara('screen-feed');
+
+        document.getElementById('loading').style.display = 'none'; 
+        grid.innerHTML = ""; 
+        mapaNomesAmigos = {}; 
+        
         const tut = document.createElement('div'); tut.className = "friend-book bg-jeans";
         tut.innerHTML = `<div class="book-label">Como Usar?</div>`; tut.onclick = abrirTutorial;
         grid.appendChild(tut);
+        
         snapshot.forEach((doc) => {
             const d = doc.data(); if (!d.donoNome) return;
             mapaNomesAmigos[d.donoEmail] = d.donoNome;
@@ -342,6 +357,7 @@ function selecionarCorCapa(classe, el) {
     document.querySelectorAll('.mini-book').forEach(c => c.classList.remove('selected'));
     if(el) el.classList.add('selected'); 
 }
+
 function abrirCadernoParaResponder(id, dados) {
     idCadernoAberto = id; 
     navegarPara('screen-notebook');
@@ -370,6 +386,7 @@ function abrirCadernoParaResponder(id, dados) {
             renderizarPerguntasERespostas(dados, resps);
         });
 }
+
 function renderizarPerguntasERespostas(caderno, respostas) {
     const lista = document.getElementById('lista-perguntas-leitura'); 
     lista.innerHTML = "";
@@ -384,7 +401,7 @@ function renderizarPerguntasERespostas(caderno, respostas) {
         li.innerHTML = `<div class="line-container"><span class="number-marker">${n < 10 ? '0'+n : n}.</span><span class="question-text">${perg}</span></div>`;
         lista.appendChild(li);
         
-        // 2. Respostas dos Amigos (Código igual ao anterior)
+        // 2. Respostas dos Amigos
         respostas.forEach(r => {
             if (r.dados[pid]) {
                 const pickerId = `picker_${r.uid}_${pid}`;
@@ -424,7 +441,7 @@ function renderizarPerguntasERespostas(caderno, respostas) {
             }
         });
 
-        // 3. Minha Linha de Resposta (AGORA COM BOTÃO)
+        // 3. Minha Linha de Resposta (COM BOTÃO ➤)
         if (idCadernoAberto !== 'tutorial') {
             const meuLi = document.createElement('li'); 
             meuLi.className = 'question-item';
@@ -436,9 +453,6 @@ function renderizarPerguntasERespostas(caderno, respostas) {
                 cor = minha.dados[pid].cor; 
             }
             
-            // MUDANÇA AQUI:
-            // 1. Removi o oninput="salvarResposta..."
-            // 2. Adicionei o botão ➤ (save-icon) ao lado
             meuLi.innerHTML = `
                 <div class="line-container answer-container" style="display:flex; align-items:center;">
                     <input type="text" class="answer-input" id="${pid}" value="${txt}" style="color:${cor}; flex:1;" placeholder="Sua resposta..." onfocus="ultimoInputFocado = this">
@@ -449,15 +463,15 @@ function renderizarPerguntasERespostas(caderno, respostas) {
     });
 }
 
-// Função chamada apenas ao clicar no aviãozinho ➤
+// Função chamada APENAS ao clicar no aviãozinho
 function salvarRespostaManual(inputId) {
     if (!usuarioAtual || idCadernoAberto === 'tutorial') return;
 
     const inp = document.getElementById(inputId);
     const texto = inp.value.trim();
 
-    // Feedback visual (opcional): piscar o input
-    inp.style.backgroundColor = "#e8f5e9"; // Verde bem clarinho
+    // Feedback visual
+    inp.style.backgroundColor = "#e8f5e9";
     setTimeout(() => inp.style.backgroundColor = "transparent", 300);
 
     const dados = {}; 
@@ -466,71 +480,53 @@ function salvarRespostaManual(inputId) {
     dados[inputId] = { texto: texto, cor: cor };
     dados.nomeQuemRespondeu = document.getElementById('input-meu-nome').value || usuarioAtual.displayName;
     
-    // Salva no banco
     db.collection('cadernos').doc(idCadernoAberto)
       .collection('respostas').doc(usuarioAtual.uid)
-      .set(dados, { merge: true })
-      .then(() => {
-          // Opcional: Feedback de sucesso
-          // alert("Salvo!"); // Descomente se quiser um popup, mas acho chato
-      });
+      .set(dados, { merge: true });
 }
+
+// --- UTILITÁRIOS E UI ---
+
 function toggleMenu() { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('overlay').classList.toggle('visible'); }
 function fecharMenus() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('visible'); }
 
 function navegarPara(id) { document.querySelectorAll('.screen').forEach(s => s.style.display = 'none'); document.getElementById(id).style.display = 'flex'; }
 
-// --- SISTEMA DE REAÇÕES (V12.0) ---
+// --- REAÇÕES E BUSCA ---
 
-// Abre/Fecha o menu de emojis
 function toggleReactionPicker(elementId) {
     const picker = document.getElementById(elementId);
-    // Fecha outros abertos
     document.querySelectorAll('.reaction-picker-popup').forEach(p => {
         if(p.id !== elementId) p.style.display = 'none';
     });
-    // Toggle do atual
-    picker.style.display = (picker.style.display === 'flex') ? 'none' : 'flex';
+    picker.style.display = (picker.style.display === 'grid') ? 'none' : 'grid';
 }
 
-// Salva a reação no Firestore
 function salvarReacao(cadernoId, respondenteId, perguntaId, emoji) {
-    // Esconde o picker
     document.querySelectorAll('.reaction-picker-popup').forEach(p => p.style.display = 'none');
-
     const docRef = db.collection('cadernos').doc(cadernoId).collection('respostas').doc(respondenteId);
-    
-    // Transação para garantir leitura e escrita atômica (evita bugs de concorrência)
     return db.runTransaction(transaction => {
         return transaction.get(docRef).then(doc => {
             if (!doc.exists) return;
-
             const data = doc.data();
             if (!data[perguntaId]) return;
             if (!data[perguntaId].reacoes) data[perguntaId].reacoes = {};
-
             const reacaoAtual = data[perguntaId].reacoes[usuarioAtual.uid];
-
             if (reacaoAtual === emoji) {
-                // SE JÁ TEM ESSE EMOJI -> REMOVE (Toggle Off)
                 delete data[perguntaId].reacoes[usuarioAtual.uid];
             } else {
-                // SE NÃO TEM OU É OUTRO -> SALVA (Toggle On / Troca)
                 data[perguntaId].reacoes[usuarioAtual.uid] = emoji;
             }
-
             transaction.update(docRef, { [perguntaId]: data[perguntaId] });
         });
     });
 }
 
-// --- BUSCA V13.6 (Mostra VOCÊ, Amigos e Desconhecidos) ---
 function buscarUsuarios() {
     const input = document.getElementById('input-friend-email');
     const termo = input.value.trim().toLowerCase();
     const resultadosDiv = document.getElementById('lista-resultados-busca');
     
-    // Limpa se digitar pouco
     if (termo.length < 3) {
         resultadosDiv.style.display = 'none';
         resultadosDiv.innerHTML = "";
@@ -556,20 +552,14 @@ function buscarUsuarios() {
             
             snapshot.forEach(doc => {
                 const user = doc.data();
-                encontrouAlguem = true; // Achou alguém (pode ser eu ou outro)
+                encontrouAlguem = true; 
 
                 let htmlAcao = '';
-
-                // 1. SOU EU?
                 if (user.email === usuarioAtual.email) {
                     htmlAcao = '<span class="badge-me">Você</span>';
-                } 
-                // 2. É MEU AMIGO?
-                else if (meusAmigos.includes(user.email)) {
+                } else if (meusAmigos.includes(user.email)) {
                     htmlAcao = '<span class="badge-friend">Amigo ✔</span>';
-                } 
-                // 3. É DESCONHECIDO? (Mostra Botão Adicionar)
-                else {
+                } else {
                     htmlAcao = `<button class="btn-add-mini" onclick="enviarPedidoPorBusca('${user.email}')" title="Enviar pedido">+</button>`;
                 }
 
@@ -586,21 +576,23 @@ function buscarUsuarios() {
                 resultadosDiv.appendChild(div);
             });
 
-            // Se por algum motivo bizarro o loop rodar mas não marcar ninguém (difícil acontecer agora sem filtros), avisa.
             if (!encontrouAlguem) {
                 resultadosDiv.innerHTML = '<div style="padding:10px; color:#bbb; font-size:12px;">Ninguém encontrado...</div>';
             }
         });
 }
+
 function enviarPedidoPorBusca(emailDestino) {
     document.getElementById('input-friend-email').value = emailDestino;
     enviarPedidoAmizade();
-    // Esconde a lista depois de clicar
     document.getElementById('lista-resultados-busca').style.display = 'none';
 }
 
-
-
-
-
-
+// Pequeno utilitário para atualizar cor do input ao mudar cor
+document.querySelectorAll('input[type="color"]').forEach(picker => {
+    picker.addEventListener('input', function() {
+        if (ultimoInputFocado) {
+            ultimoInputFocado.style.color = this.value;
+        }
+    });
+});
