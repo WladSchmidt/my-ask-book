@@ -1,4 +1,4 @@
-/* --- STYLE.CSS (V16 - TEXTO LONGO E LAYOUT ESTÁVEL) --- */
+/* --- STYLE.CSS (V17 - ALINHAMENTO MATEMÁTICO PERFEITO) --- */
 
 * {
     box-sizing: border-box;
@@ -6,10 +6,13 @@
     padding: 0;
 }
 
+:root {
+    --line-height: 40px; /* A REGRA DE OURO: Tudo segue essa medida */
+}
+
 body {
     font-family: 'Inter', sans-serif;
     background-color: #1a1a1a; 
-    /* Coloque aqui o link da sua imagem de fundo se quiser */
     background-image: url('imagens/planodefundo.jpg'); 
     background-size: cover;
     background-attachment: fixed;
@@ -104,10 +107,11 @@ body {
     background-color: #fdfbf7; position: relative; 
     box-shadow: 0 5px 15px rgba(0,0,0,0.2); border-radius: 4px; margin: 20px 0; 
     padding: 60px 50px 50px 90px; 
-    /* Pauta do caderno */
+    
+    /* LINHAS: Definidas exatamente como 40px */
     background-image: linear-gradient(90deg, transparent 84px, #ffadad 84px, #ffadad 86px, transparent 86px), 
                       linear-gradient(#fdfbf7 39px, #a5d6a7 40px);
-    background-size: 100% 100%, 100% 40px; 
+    background-size: 100% 100%, 100% 40px; /* A altura da linha é 40px */
     background-attachment: local; 
     background-position: 0 20px; 
 }
@@ -116,38 +120,71 @@ body {
 .creation-subtitle-box { text-align: center; margin-bottom: 20px; margin-left: -40px; }
 .question-list { list-style: none; padding: 0; margin: 0; }
 
-/* --- ALINHAMENTO DO TEXTO (CORREÇÃO DE QUEBRA DE LINHA) --- */
-.line-container { display: flex; align-items: baseline; min-height: 40px; }
-.number-marker { font-family: 'Gloria Hallelujah'; color: #0288d1; font-size: 22px; width: 40px; text-align: right; margin-right: 15px; flex-shrink: 0; line-height: 40px; }
-.question-text { font-family: 'Patrick Hand'; font-size: 26px; color: #222; font-weight: bold; flex: 1; white-space: pre-wrap; line-height: 40px; }
+/* --- ALINHAMENTO DO TEXTO (SINCRONIA PERFEITA) --- */
+/* Cada bloco de pergunta/resposta deve ter altura múltipla de 40px */
+
+.question-item {
+    margin-bottom: 0; /* Remove margem para não desalinhar a grade */
+}
+
+.line-container { 
+    display: flex; 
+    align-items: flex-end; /* Alinha o texto na base da linha */
+    min-height: 40px; /* Uma linha de altura */
+    padding-bottom: 2px; /* Ajuste fino */
+}
+
+.number-marker { 
+    font-family: 'Gloria Hallelujah'; color: #0288d1; font-size: 22px; width: 40px; 
+    text-align: right; margin-right: 15px; flex-shrink: 0; 
+    line-height: 40px; 
+}
+
+.question-text { 
+    font-family: 'Patrick Hand'; font-size: 24px; color: #222; font-weight: bold; 
+    flex: 1; 
+    white-space: pre-wrap; 
+    line-height: 40px; /* Mesma altura da linha do papel */
+    margin: 0;
+}
 
 /* Respostas */
-.answer-container { padding-left: 55px; width: 100%; display: flex; align-items: flex-start; }
+.answer-container { 
+    padding-left: 55px; width: 100%; 
+    display: flex; align-items: flex-end; /* Alinha na base */
+    min-height: 40px;
+    padding-bottom: 2px; /* Ajuste fino para sentar na linha */
+}
 
-/* NOVO ESTILO DO CAMPO DE TEXTO (TEXTAREA) */
+/* ÁREA DE TEXTO (TEXTAREA) */
 .answer-input {
     width: 100%;
     background: transparent;
     border: none;
     outline: none;
     font-family: 'Patrick Hand';
-    font-size: 26px;
+    font-size: 24px;
     color: #0d47a1;
     padding: 0;
     margin: 0;
-    line-height: 40px; /* Mesma altura da pauta */
-    resize: none; /* Remove o puxador */
-    overflow: hidden; /* Limpa a barra de rolagem */
-    min-height: 40px; /* Começa com uma linha */
-    height: auto;
-    white-space: pre-wrap; /* Quebra linha automaticamente */
+    
+    line-height: 40px; /* CRUCIAL: Segue a altura da linha */
+    height: 40px; /* Altura inicial */
+    min-height: 40px;
+    
+    resize: none; 
+    overflow: hidden; 
+    white-space: pre-wrap; 
     display: block;
 }
 
-/* Ajuste específico para a caixa de criação (input simples) */
-.create-input { width: 100%; height: 35px; background: transparent; border: none; border-bottom: 2px dashed #e91e63; outline: none; font-family: 'Patrick Hand'; font-size: 26px; color: #e91e63; }
-
-.friend-answer-line { font-family: 'Patrick Hand'; font-size: 24px; width: 100%; white-space: pre-wrap; line-height: 40px; }
+/* Para amigos */
+.friend-answer-line { 
+    font-family: 'Patrick Hand'; font-size: 24px; width: 100%; 
+    white-space: pre-wrap; 
+    line-height: 40px; /* CRUCIAL */
+    margin: 0;
+}
 
 /* Ferramentas */
 .btn-back { position: fixed; top: 20px; left: 20px; width: 50px; height: 50px; border-radius: 50%; background: #fff; color: #333; box-shadow: 0 4px 10px rgba(0,0,0,0.2); font-size: 24px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 1000; }
