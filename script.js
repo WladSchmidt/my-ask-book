@@ -383,7 +383,23 @@ function toggleMenu() { document.getElementById('sidebar').classList.toggle('ope
 function fecharMenus() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('visible'); }
 function toggleNotificacoes() { const m = document.getElementById('notif-modal'); m.style.display = (m.style.display === 'block') ? 'none' : 'block'; }
 function navegarPara(id) { document.querySelectorAll('.screen').forEach(s => s.style.display = 'none'); document.getElementById(id).style.display = 'flex'; }
-document.querySelectorAll('input[type="color"]').forEach(picker => { picker.addEventListener('input', function() { if (ultimoInputFocado) ultimoInputFocado.style.color = this.value; }); });
+// --- CORREÇÃO DA FERRAMENTA DE COR (V13.10) ---
+const colorPicker = document.getElementById('colorPickerResposta');
+
+if (colorPicker) {
+    colorPicker.addEventListener('input', function() {
+        // Se temos um campo salvo na memória
+        if (ultimoInputFocado) {
+            // 1. Aplica a cor visualmente na hora
+            ultimoInputFocado.style.color = this.value;
+            
+            // 2. Traz o foco de volta para o campo para você continuar digitando
+            ultimoInputFocado.focus();
+        } else {
+            alert("Clique em uma linha de resposta antes de escolher a cor!");
+        }
+    });
+}
 
 // --- FUNÇÕES DE REAÇÃO (V12.0) ---
 function toggleReactionPicker(elementId) {
@@ -435,3 +451,4 @@ function enviarPedidoPorBusca(emailDestino) {
     document.getElementById('input-friend-email').value = emailDestino; enviarPedidoAmizade();
     document.getElementById('lista-resultados-busca').style.display = 'none';
 }
+
