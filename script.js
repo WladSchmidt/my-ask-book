@@ -328,7 +328,10 @@ function abrirTutorial() {
             "Bem-vindo ao My Ask Book!",
             "Você irá descobrir diversas curiosidades sobre seus amigos.",
             "Crie o seu caderno e comece a interagir.",
-            "Adicione amigos no menu lateral e converse com eles em tempo real.",
+            "Ao clicar em criar meu caderno, você poderá escolher como quer ser chamado, escolher uma capa para seu caderno e elaborar suas próprias perguntas para que seus amigos respondam.",
+            "Adicione amigos no menu lateral e converse com eles em tempo real através do chat.",
+            "Você pode buscar o seu amigo pelo nome ou adicionar pelo e-mail",
+            "Ao clicar no lápis que se encontra no canto superior direito dos cadernos, você poderá alterar a cor da letra",
             "Não esqueça de responder os cadernos de seus amigos, entre na brincadeira!"
         ]
     });
@@ -557,6 +560,7 @@ function enviarPedidoPorBusca(emailDestino) {
     document.getElementById('input-friend-email').value = emailDestino; enviarPedidoAmizade();
     document.getElementById('lista-resultados-busca').style.display = 'none';
 }
+
 
 
 
