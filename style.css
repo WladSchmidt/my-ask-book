@@ -424,26 +424,60 @@ body {
     cursor: default;
 }
 
-/* Botão de Enviar Resposta (V13.9) */
+/* --- CORREÇÃO DE ALINHAMENTO (V14.1 - RESTAURAÇÃO) --- */
+
+/* Garante que a linha ocupe a largura certa e alinhe na base */
+.line-container {
+    display: flex;
+    align-items: center; /* Centraliza verticalmente na linha */
+    width: 100%;
+    position: relative;
+    padding-bottom: 2px; /* Ajuste fino para "sentar" na linha */
+}
+
+/* O container da resposta deve se comportar igual à linha de pergunta */
+.answer-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+/* O Input (texto) volta a ser o protagonista */
+.answer-input {
+    flex: 1; /* Ocupa todo o espaço disponível */
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: 'Patrick Hand', cursive; /* Sua fonte original */
+    font-size: 20px; /* Tamanho padrão */
+    color: #333;
+    min-width: 0; /* Impede que estoure a tela no celular */
+    padding: 0;
+    margin: 0;
+}
+
+/* O Botão de Aviãozinho (Discreto e Alinhado) */
 .btn-send-answer {
     background: none;
     border: none;
-    font-size: 18px;
+    font-size: 20px;
     cursor: pointer;
-    color: #2e7d32; /* Verde folha */
-    padding: 0 5px;
+    color: #4caf50; /* Verde padrão */
+    padding: 0 10px; /* Espaço lateral para o dedo no celular */
     margin-left: 5px;
-    transition: transform 0.2s;
     display: flex;
     align-items: center;
+    justify-content: center;
+    /* Removemos qualquer animação ou tamanho exagerado que causava a distorção */
 }
 
-.btn-send-answer:hover {
-    transform: scale(1.2) rotate(-10deg);
-    color: #1b5e20;
+/* Ajuste específico para Mobile (evita que o texto caia pra fora) */
+@media (max-width: 600px) {
+    .line-container {
+        font-size: 18px; /* Um pouco menor no celular para caber melhor */
+    }
+    
+    .answer-input {
+        font-size: 18px;
+    }
 }
-
-.btn-send-answer:active {
-    transform: scale(0.9);
-}
-
