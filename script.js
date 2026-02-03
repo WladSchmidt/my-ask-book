@@ -1,5 +1,4 @@
-// --- VARIÁVEIS GLOBAIS ---
-let unsubscribeRespostas = null;
+let unsubscribeRespostas = null; 
 let usuarioAtual = null;
 let meusAmigos = [];
 let chatAtualId = null;
@@ -9,20 +8,18 @@ let mapaNomesAmigos = {};
 let ultimoInputFocado = null; 
 let editandoCadernoId = null; 
 let bolhasAtivas = {}; 
-let timeoutSalvar = null; // CONTROLADOR DO DELAY
+let timeoutSalvar = null; // Variável para controlar o tempo de salvar
 
-// --- AUTENTICAÇÃO E START ---
 auth.onAuthStateChanged(user => {
     if (user) {
         usuarioAtual = user;
         salvarUsuarioNoBanco();
         carregarMeusAmigosDoBanco();
         atualizarUIUsuario();
-        monitorarNotificacoes();
         navegarPara('screen-feed');
+        monitorarNotificacoes();
     } else {
         navegarPara('screen-login');
-        document.getElementById('screen-loading').style.display = 'none';
     }
 });
 
@@ -102,16 +99,19 @@ function monitorarNotificacoes() {
 
 function criarOuAtualizarBolha(emailRemetente, nomeRemetente, idNotificacao) {
     const container = document.getElementById('bubbles-container');
+    
     if (document.getElementById('chat-modal').style.display === 'flex' && chatAtualEmailAmigo === emailRemetente) {
         db.collection('notificacoes').doc(idNotificacao).delete();
         return;
     }
+
     if (bolhasAtivas[emailRemetente]) {
         const badge = bolhasAtivas[emailRemetente].querySelector('.bubble-badge');
         let count = parseInt(badge.innerText) + 1;
         badge.innerText = count;
         return;
     }
+
     const bolha = document.createElement('div');
     bolha.className = 'chat-bubble';
     bolha.innerText = nomeRemetente.charAt(0).toUpperCase();
@@ -123,6 +123,7 @@ function criarOuAtualizarBolha(emailRemetente, nomeRemetente, idNotificacao) {
             snap.forEach(d => d.ref.delete());
         });
     };
+
     const badge = document.createElement('div');
     badge.className = 'bubble-badge';
     badge.innerText = '1';
@@ -243,7 +244,6 @@ function fecharChat() {
 function carregarFeed() {
     const grid = document.getElementById('grid-cadernos');
     db.collection('cadernos').onSnapshot((snapshot) => {
-        document.getElementById('screen-loading').style.display = 'none'; // Some o loading
         document.getElementById('loading').style.display = 'none'; grid.innerHTML = ""; mapaNomesAmigos = {}; 
         const tut = document.createElement('div'); tut.className = "friend-book bg-jeans";
         tut.innerHTML = `<div class="book-label">Como Usar?</div>`; tut.onclick = abrirTutorial;
@@ -342,7 +342,6 @@ function selecionarCorCapa(classe, el) {
     document.querySelectorAll('.mini-book').forEach(c => c.classList.remove('selected'));
     if(el) el.classList.add('selected'); 
 }
-
 function abrirCadernoParaResponder(id, dados) {
     idCadernoAberto = id; 
     navegarPara('screen-notebook');
@@ -371,7 +370,6 @@ function abrirCadernoParaResponder(id, dados) {
             renderizarPerguntasERespostas(dados, resps);
         });
 }
-
 function renderizarPerguntasERespostas(caderno, respostas) {
     const lista = document.getElementById('lista-perguntas-leitura'); 
     lista.innerHTML = "";
@@ -387,9 +385,6 @@ function renderizarPerguntasERespostas(caderno, respostas) {
         
         respostas.forEach(r => {
             if (r.dados[pid]) {
-                // Se for eu, não renderiza aqui, e sim no textarea
-                if(r.uid === usuarioAtual.uid) return;
-
                 const pickerId = `picker_${r.uid}_${pid}`;
                 let htmlReacoes = "";
                 if (r.dados[pid].reacoes) {
@@ -426,7 +421,6 @@ function renderizarPerguntasERespostas(caderno, respostas) {
             }
         });
 
-        // MINHA RESPOSTA (TEXTAREA AGORA)
         if (idCadernoAberto !== 'tutorial') {
             const meuLi = document.createElement('li'); 
             meuLi.className = 'question-item';
@@ -438,12 +432,12 @@ function renderizarPerguntasERespostas(caderno, respostas) {
                 cor = minha.dados[pid].cor; 
             }
             
-            // Textarea com Auto-Resize ao digitar e Salvamento com Delay
+            // --- MUDANÇA: textarea + salvarComDelay ---
             meuLi.innerHTML = `
                 <div class="line-container answer-container">
                     <textarea class="answer-input" id="${pid}" style="color:${cor}" 
                         placeholder="Sua resposta..." 
-                        oninput="agendarSalvamento(this)" 
+                        oninput="ajustarAltura(this); salvarComDelay(this)" 
                         onfocus="ultimoInputFocado = this">${txt}</textarea>
                 </div>`;
             lista.appendChild(meuLi);
@@ -451,100 +445,162 @@ function renderizarPerguntasERespostas(caderno, respostas) {
             // Pequeno ajuste para a altura inicial correta
             setTimeout(() => {
                 const ta = document.getElementById(pid);
-                if(ta) ta.style.height = (ta.scrollHeight) + "px";
+                if(ta) ajustarAltura(ta);
             }, 100);
         }
     });
 }
 
-// --- FUNÇÕES DE SALVAMENTO INTELIGENTE (DEBOUNCE) ---
-
-function agendarSalvamento(el) {
-    // 1. Ajusta altura automaticamente (Cresce com o texto)
-    el.style.height = 'auto';
-    el.style.height = (el.scrollHeight) + 'px';
-
-    // 2. Cancela timer anterior e espera 1.5s
-    clearTimeout(timeoutSalvar);
+// --- FUNÇÃO PARA SALVAR COM DELAY (EVITA FECHAR TECLADO) ---
+function salvarComDelay(inp) {
+    clearTimeout(timeoutSalvar); // Cancela o envio anterior
     timeoutSalvar = setTimeout(() => {
-        executarSalvar(el);
-    }, 1500); 
+        salvarResposta(inp); // Envia só depois de 1.5s parado
+    }, 1500);
 }
 
-function executarSalvar(inp) {
+// --- FUNÇÃO PARA O TEXTAREA CRESCER SOZINHO ---
+function ajustarAltura(el) {
+    el.style.height = 'auto';
+    el.style.height = (el.scrollHeight) + 'px';
+}
+
+function salvarResposta(inp) {
     if (!usuarioAtual || idCadernoAberto === 'tutorial') return;
-    const dados = {}; 
-    const cor = inp.style.color || document.getElementById('colorPickerResposta').value;
+    const dados = {}; const cor = inp.style.color || document.getElementById('colorPickerResposta').value;
     dados[inp.id] = { texto: inp.value, cor: cor };
     dados.nomeQuemRespondeu = document.getElementById('input-meu-nome').value || usuarioAtual.displayName;
-    
     db.collection('cadernos').doc(idCadernoAberto).collection('respostas').doc(usuarioAtual.uid).set(dados, { merge: true });
 }
 
-// Corrigir Lápis
 document.querySelectorAll('input[type="color"]').forEach(picker => {
     picker.addEventListener('input', function() {
         if (ultimoInputFocado) {
             ultimoInputFocado.style.color = this.value;
-            if (ultimoInputFocado.classList.contains('answer-input')) agendarSalvamento(ultimoInputFocado);
+            if (ultimoInputFocado.classList.contains('answer-input')) salvarResposta(ultimoInputFocado);
         }
     });
 });
-
 function toggleMenu() { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('overlay').classList.toggle('visible'); }
 function fecharMenus() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('visible'); }
 
 function navegarPara(id) { document.querySelectorAll('.screen').forEach(s => s.style.display = 'none'); document.getElementById(id).style.display = 'flex'; }
 
 // --- SISTEMA DE REAÇÕES (V12.0) ---
+
+// Abre/Fecha o menu de emojis
 function toggleReactionPicker(elementId) {
     const picker = document.getElementById(elementId);
+    // Fecha outros abertos
     document.querySelectorAll('.reaction-picker-popup').forEach(p => {
         if(p.id !== elementId) p.style.display = 'none';
     });
+    // Toggle do atual
     picker.style.display = (picker.style.display === 'flex') ? 'none' : 'flex';
 }
 
+// Salva a reação no Firestore
 function salvarReacao(cadernoId, respondenteId, perguntaId, emoji) {
+    // Esconde o picker
     document.querySelectorAll('.reaction-picker-popup').forEach(p => p.style.display = 'none');
+
     const docRef = db.collection('cadernos').doc(cadernoId).collection('respostas').doc(respondenteId);
+    
+    // Transação para garantir leitura e escrita atômica (evita bugs de concorrência)
     return db.runTransaction(transaction => {
         return transaction.get(docRef).then(doc => {
             if (!doc.exists) return;
+
             const data = doc.data();
             if (!data[perguntaId]) return;
             if (!data[perguntaId].reacoes) data[perguntaId].reacoes = {};
+
             const reacaoAtual = data[perguntaId].reacoes[usuarioAtual.uid];
-            if (reacaoAtual === emoji) { delete data[perguntaId].reacoes[usuarioAtual.uid]; } 
-            else { data[perguntaId].reacoes[usuarioAtual.uid] = emoji; }
+
+            if (reacaoAtual === emoji) {
+                // SE JÁ TEM ESSE EMOJI -> REMOVE (Toggle Off)
+                delete data[perguntaId].reacoes[usuarioAtual.uid];
+            } else {
+                // SE NÃO TEM OU É OUTRO -> SALVA (Toggle On / Troca)
+                data[perguntaId].reacoes[usuarioAtual.uid] = emoji;
+            }
+
             transaction.update(docRef, { [perguntaId]: data[perguntaId] });
         });
     });
 }
 
-// --- BUSCA V13.6 ---
+// --- BUSCA V13.6 (Mostra VOCÊ, Amigos e Desconhecidos) ---
 function buscarUsuarios() {
     const input = document.getElementById('input-friend-email');
     const termo = input.value.trim().toLowerCase();
     const resultadosDiv = document.getElementById('lista-resultados-busca');
-    if (termo.length < 3) { resultadosDiv.style.display = 'none'; resultadosDiv.innerHTML = ""; return; }
-    db.collection('usuarios').where('nome_busca', '>=', termo).where('nome_busca', '<=', termo + '\uf8ff').limit(5).get().then(snapshot => {
-        resultadosDiv.innerHTML = ""; let encontrouAlguem = false;
-        if (snapshot.empty) { resultadosDiv.style.display = 'block'; resultadosDiv.innerHTML = '<div style="padding:10px; color:#bbb; font-size:12px;">Ninguém encontrado...</div>'; return; }
-        resultadosDiv.style.display = 'block';
-        snapshot.forEach(doc => {
-            const user = doc.data(); encontrouAlguem = true; let htmlAcao = '';
-            if (user.email === usuarioAtual.email) htmlAcao = '<span class="badge-me">Você</span>';
-            else if (meusAmigos.includes(user.email)) htmlAcao = '<span class="badge-friend">Amigo ✔</span>';
-            else htmlAcao = `<button class="btn-add-mini" onclick="enviarPedidoPorBusca('${user.email}')" title="Enviar pedido">+</button>`;
-            const div = document.createElement('div'); div.className = 'search-result-item';
-            div.innerHTML = `<img src="${user.foto || 'https://via.placeholder.com/30'}" class="mini-avatar"><div style="flex:1; display:flex; flex-direction:column; align-items:flex-start;"><span style="font-weight:bold; font-size:14px; color:white;">${user.nome}</span><span style="font-size:10px; color:#aaa;">${user.email}</span></div>${htmlAcao}`;
-            resultadosDiv.appendChild(div);
+    
+    // Limpa se digitar pouco
+    if (termo.length < 3) {
+        resultadosDiv.style.display = 'none';
+        resultadosDiv.innerHTML = "";
+        return;
+    }
+
+    db.collection('usuarios')
+        .where('nome_busca', '>=', termo)
+        .where('nome_busca', '<=', termo + '\uf8ff')
+        .limit(5)
+        .get()
+        .then(snapshot => {
+            resultadosDiv.innerHTML = "";
+            let encontrouAlguem = false;
+            
+            if (snapshot.empty) {
+                resultadosDiv.style.display = 'block';
+                resultadosDiv.innerHTML = '<div style="padding:10px; color:#bbb; font-size:12px;">Ninguém encontrado...</div>';
+                return;
+            }
+
+            resultadosDiv.style.display = 'block';
+            
+            snapshot.forEach(doc => {
+                const user = doc.data();
+                encontrouAlguem = true; // Achou alguém (pode ser eu ou outro)
+
+                let htmlAcao = '';
+
+                // 1. SOU EU?
+                if (user.email === usuarioAtual.email) {
+                    htmlAcao = '<span class="badge-me">Você</span>';
+                } 
+                // 2. É MEU AMIGO?
+                else if (meusAmigos.includes(user.email)) {
+                    htmlAcao = '<span class="badge-friend">Amigo ✔</span>';
+                } 
+                // 3. É DESCONHECIDO? (Mostra Botão Adicionar)
+                else {
+                    htmlAcao = `<button class="btn-add-mini" onclick="enviarPedidoPorBusca('${user.email}')" title="Enviar pedido">+</button>`;
+                }
+
+                const div = document.createElement('div');
+                div.className = 'search-result-item';
+                div.innerHTML = `
+                    <img src="${user.foto || 'https://via.placeholder.com/30'}" class="mini-avatar">
+                    <div style="flex:1; display:flex; flex-direction:column; align-items:flex-start;">
+                        <span style="font-weight:bold; font-size:14px; color:white;">${user.nome}</span>
+                        <span style="font-size:10px; color:#aaa;">${user.email}</span>
+                    </div>
+                    ${htmlAcao}
+                `;
+                resultadosDiv.appendChild(div);
+            });
+
+            // Se por algum motivo bizarro o loop rodar mas não marcar ninguém (difícil acontecer agora sem filtros), avisa.
+            if (!encontrouAlguem) {
+                resultadosDiv.innerHTML = '<div style="padding:10px; color:#bbb; font-size:12px;">Ninguém encontrado...</div>';
+            }
         });
-        if (!encontrouAlguem) resultadosDiv.innerHTML = '<div style="padding:10px; color:#bbb; font-size:12px;">Ninguém encontrado...</div>';
-    });
 }
 function enviarPedidoPorBusca(emailDestino) {
-    document.getElementById('input-friend-email').value = emailDestino; enviarPedidoAmizade();
+    document.getElementById('input-friend-email').value = emailDestino;
+    enviarPedidoAmizade();
+    // Esconde a lista depois de clicar
     document.getElementById('lista-resultados-busca').style.display = 'none';
 }
