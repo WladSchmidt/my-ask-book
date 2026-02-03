@@ -1,167 +1,169 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>My Ask Book</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Gloria+Hallelujah&family=Patrick+Hand&family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>My Ask Book</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Gloria+Hallelujah&family=Patrick+Hand&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
 
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 </head>
 <body>
 
-    <div id="overlay" class="overlay" onclick="fecharMenus()"></div>
+    <div id="overlay" class="overlay" onclick="fecharMenus()"></div>
 
-    <div id="sidebar" class="sidebar">
-        <div class="sidebar-title">
-            <span>Amigos</span>
-            <button onclick="fecharMenus()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">&times;</button>
-        </div>
-        <div class="add-friend-box" style="position:relative;">
-            <input type="text" id="input-friend-email" class="input-friend" placeholder="Busque por nome ou e-mail." oninput="buscarUsuarios()" autocomplete="off">
-            
-            <button class="btn-add-friend" onclick="enviarPedidoAmizade()">Ok</button>
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-title">
+            <span>Amigos</span>
+            <button onclick="fecharMenus()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">&times;</button>
+        </div>
+        <div class="add-friend-box" style="position:relative;">
+            <input type="text" id="input-friend-email" class="input-friend" placeholder="Busque por nome ou e-mail." oninput="buscarUsuarios()" autocomplete="off">
+            
+            <button class="btn-add-friend" onclick="enviarPedidoAmizade()">Ok</button>
 
-            <div id="lista-resultados-busca" class="search-dropdown"></div>
-        </div>
-        <ul id="lista-amigos-sidebar" class="friend-list"></ul>
-        <div class="sidebar-footer">
-            <div class="user-info">
-                <img id="user-img" class="user-avatar" src="">
-                <div style="display:flex; flex-direction:column;">
-                    <span id="user-name" style="font-size: 16px; font-weight: bold; color:white;">...</span>
-                    <span style="font-size: 12px; color: #aaa;">Online</span>
-                </div>
-            </div>
-            <button class="btn-logout" onclick="fazerLogout()">Sair</button>
-        </div>
-    </div>
+            <div id="lista-resultados-busca" class="search-dropdown"></div>
+        </div>
+        <ul id="lista-amigos-sidebar" class="friend-list"></ul>
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <img id="user-img" class="user-avatar" src="">
+                <div style="display:flex; flex-direction:column;">
+                    <span id="user-name" style="font-size: 16px; font-weight: bold; color:white;">...</span>
+                    <span style="font-size: 12px; color: #aaa;">Online</span>
+                </div>
+            </div>
+            <button class="btn-logout" onclick="fazerLogout()">Sair</button>
+        </div>
+    </div>
 
-    <div id="notif-modal" class="notif-modal">
-        <div class="notif-header">
-            Notificações
-            <button onclick="toggleNotificacoes()" style="border:none; background:none; cursor:pointer;">&times;</button>
-        </div>
-        <ul id="lista-notificacoes" class="notif-list"></ul>
-    </div>
+    <div id="notif-modal" class="notif-modal">
+        <div class="notif-header">
+            Notificações
+            <button onclick="toggleNotificacoes()" style="border:none; background:none; cursor:pointer;">&times;</button>
+        </div>
+        <ul id="lista-notificacoes" class="notif-list"></ul>
+    </div>
 
-    <div id="bubbles-container"></div>
+    <div id="bubbles-container"></div>
 
-    <div id="chat-modal" class="chat-modal">
-        <div class="chat-header" onclick="minimizarChat()">
-            <span id="chat-friend-name">Chat</span>
-            <div>
-                <button onclick="minimizarChat(); event.stopPropagation();" style="background:none; border:none; color:white; font-size:18px; cursor:pointer; margin-right: 10px;">_</button>
-                <button onclick="fecharChat(); event.stopPropagation();" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">&times;</button>
-            </div>
-        </div>
-        <div id="chat-body" class="chat-body"></div>
-        <div class="chat-footer">
-            <input type="text" id="chat-input" class="chat-input" placeholder="Digite..." onkeypress="if(event.key==='Enter') enviarMensagemChat()">
-            <button onclick="enviarMensagemChat()" style="background:none; border:none; font-size:20px; cursor:pointer;">🚀</button>
-        </div>
-    </div>
+    <div id="chat-modal" class="chat-modal">
+        <div class="chat-header" onclick="minimizarChat()">
+            <span id="chat-friend-name">Chat</span>
+            <div>
+                <button onclick="minimizarChat(); event.stopPropagation();" style="background:none; border:none; color:white; font-size:18px; cursor:pointer; margin-right: 10px;">_</button>
+                <button onclick="fecharChat(); event.stopPropagation();" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">&times;</button>
+            </div>
+        </div>
+        <div id="chat-body" class="chat-body"></div>
+        <div class="chat-footer">
+            <input type="text" id="chat-input" class="chat-input" placeholder="Digite..." onkeypress="if(event.key==='Enter') enviarMensagemChat()">
+            <button onclick="enviarMensagemChat()" style="background:none; border:none; font-size:20px; cursor:pointer;">🚀</button>
+        </div>
+    </div>
 
-    <div id="screen-loading" class="screen" style="display: flex;">
-        <p>Carregando My Ask Book...</p>
-    </div>
+    <div id="screen-loading" class="screen" style="display: flex;">
+        <p>Carregando My Ask Book...</p>
+    </div>
 
-    <div id="screen-login" class="screen">
-        <div class="login-card">
-            <div class="login-title">My Ask Book</div>
-            <p style="color: #666;">Edição Premium</p>
-            <button class="btn-google" onclick="fazerLoginGoogle()">
-                <span style="font-weight:bold; font-size:18px;">G</span> Entrar com Google
-            </button>
-        </div>
-    </div>
+    <div id="screen-login" class="screen">
+        <div class="login-card">
+            <div class="login-title">My Ask Book</div>
+            <p style="color: #666;">Edição Premium</p>
+            <button class="btn-google" onclick="fazerLoginGoogle()">
+                <span style="font-weight:bold; font-size:18px;">G</span> Entrar com Google
+            </button>
+        </div>
+    </div>
 
-    <div id="screen-feed" class="screen">
-        <div class="feed-container">
-            <div class="feed-header">
-                <div class="header-actions">
-                    <button class="btn-menu" onclick="toggleMenu()" title="Amigos">👥</button>
-                    <button class="btn-menu" onclick="toggleNotificacoes()" title="Notificações" style="position:relative;">
-                        🔔 <div id="notif-badge" class="notification-badge" style="display:none;">0</div>
-                    </button>
-                </div>
+    <div id="screen-feed" class="screen">
+        <div class="feed-container">
+            <div class="feed-header">
+                <div class="header-actions">
+                    <button class="btn-menu" onclick="toggleMenu()" title="Amigos">👥</button>
+                    <button class="btn-menu" onclick="toggleNotificacoes()" title="Notificações" style="position:relative;">
+                        🔔 <div id="notif-badge" class="notification-badge" style="display:none;">0</div>
+                    </button>
+                </div>
 
-                <div class="header-center">
-                    <h1 class="main-logo">My Ask Book</h1>
-                    <div class="sub-logo">Colecione memórias</div>
-                </div>
-            </div>
+                <div class="header-center">
+                    <h1 class="main-logo">My Ask Book</h1>
+                    <div class="sub-logo">Colecione memórias</div>
+                </div>
+            </div>
 
-            <button class="btn-create-main" onclick="verificarSeJaTemCaderno()">+ Criar Meu Caderno</button>
-            <div id="loading" style="color: white; font-family: 'Patrick Hand'; font-size: 20px;">Carregando sua estante...</div>
-            <div class="friends-grid" id="grid-cadernos"></div>
-        </div>
-    </div>
+            <button class="btn-create-main" onclick="verificarSeJaTemCaderno()">+ Criar Meu Caderno</button>
+            <div id="loading" style="color: white; font-family: 'Patrick Hand'; font-size: 20px;">Carregando sua estante...</div>
+            <div class="friends-grid" id="grid-cadernos"></div>
+        </div>
+    </div>
 
-    <div id="screen-notebook" class="screen">
-        <div class="btn-back" onclick="navegarPara('screen-feed')">&#8617;</div>
-        <div class="paper">
-            <div class="pen-tool" onclick="document.getElementById('colorPickerResposta').click()">
-                <span class="pen-icon">✏️</span>
-                <input type="color" id="colorPickerResposta" class="color-input-hidden" value="#0d47a1">
-            </div>
-            <h1 id="titulo-caderno">Caderno...</h1>
-            <ul class="question-list" id="lista-perguntas-leitura"></ul>
-        </div>
-    </div>
+    <div id="screen-notebook" class="screen">
+        <div class="btn-back" onclick="navegarPara('screen-feed')">&#8617;</div>
+        <div class="paper">
+            <div class="pen-tool">
+                <span class="pen-icon">✏️</span>
+                <input type="color" id="colorPickerResposta" class="color-input-hidden" value="#0d47a1">
+            </div>
+            <h1 id="titulo-caderno">Caderno...</h1>
+            <ul class="question-list" id="lista-perguntas-leitura"></ul>
+        </div>
+    </div>
 
-    <div id="screen-create" class="screen">
-        <div class="btn-back" onclick="navegarPara('screen-feed')">&#8617;</div>
-        <div class="paper">
-            <div class="pen-tool" onclick="document.getElementById('colorPickerCriacao').click()">
-                <span class="pen-icon">✏️</span>
-                <input type="color" id="colorPickerCriacao" class="color-input-hidden" value="#d81b60">
-            </div>
-            
-            <div class="creation-container">
-                <h1 class="creation-title">Novo Caderno</h1>
-                
-                <div class="creation-subtitle-box">
-                    <label style="color:#777; font-size:16px; font-family: 'Patrick Hand';">Apelido na capa:</label><br>
-                    <input type="text" id="input-meu-nome" style="border:none; border-bottom: 2px solid #ccc; padding:5px; font-family:'Patrick Hand'; font-size: 24px; width: 250px; text-align:center; background: transparent; color: #d81b60;">
-                </div>
+    <div id="screen-create" class="screen">
+        <div class="btn-back" onclick="navegarPara('screen-feed')">&#8617;</div>
+        <div class="paper">
+            <div class="pen-tool">
+                <span class="pen-icon">✏️</span>
+                <input type="color" id="colorPickerCriacao" class="color-input-hidden" value="#d81b60">
+            </div>
+            
+            <div class="creation-container">
+                <h1 class="creation-title">Novo Caderno</h1>
+                
+                <div class="creation-subtitle-box">
+                    <label style="color:#777; font-size:16px; font-family: 'Patrick Hand';">Apelido na capa:</label><br>
+                    <input type="text" id="input-meu-nome" style="border:none; border-bottom: 2px solid #ccc; padding:5px; font-family:'Patrick Hand'; font-size: 24px; width: 250px; text-align:center; background: transparent; color: #d81b60;">
+                </div>
 
-                <div style="text-align:center; margin-bottom: 15px; font-family:'Patrick Hand'; color:#555;">Escolha uma capa:</div>
-                
-                <div class="cover-selector-grid">
-                    <div class="mini-book bg-draft selected" onclick="selecionarCorCapa('bg-draft', this)"></div>
-                    <div class="mini-book bg-games" onclick="selecionarCorCapa('bg-games', this)"></div>
-                    <div class="mini-book bg-jeans" onclick="selecionarCorCapa('bg-jeans', this)"></div>
-                    <div class="mini-book bg-monstro" onclick="selecionarCorCapa('bg-monstro', this)"></div>
-                    <div class="mini-book bg-oncinha" onclick="selecionarCorCapa('bg-oncinha', this)"></div>
-                    <div class="mini-book bg-alien" onclick="selecionarCorCapa('bg-alien', this)"></div>
-                </div>
+                <div style="text-align:center; margin-bottom: 15px; font-family:'Patrick Hand'; color:#555;">Escolha uma capa:</div>
+                
+                <div class="cover-selector-grid">
+                    <div class="mini-book bg-draft selected" onclick="selecionarCorCapa('bg-draft', this)"></div>
+                    <div class="mini-book bg-games" onclick="selecionarCorCapa('bg-games', this)"></div>
+                    <div class="mini-book bg-jeans" onclick="selecionarCorCapa('bg-jeans', this)"></div>
+                    <div class="mini-book bg-monstro" onclick="selecionarCorCapa('bg-monstro', this)"></div>
+                    <div class="mini-book bg-oncinha" onclick="selecionarCorCapa('bg-oncinha', this)"></div>
+                    <div class="mini-book bg-alien" onclick="selecionarCorCapa('bg-alien', this)"></div>
+                </div>
 
-                <div style="text-align:center; color:#555; font-family:'Patrick Hand'; margin-bottom: 20px; font-size: 18px; margin-left: -10px;">
-                    Essas são perguntas modelos, mas você pode editar e adicionar novas perguntas para seus amigos responderem.
-                </div>
-            </div>
-            <input type="hidden" id="input-cor-capa" value="bg-draft">
-            
-            <ul class="question-list" id="lista-criacao"></ul>
-            
-            <div class="line-container" style="justify-content: center; margin-top: 20px;">
-                <button onclick="adicionarNovaLinha()" style="border: 1px dashed #999; background:none; padding: 5px 15px; cursor: pointer; font-family: 'Patrick Hand'; font-size: 18px; color: #555;">+ Adicionar Pergunta</button>
-            </div>
-            
-            <div class="line-container" style="justify-content: center; margin-top: 20px; height: auto;">
-                <button onclick="salvarNovoCadernoNoBanco()" style="background: #4caf50; color: white; border: none; padding: 12px 40px; border-radius: 30px; cursor: pointer; font-family: 'Patrick Hand'; font-size: 22px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">💾 Salvar</button>
-            </div>
-        </div>
-    </div>
+                <div style="text-align:center; color:#555; font-family:'Patrick Hand'; margin-bottom: 20px; font-size: 18px; margin-left: -10px;">
+                    Essas são perguntas modelos, mas você pode editar e adicionar novas perguntas para seus amigos responderem.
+                </div>
+            </div>
+            <input type="hidden" id="input-cor-capa" value="bg-draft">
+            
+            <ul class="question-list" id="lista-criacao"></ul>
+            
+            <div class="line-container" style="justify-content: center; margin-top: 20px;">
+                <button onclick="adicionarNovaLinha()" style="border: 1px dashed #999; background:none; padding: 5px 15px; cursor: pointer; font-family: 'Patrick Hand'; font-size: 18px; color: #555;">+ Adicionar Pergunta</button>
+            </div>
+            
+            <div class="line-container" style="justify-content: center; margin-top: 20px; height: auto;">
+                <button onclick="salvarNovoCadernoNoBanco()" style="background: #4caf50; color: white; border: none; padding: 12px 40px; border-radius: 30px; cursor: pointer; font-family: 'Patrick Hand'; font-size: 22px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">💾 Salvar</button>
+            </div>
+        </div>
+    </div>
 
-    <script src="firebase-config.js"></script>
-    <script src="script.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="script.js"></script>
 </body>
 
 </html>
+
+
