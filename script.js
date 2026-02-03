@@ -10,22 +10,20 @@ let ultimoInputFocado = null;
 let editandoCadernoId = null; 
 let bolhasAtivas = {}; 
 
-console.log("Script carregado com sucesso!"); // Teste de carregamento
+console.log("Script iniciado...");
 
 // --- AUTENTICAÇÃO E START ---
 auth.onAuthStateChanged(user => {
     if (user) {
-        console.log("Usuário logado:", user.email);
         usuarioAtual = user;
         salvarUsuarioNoBanco();
         carregarMeusAmigosDoBanco();
         atualizarUIUsuario();
         monitorarNotificacoes();
-        // OBS: A tela de loading só sai quando carregarFeed() terminar de rodar
+        // A tela de loading sai dentro de carregarFeed()
     } else {
-        console.log("Nenhum usuário logado. Redirecionando para Login.");
         navegarPara('screen-login');
-        // Se não tem user, forçamos a tela de loading a sumir para aparecer o login
+        // Se não tem user, tira o loading para mostrar o login
         document.getElementById('screen-loading').style.display = 'none';
     }
 });
@@ -53,30 +51,25 @@ function salvarUsuarioNoBanco() {
 }
 
 function carregarMeusAmigosDoBanco() {
-    console.log("Buscando lista de amigos...");
     db.collection('usuarios').doc(usuarioAtual.uid).onSnapshot(doc => {
         if (doc.exists && doc.data().amigos) {
             meusAmigos = doc.data().amigos;
         } else {
             meusAmigos = [];
         }
-        // Assim que tivermos os amigos, carregamos o feed
         carregarFeed();
     });
 }
 
-// --- LÓGICA DO FEED (Destravamento da Tela de Loading) ---
+// --- LÓGICA DO FEED ---
 function carregarFeed() {
-    console.log("Carregando Feed...");
     const grid = document.getElementById('grid-cadernos');
     
     db.collection('cadernos').onSnapshot((snapshot) => {
-        console.log("Dados do Feed recebidos. Destravando tela...");
-        
-        // --- AQUI ESTÁ O COMANDO QUE DESTRAVA O SITE ---
+        // --- DESTRAVA A TELA DE LOADING ---
         document.getElementById('screen-loading').style.display = 'none';
         navegarPara('screen-feed');
-        // ------------------------------------------------
+        // ----------------------------------
 
         document.getElementById('loading').style.display = 'none'; 
         grid.innerHTML = ""; 
@@ -124,6 +117,7 @@ function monitorarNotificacoes() {
             const lista = document.getElementById('lista-notificacoes');
             let countSino = 0;
             lista.innerHTML = "";
+            
             snapshot.forEach(doc => {
                 const notif = doc.data();
                 if(notif.tipo === 'nova_mensagem') {
@@ -136,6 +130,7 @@ function monitorarNotificacoes() {
                     lista.appendChild(li);
                 }
             });
+
             if (countSino > 0) {
                 badge.style.display = 'flex'; badge.innerText = countSino;
             } else {
@@ -154,7 +149,9 @@ function responderAmizade(idNotificacao, emailAmigo, aceitou) {
         const meuRef = db.collection('usuarios').doc(usuarioAtual.uid);
         batch.set(meuRef, { amigos: firebase.firestore.FieldValue.arrayUnion(emailAmigo), email: usuarioAtual.email }, { merge: true });
         db.collection('usuarios').where('email', '==', emailAmigo).get().then(snapshot => {
-            if(!snapshot.empty) snapshot.docs[0].ref.update({ amigos: firebase.firestore.FieldValue.arrayUnion(usuarioAtual.email) });
+            if(!snapshot.empty) {
+                snapshot.docs[0].ref.update({ amigos: firebase.firestore.FieldValue.arrayUnion(usuarioAtual.email) });
+            }
         });
         alert("Amizade aceita!");
     }
