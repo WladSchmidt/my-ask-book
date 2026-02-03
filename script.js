@@ -449,22 +449,6 @@ function renderizarPerguntasERespostas(caderno, respostas) {
     });
 }
 
-        if (idCadernoAberto !== 'tutorial') {
-            const meuLi = document.createElement('li'); 
-            meuLi.className = 'question-item';
-            let txt = "", cor = document.getElementById('colorPickerResposta').value;
-            const minha = respostas.find(r => r.uid === usuarioAtual.uid);
-            
-            if (minha && minha.dados[pid]) { 
-                txt = minha.dados[pid].texto; 
-                cor = minha.dados[pid].cor; 
-            }
-            
-            meuLi.innerHTML = `<div class="line-container answer-container"><input type="text" class="answer-input" id="${pid}" value="${txt}" style="color:${cor}" placeholder="Sua resposta..." oninput="salvarResposta(this)" onfocus="ultimoInputFocado = this"></div>`;
-            lista.appendChild(meuLi);
-        }
-    });
-}
 // Função chamada apenas ao clicar no aviãozinho ➤
 function salvarRespostaManual(inputId) {
     if (!usuarioAtual || idCadernoAberto === 'tutorial') return;
@@ -614,6 +598,7 @@ function enviarPedidoPorBusca(emailDestino) {
     // Esconde a lista depois de clicar
     document.getElementById('lista-resultados-busca').style.display = 'none';
 }
+
 
 
 
