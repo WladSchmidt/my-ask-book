@@ -458,10 +458,10 @@ function salvarComDelay(inp) {
     // Cancela o salvamento anterior (o usuário ainda está digitando)
     clearTimeout(timeoutSalvar);
     
-    // Agenda para salvar daqui a 1.5 segundos (se ele parar)
+    // Agenda para salvar daqui a 4.0 segundos (se ele parar)
     timeoutSalvar = setTimeout(() => {
         salvarResposta(inp);
-    }, 3500); 
+    }, 4000); 
 }
 
 function salvarImediatamente(inp) {
@@ -557,5 +557,6 @@ function enviarPedidoPorBusca(emailDestino) {
     document.getElementById('input-friend-email').value = emailDestino; enviarPedidoAmizade();
     document.getElementById('lista-resultados-busca').style.display = 'none';
 }
+
 
 
