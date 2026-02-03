@@ -151,33 +151,13 @@ body {
 .answer-container { padding-left: 55px; }
 .friend-answer-line { 
     font-family: 'Patrick Hand'; font-size: 24px; width: 100%; 
-    white-space: pre-wrap; 
+    white-space: normal; 
+    word-wrap: break-word; 
     line-height: 40px; 
     margin: 0; padding: 0;
 }
-
-/* --- MUDANÇA AQUI: Input de resposta separado para tirar tracinhos --- */
-.answer-input { 
-    width: 100%; 
-    background: transparent; 
-    border: none; 
-    outline: none; 
-    font-family: 'Patrick Hand'; 
-    font-size: 26px; 
-    color: #0d47a1; 
-    padding: 0; 
-    margin: 0; 
-    
-    /* Configurações para quebra de linha sem tracinhos */
-    resize: none; /* TIRA OS TRACINHOS */
-    overflow: hidden; 
-    min-height: 35px;
-    height: auto; 
-    display: block;
-}
-
-/* O input de criar continua o mesmo */
-.create-input { width: 100%; height: 35px; background: transparent; border: none; border-bottom: 2px dashed #e91e63; outline: none; font-family: 'Patrick Hand'; font-size: 26px; color: #e91e63; }
+.answer-input, .create-input { width: 100%; height: 35px; background: transparent; border: none; outline: none; font-family: 'Patrick Hand'; font-size: 26px; color: #0d47a1; padding: 0; margin: 0; }
+.create-input { border-bottom: 2px dashed #e91e63; color: #e91e63; }
 
 /* Seletor de Capas */
 .cover-selector-grid { 
@@ -289,8 +269,8 @@ body {
     gap: 5px;
     margin-left: 8px;
     position: relative;
-    vertical-align: middle; 
-    height: 24px; 
+    vertical-align: middle; /* Garante alinhamento com o texto */
+    height: 24px; /* Altura fixa menor que a linha de 40px para não estourar */
 }
 
 .reaction-list {
