@@ -1,475 +1,448 @@
-// --- VARIÁVEIS GLOBAIS ---
-let unsubscribeRespostas = null;
-let usuarioAtual = null;
-let meusAmigos = [];
-let chatAtualId = null;
-let chatAtualEmailAmigo = null;
-let unsubscribeChat = null;
-let mapaNomesAmigos = {}; 
-let ultimoInputFocado = null; 
-let editandoCadernoId = null; 
-let bolhasAtivas = {}; 
-
-console.log("Script restaurado com botão de avião...");
-
-// --- AUTENTICAÇÃO E START ---
-auth.onAuthStateChanged(user => {
-    if (user) {
-        usuarioAtual = user;
-        salvarUsuarioNoBanco();
-        carregarMeusAmigosDoBanco();
-        atualizarUIUsuario();
-        monitorarNotificacoes();
-    } else {
-        navegarPara('screen-login');
-        document.getElementById('screen-loading').style.display = 'none';
-    }
-});
-
-function fazerLoginGoogle() {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider).catch((error) => alert("Erro: " + error.message));
-}
-function fazerLogout() { auth.signOut().then(() => window.location.reload()); }
-
-function atualizarUIUsuario() {
-    if (usuarioAtual) {
-        document.getElementById('user-name').innerText = usuarioAtual.displayName.split(' ')[0];
-        document.getElementById('user-img').src = usuarioAtual.photoURL;
-    }
+/* --- ESTILOS GERAIS --- */
+body { 
+    background-color: #1a1a1a; 
+    background-image: url('imagens/planodefundo.jpg'); 
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+    margin: 0; 
+    font-family: 'Patrick Hand', cursive; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    min-height: 100vh; 
+    overflow-x: hidden; 
 }
 
-function salvarUsuarioNoBanco() {
-    db.collection('usuarios').doc(usuarioAtual.uid).set({
-        email: usuarioAtual.email,
-        nome: usuarioAtual.displayName,
-        nome_busca: usuarioAtual.displayName.toLowerCase(), 
-        foto: usuarioAtual.photoURL
-    }, { merge: true });
+.screen { display: none; width: 100%; min-height: 100vh; justify-content: center; align-items: center; flex-direction: column; padding-bottom: 50px; box-sizing: border-box; }
+
+/* HEADER */
+.feed-container { width: 90%; max-width: 900px; text-align: center; padding: 20px; }
+.feed-header { display: flex; align-items: center; justify-content: center; width: 100%; margin-bottom: 30px; position: relative; min-height: 80px; }
+.header-center { display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1; text-align: center; }
+.header-actions { position: absolute; left: 0; top: 10px; display: flex; gap: 15px; z-index: 10; }
+
+.main-logo { 
+    font-family: 'Gloria Hallelujah'; font-size: 55px; 
+    background: -webkit-linear-gradient(45deg, #ffeb3b, #ff80ab, #4fc3f7);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    filter: drop-shadow(2px 2px 0px rgba(0,0,0,0.5)); line-height: 1.1; margin: 0; 
+}
+.sub-logo { font-family: 'Patrick Hand'; font-size: 24px; text-shadow: 1px 1px 4px rgba(0,0,0,0.9); margin-top: 0px; color: #ffeb3b; }
+
+/* Sidebar */
+.sidebar { position: fixed; left: -320px; top: 0; width: 300px; height: 100%; background: #222; color: #eee; transition: 0.3s; z-index: 2000; box-shadow: 5px 0 15px rgba(0,0,0,0.5); padding: 20px; display: flex; flex-direction: column; box-sizing: border-box; }
+.sidebar.open { left: 0; }
+.sidebar-title { font-family: 'Gloria Hallelujah'; font-size: 24px; border-bottom: 1px solid #444; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;}
+.add-friend-box { display: flex; gap: 5px; margin-bottom: 20px; }
+.input-friend { flex: 1; padding: 10px; border-radius: 6px; border: 1px solid #444; background: #333; color: white; font-family: 'Inter', sans-serif; }
+.btn-add-friend { background: #d81b60; color: white; border: none; padding: 5px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; font-family: 'Inter', sans-serif; }
+.friend-list { list-style: none; padding: 0; overflow-y: auto; flex: 1; margin-bottom: 20px; }
+.friend-item { padding: 12px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
+.btn-icon { background: none; border: none; cursor: pointer; font-size: 18px; transition: transform 0.2s; color: #ccc; }
+.btn-icon:hover { transform: scale(1.2); color: white; }
+.sidebar-footer { background-color: #333; padding: 15px; border-radius: 10px; display: flex; flex-direction: column; gap: 10px; }
+.user-info { display: flex; align-items: center; gap: 10px; }
+.user-avatar { width: 40px; height: 40px; border-radius: 50%; border: 2px solid #d81b60; object-fit: cover; }
+.btn-logout { background-color: #444; color: #ff5252; border: 1px solid #ff5252; padding: 8px; border-radius: 5px; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 12px; width: 100%; transition: 0.2s; }
+
+/* Login */
+.login-card { background: rgba(255, 255, 255, 0.95); width: 320px; padding: 40px; border-radius: 15px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); text-align: center; border-top: 5px solid #d81b60; backdrop-filter: blur(10px); }
+.login-title { font-family: 'Gloria Hallelujah', cursive; font-size: 32px; color: #333; margin-bottom: 10px; }
+.btn-google { background-color: #fff; color: #444; display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px; margin: 20px 0; border: 1px solid #ddd; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; font-family: 'Inter', sans-serif; font-size: 16px; }
+
+/* Botões Menu */
+.btn-menu { 
+    font-size: 28px; background: #ffffff; width: 55px; height: 55px; 
+    border-radius: 50%; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    cursor: pointer; color: #d81b60; display: flex; justify-content: center; align-items: center; 
+    transition: 0.2s; 
+}
+.btn-menu:hover { transform: scale(1.1); background-color: #f0f0f0; }
+.btn-create-main { background-color: #d81b60; color: #fff; border: none; padding: 12px 30px; font-family: 'Gloria Hallelujah'; font-size: 22px; border-radius: 50px; cursor: pointer; margin-bottom: 40px; box-shadow: 0 5px 15px rgba(216, 27, 96, 0.4); transition: 0.2s; }
+
+/* Grid de Livros */
+.friends-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
+    gap: 40px; 
+    justify-items: center; 
+    padding-bottom: 40px; 
+}
+.friend-book { 
+    width: 180px; height: 250px; 
+    cursor: pointer; 
+    display: flex; justify-content: center; align-items: center; 
+    transition: transform 0.3s ease; position: relative; 
+    filter: drop-shadow(5px 10px 10px rgba(0,0,0,0.5));
+    background-size: contain; background-repeat: no-repeat; background-position: center;
+}
+.friend-book:hover { transform: translateY(-10px) scale(1.02); z-index: 10; filter: drop-shadow(10px 20px 20px rgba(0,0,0,0.6)); }
+
+.book-label { 
+    background: #fff; color: #111; padding: 8px 10px; 
+    font-family: 'Patrick Hand', cursive; font-size: 18px; font-weight: bold;
+    width: 80%; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.3); 
+    transform: rotate(-2deg); border: 1px solid #ccc;
+}
+.btn-action-book { 
+    position: absolute; top: -5px; width: 28px; height: 28px; 
+    border-radius: 50%; font-size: 14px; border: 2px solid white; 
+    cursor: pointer; display: flex; justify-content: center; align-items: center; 
+    z-index: 15; box-shadow: 0 2px 5px rgba(0,0,0,0.3); 
+}
+.btn-delete-book { right: -5px; background: #ff5252; color: white; }
+.btn-edit-book { left: -5px; background: #ffca28; color: #333; }
+
+/* Imagens Locais */
+.bg-draft   { background-image: url('imagens/Draft.png'); } 
+.bg-games   { background-image: url('imagens/Games.png'); } 
+.bg-jeans   { background-image: url('imagens/Jeans.png'); } 
+.bg-monstro { background-image: url('imagens/Monstro.png'); } 
+.bg-oncinha { background-image: url('imagens/Oncinha.png'); } 
+.bg-alien   { background-image: url('imagens/Alien.png'); } 
+.bg-blue    { background-color: #3b82f6; }
+
+/* Papel */
+.paper { 
+    width: 90%; max-width: 700px; min-height: 800px; background-color: #fdfbf7; position: relative; 
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2); border-radius: 4px; margin: 20px 0; 
+    padding: 60px 50px 50px 90px; 
+    background-image: linear-gradient(90deg, transparent 84px, #ffadad 84px, #ffadad 86px, transparent 86px), 
+                      linear-gradient(#fdfbf7 39px, #a5d6a7 40px);
+    background-size: 100% 100%, 100% 40px; background-attachment: local; background-position: 0 20px; 
+}
+#titulo-caderno {
+    font-family: 'Gloria Hallelujah'; font-size: 36px; color: #222;
+    margin: 0 0 40px 0; line-height: 40px; border-bottom: 2px dashed #aaa; padding-bottom: 5px; 
 }
 
-function carregarMeusAmigosDoBanco() {
-    db.collection('usuarios').doc(usuarioAtual.uid).onSnapshot(doc => {
-        if (doc.exists && doc.data().amigos) {
-            meusAmigos = doc.data().amigos;
-        } else {
-            meusAmigos = [];
-        }
-        carregarFeed();
-    });
+.creation-title {
+    font-family: 'Gloria Hallelujah'; font-size: 36px; color: #000;
+    margin: 0 0 40px 0; line-height: 40px; border-bottom: 2px dashed #ccc; padding-bottom: 5px;
+    margin-left: +5px; text-align: left; 
+}
+.creation-subtitle-box { text-align: center; margin-bottom: 20px; margin-left: -40px; }
+
+.question-list { list-style: none; padding: 0; margin: 0; }
+.question-item { margin-bottom: 0; }
+
+.line-container { 
+    min-height: 40px; 
+    height: auto; 
+    display: flex; 
+    align-items: baseline; 
+}
+.number-marker { 
+    font-family: 'Gloria Hallelujah'; color: #0288d1; font-weight: bold; font-size: 22px; 
+    width: 40px; text-align: right; margin-right: 15px; 
+    line-height: 40px; 
+    flex-shrink: 0;
+    align-self: flex-start;
+}
+.question-text { 
+    font-family: 'Patrick Hand'; font-size: 26px; color: #222; font-weight: bold; 
+    flex: 1; 
+    white-space: normal; 
+    word-wrap: break-word; 
+    line-height: 40px; 
+    margin: 0; padding: 0;
+}
+.answer-container { padding-left: 55px; }
+.friend-answer-line { 
+    font-family: 'Patrick Hand'; font-size: 24px; width: 100%; 
+    white-space: normal; 
+    word-wrap: break-word; 
+    line-height: 40px; 
+    margin: 0; padding: 0;
+}
+.answer-input, .create-input { width: 100%; height: 35px; background: transparent; border: none; outline: none; font-family: 'Patrick Hand'; font-size: 26px; color: #0d47a1; padding: 0; margin: 0; }
+.create-input { border-bottom: 2px dashed #e91e63; color: #e91e63; }
+
+/* Seletor de Capas */
+.cover-selector-grid { 
+    display: grid; 
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 25px; 
+    justify-items: center; 
+    margin-bottom: 20px; 
+    margin-left: -40px; 
+}
+.mini-book { 
+    width: 110px; height: 155px; 
+    border-radius: 4px; cursor: pointer; 
+    background-size: contain; background-repeat: no-repeat; background-position: center; 
+    filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.3)); border: 2px solid transparent; transition: all 0.2s; 
+}
+.mini-book:hover { transform: scale(1.1); }
+.mini-book.selected { filter: drop-shadow(0 0 5px #d81b60); transform: scale(1.15); }
+.mini-book.bg-draft { background-image: url('imagens/Draft.png'); }
+.mini-book.bg-games { background-image: url('imagens/Games.png'); }
+.mini-book.bg-jeans { background-image: url('imagens/Jeans.png'); }
+.mini-book.bg-monstro { background-image: url('imagens/Monstro.png'); }
+.mini-book.bg-oncinha { background-image: url('imagens/Oncinha.png'); }
+.mini-book.bg-alien { background-image: url('imagens/Alien.png'); }
+
+/* Notificações */
+.notification-badge { position: absolute; top: -5px; right: -5px; background: red; color: white; font-size: 10px; width: 18px; height: 18px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-family: sans-serif; border: 2px solid #fff; z-index: 100; }
+.notif-modal { position: fixed; top: 70px; left: 20px; width: 300px; background: white; border-radius: 8px; box-shadow: 0 5px 20px rgba(0,0,0,0.3); z-index: 2100; display: none; overflow: hidden; font-family: 'Inter', sans-serif; }
+.notif-header { background: #f5f5f5; padding: 10px; font-weight: bold; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; }
+.notif-list { max-height: 300px; overflow-y: auto; padding: 0; margin: 0; list-style: none; }
+.notif-item { padding: 10px; border-bottom: 1px solid #eee; display: flex; flex-direction: column; gap: 5px; cursor: pointer; transition: 0.2s; }
+.notif-item:hover { background-color: #f9f9f9; }
+.notif-actions { display: flex; gap: 10px; margin-top: 5px; }
+.btn-accept { background: #4caf50; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+.btn-deny { background: #f44336; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+.overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1500; display: none; backdrop-filter: blur(3px); }
+.overlay.visible { display: block; }
+
+/* Chat Heads */
+#bubbles-container {
+    position: fixed; bottom: 20px; right: 20px; z-index: 2400;
+    display: flex; flex-direction: column-reverse; gap: 15px; align-items: flex-end;
+}
+.chat-bubble {
+    width: 55px; height: 55px; border-radius: 50%;
+    background-color: #d81b60; color: white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    cursor: pointer; position: relative;
+    transition: transform 0.2s;
+    display: flex; justify-content: center; align-items: center;
+    font-weight: bold; font-family: 'Patrick Hand'; font-size: 20px;
+    border: 2px solid white;
+}
+.chat-bubble:hover { transform: scale(1.1); }
+.bubble-badge {
+    position: absolute; top: -5px; right: -5px;
+    background: red; color: white; width: 20px; height: 20px; border-radius: 50%;
+    display: flex; justify-content: center; align-items: center;
+    font-size: 11px; border: 2px solid white; font-family: sans-serif;
 }
 
-// --- LÓGICA DO FEED ---
-function carregarFeed() {
-    const grid = document.getElementById('grid-cadernos');
-    db.collection('cadernos').onSnapshot((snapshot) => {
-        document.getElementById('screen-loading').style.display = 'none';
-        navegarPara('screen-feed');
-        document.getElementById('loading').style.display = 'none'; 
-        grid.innerHTML = ""; 
-        mapaNomesAmigos = {}; 
-        
-        const tut = document.createElement('div'); tut.className = "friend-book bg-jeans";
-        tut.innerHTML = `<div class="book-label">Como Usar?</div>`; tut.onclick = abrirTutorial;
-        grid.appendChild(tut);
-        
-        snapshot.forEach((doc) => {
-            const d = doc.data(); if (!d.donoNome) return;
-            mapaNomesAmigos[d.donoEmail] = d.donoNome;
-            if (d.donoEmail === usuarioAtual.email || meusAmigos.includes(d.donoEmail)) {
-                const div = document.createElement('div'); div.className = `friend-book ${d.corCapa || 'bg-draft'}`;
-                let btns = `<div class="book-label">${d.donoNome}</div>`;
-                if (d.donoEmail === usuarioAtual.email) {
-                    btns += `<button class="btn-action-book btn-delete-book" onclick="excluirCaderno('${doc.id}')">✕</button>`;
-                    btns += `<button class="btn-action-book btn-edit-book" onclick="editarMeuCaderno('${doc.id}')">✎</button>`;
-                }
-                div.innerHTML = btns;
-                div.onclick = (e) => { if(!e.target.className.includes('btn-action')) abrirCadernoParaResponder(doc.id, d); };
-                grid.appendChild(div);
-            }
-        });
-        renderizarListaAmigos();
-    });
+/* Chat Docked */
+.chat-modal { 
+    position: fixed; bottom: 0; right: 20px; width: 320px; height: 420px; 
+    background: white; border-radius: 12px 12px 0 0; 
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.2); 
+    display: none; flex-direction: column; z-index: 2500; overflow: hidden; font-family: 'Inter', sans-serif; 
+}
+.chat-header { 
+    background: #d81b60; color: white; padding: 10px 15px; font-weight: bold; 
+    display: flex; justify-content: space-between; align-items: center; cursor: pointer;
+}
+.chat-body { flex: 1; padding: 15px; overflow-y: auto; background: #f5f5f5; display: flex; flex-direction: column; gap: 8px; }
+.chat-msg { padding: 8px 12px; border-radius: 12px; max-width: 80%; font-size: 14px; word-wrap: break-word; }
+.msg-me { background: #d81b60; color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+.msg-friend { background: white; color: #333; align-self: flex-start; border-bottom-left-radius: 2px; border: 1px solid #ddd; }
+.chat-footer { display: flex; align-items: center; gap: 10px; padding: 10px; border-top: 1px solid #eee; background: white; }
+.chat-input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 20px; outline: none; font-family: 'Inter'; font-size: 14px; }
+
+.btn-back { position: fixed; top: 20px; left: 20px; width: 50px; height: 50px; border-radius: 50%; background-color: #fff; color: #333; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.2); font-size: 24px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 1000; transition: 0.2s; }
+.btn-back:hover { transform: scale(1.1); }
+
+.pen-tool { position: absolute; top: 30px; right: 30px; z-index: 10; cursor: pointer; transition: transform 0.2s; }
+.pen-icon { font-size: 50px; filter: drop-shadow(5px 5px 2px rgba(0,0,0,0.2)); transform: rotate(15deg); display: block; transition: 0.2s; }
+.pen-tool:hover .pen-icon { transform: rotate(0deg) scale(1.1) translateY(-5px); }
+.color-input-hidden { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 100; }
+
+/* Media Queries */
+@media (max-width: 600px) {
+    .feed-header { height: auto; flex-direction: column; padding-top: 10px; }
+    .header-center { margin-top: 40px; }
+    .main-logo { font-size: 40px; }
+    .sub-logo { font-size: 20px; }
+    .header-actions { top: 10px; left: 10px; gap: 5px; }
+    .btn-menu { width: 40px; height: 40px; font-size: 20px; }
+    .paper { width: 95%; padding: 60px 20px 50px 50px; background-image: linear-gradient(90deg, transparent 44px, #ffadad 44px, #ffadad 46px, transparent 46px), linear-gradient(#fdfbf7 39px, #a5d6a7 40px); }
+    .answer-container { padding-left: 10px; }
+    .friends-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .cover-selector-grid { grid-template-columns: repeat(2, 1fr); margin-left: -20px; }
+    .chat-modal { width: 95%; right: 2.5%; bottom: 0; height: 60vh; border-radius: 12px 12px 0 0; }
+    #bubbles-container { bottom: 80px; right: 10px; }
+
 }
 
-// --- AMIZADES E BUSCA ---
-function enviarPedidoAmizade() {
-    const input = document.getElementById('input-friend-email');
-    const emailDestino = input.value.trim().toLowerCase();
-    if (!emailDestino || emailDestino === usuarioAtual.email) return alert("Email inválido.");
-    if (meusAmigos.includes(emailDestino)) return alert("Vocês já são amigos!");
-    db.collection('notificacoes').add({
-        de: usuarioAtual.email, deNome: usuarioAtual.displayName, para: emailDestino,
-        tipo: 'pedido_amizade', status: 'pendente', data: firebase.firestore.FieldValue.serverTimestamp()
-    }).then(() => { alert("Pedido enviado!"); input.value = ""; }).catch(err => alert("Erro ao enviar."));
+/* --- REAÇÕES (V12.1 - Ajustado) --- */
+.reaction-wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-left: 8px;
+    position: relative;
+    vertical-align: middle; /* Garante alinhamento com o texto */
+    height: 24px; /* Altura fixa menor que a linha de 40px para não estourar */
 }
 
-function monitorarNotificacoes() {
-    db.collection('notificacoes').where('para', '==', usuarioAtual.email).where('status', '==', 'pendente')
-        .onSnapshot(snapshot => {
-            const badge = document.getElementById('notif-badge');
-            const lista = document.getElementById('lista-notificacoes');
-            let countSino = 0;
-            lista.innerHTML = "";
-            snapshot.forEach(doc => {
-                const notif = doc.data();
-                if(notif.tipo === 'nova_mensagem') {
-                    criarOuAtualizarBolha(notif.de, notif.deNome, doc.id);
-                } else {
-                    countSino++;
-                    const li = document.createElement('li'); li.className = 'notif-item';
-                    li.innerHTML = `<span><strong>${notif.deNome}</strong> quer ser amigo.</span>
-                        <div class="notif-actions"><button class="btn-accept" onclick="responderAmizade('${doc.id}', '${notif.de}', true)">Aceitar</button><button class="btn-deny" onclick="responderAmizade('${doc.id}', '${notif.de}', false)">Recusar</button></div>`;
-                    lista.appendChild(li);
-                }
-            });
-            if (countSino > 0) {
-                badge.style.display = 'flex'; badge.innerText = countSino;
-            } else {
-                badge.style.display = 'none';
-                if(lista.children.length === 0) lista.innerHTML = "<li style='padding:10px; color:#777;'>Nenhuma notificação nova.</li>";
-            }
-        });
+.reaction-list {
+    font-size: 16px; /* Emojis um pouco maiores */
+    background: rgba(255,255,255,0.5); /* Fundo mais sutil */
+    padding: 0 4px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    cursor: pointer; /* Indica que dá para clicar */
 }
 
-function responderAmizade(idNotificacao, emailAmigo, aceitou) {
-    const batch = db.batch();
-    const notifRef = db.collection('notificacoes').doc(idNotificacao);
-    batch.update(notifRef, { status: aceitou ? 'aceito' : 'recusado' });
-    if (aceitou) {
-        const meuRef = db.collection('usuarios').doc(usuarioAtual.uid);
-        batch.set(meuRef, { amigos: firebase.firestore.FieldValue.arrayUnion(emailAmigo), email: usuarioAtual.email }, { merge: true });
-        db.collection('usuarios').where('email', '==', emailAmigo).get().then(snapshot => {
-            if(!snapshot.empty) snapshot.docs[0].ref.update({ amigos: firebase.firestore.FieldValue.arrayUnion(usuarioAtual.email) });
-        });
-        alert("Amizade aceita!");
-    }
-    batch.commit().then(() => toggleNotificacoes());
+.btn-add-reaction {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 20px; /* Ícone ☺ maior */
+    color: #888; /* Cor cinza neutra */
+    transition: 0.2s;
+    padding: 0;
+    line-height: 1;
+    display: flex;
+    align-items: center;
 }
 
-function removerAmigo(email) {
-    if(!confirm("Desfazer amizade com " + email + "?")) return;
-    db.collection('usuarios').doc(usuarioAtual.uid).update({ amigos: firebase.firestore.FieldValue.arrayRemove(email) });
-    db.collection('usuarios').where('email', '==', email).get().then(s => { if(!s.empty) s.docs[0].ref.update({ amigos: firebase.firestore.FieldValue.arrayRemove(usuarioAtual.email) }); });
+.btn-add-reaction:hover {
+    color: #d81b60; /* Rosa ao passar o mouse */
+    transform: scale(1.1);
 }
 
-function renderizarListaAmigos() {
-    const ul = document.getElementById('lista-amigos-sidebar'); ul.innerHTML = "";
-    meusAmigos.forEach(email => {
-        const nome = mapaNomesAmigos[email] || email.split('@')[0];
-        ul.innerHTML += `<li class="friend-item"><div><span style="font-size:16px; font-weight:bold; color:#ddd;">${nome}</span></div><div class="friend-actions"><button class="btn-icon" onclick="abrirChat('${email}', '${nome}')">💬</button><button class="btn-icon" style="color:#ff5252" onclick="removerAmigo('${email}')">🗑️</button></div></li>`;
-    });
-}
-
-// --- CHAT ---
-function criarOuAtualizarBolha(emailRemetente, nomeRemetente, idNotificacao) {
-    const container = document.getElementById('bubbles-container');
-    if (document.getElementById('chat-modal').style.display === 'flex' && chatAtualEmailAmigo === emailRemetente) {
-        db.collection('notificacoes').doc(idNotificacao).delete();
-        return;
-    }
-    if (bolhasAtivas[emailRemetente]) {
-        const badge = bolhasAtivas[emailRemetente].querySelector('.bubble-badge');
-        badge.innerText = parseInt(badge.innerText) + 1;
-        return;
-    }
-    const bolha = document.createElement('div'); bolha.className = 'chat-bubble';
-    bolha.innerText = nomeRemetente.charAt(0).toUpperCase();
-    bolha.onclick = () => {
-        abrirChat(emailRemetente, nomeRemetente); bolha.remove(); delete bolhasAtivas[emailRemetente];
-        db.collection('notificacoes').where('de', '==', emailRemetente).where('tipo', '==', 'nova_mensagem').get().then(snap => snap.forEach(d => d.ref.delete()));
-    };
-    const badge = document.createElement('div'); badge.className = 'bubble-badge'; badge.innerText = '1';
-    bolha.appendChild(badge); container.appendChild(bolha); bolhasAtivas[emailRemetente] = bolha;
-}
-
-function abrirChat(email, nome) {
-    const emails = [usuarioAtual.email, email].sort();
-    chatAtualId = emails[0].replace(/\./g, '_') + "-" + emails[1].replace(/\./g, '_');
-    chatAtualEmailAmigo = email;
-    const chatModal = document.getElementById('chat-modal'); chatModal.style.display = 'flex';
-    document.getElementById('chat-friend-name').innerText = nome;
-    fecharMenus();
-    if (unsubscribeChat) unsubscribeChat();
-    unsubscribeChat = db.collection('chats').doc(chatAtualId).collection('mensagens').orderBy('data', 'asc').onSnapshot(snapshot => {
-        const b = document.getElementById('chat-body'); b.innerHTML = "";
-        snapshot.forEach(doc => {
-            const msg = doc.data(); const d = document.createElement('div');
-            d.className = `chat-msg ${msg.email === usuarioAtual.email ? 'msg-me' : 'msg-friend'}`; d.innerText = msg.texto;
-            b.appendChild(d);
-        });
-        b.scrollTop = b.scrollHeight;
-    });
-}
-
-function enviarMensagemChat() {
-    const i = document.getElementById('chat-input'); const t = i.value.trim(); if (!t) return;
-    db.collection('chats').doc(chatAtualId).collection('mensagens').add({ texto: t, email: usuarioAtual.email, data: firebase.firestore.FieldValue.serverTimestamp() });
-    if (chatAtualEmailAmigo) db.collection('notificacoes').add({ de: usuarioAtual.email, deNome: usuarioAtual.displayName, para: chatAtualEmailAmigo, tipo: 'nova_mensagem', status: 'pendente', data: firebase.firestore.FieldValue.serverTimestamp() });
-    i.value = "";
-}
-
-function fecharChat() { document.getElementById('chat-modal').style.display = 'none'; chatAtualEmailAmigo = null; if (unsubscribeChat) unsubscribeChat(); }
-function minimizarChat() {
-    const chatModal = document.getElementById('chat-modal'); chatModal.style.display = 'none';
-    if (chatAtualEmailAmigo) {
-        const nomeAmigo = document.getElementById('chat-friend-name').innerText;
-        const container = document.getElementById('bubbles-container');
-        const bolha = document.createElement('div'); bolha.className = 'chat-bubble';
-        bolha.innerText = nomeAmigo.charAt(0).toUpperCase();
-        bolha.onclick = () => { abrirChat(chatAtualEmailAmigo, nomeAmigo); bolha.remove(); };
-        container.appendChild(bolha);
-    }
-}
-
-// --- CADERNOS E RESPOSTAS ---
-function editarMeuCaderno(id) {
-    db.collection('cadernos').doc(id).get().then(doc => {
-        if(!doc.exists) return;
-        const dados = doc.data();
-        navegarPara('screen-create');
-        document.getElementById('input-meu-nome').value = dados.donoNome;
-        selecionarCorCapa(dados.corCapa || 'bg-draft', document.querySelector(`.mini-book.${dados.corCapa}`));
-        const lista = document.getElementById('lista-criacao'); lista.innerHTML = ""; 
-        dados.perguntas.forEach(p => adicionarNovaLinha(p));
-        editandoCadernoId = id;
-    });
-}
-
-function verificarSeJaTemCaderno() {
-    if (!usuarioAtual) return;
-    editandoCadernoId = null; navegarPara('screen-create');
-    document.getElementById('input-meu-nome').value = usuarioAtual.displayName;
-    const lista = document.getElementById('lista-criacao'); lista.innerHTML = "";
-    adicionarNovaLinha("Qual sua banda predileta ?"); adicionarNovaLinha("Qual seu filme predileto ?");
-    adicionarNovaLinha("Qual seu maior sonho ?"); adicionarNovaLinha("Um país em que você sonha visitar...");
-    adicionarNovaLinha("Qual sua comida predileta ?");
-}
-
-function adicionarNovaLinha(txt = "") {
-    const l = document.getElementById('lista-criacao'); const n = l.children.length + 1;
-    const li = document.createElement('li'); li.className = 'question-item';
-    li.innerHTML = `<div class="line-container"><span class="number-marker">${n < 10 ? '0'+n : n}.</span><input type="text" class="create-input" value="${txt}" style="color:${document.getElementById('colorPickerCriacao').value}" placeholder="..." onfocus="ultimoInputFocado = this"></div>`;
-    l.appendChild(li);
-}
-
-function salvarNovoCadernoNoBanco() {
-    const inps = document.querySelectorAll('.create-input'); const p = [];
-    inps.forEach(i => { if (i.value.trim()) p.push(i.value); });
-    if (!p.length) return alert("Crie uma pergunta!");
-    const dadosToSave = { donoNome: document.getElementById('input-meu-nome').value, donoEmail: usuarioAtual.email, corCapa: document.getElementById('input-cor-capa').value, perguntas: p, dataCriacao: firebase.firestore.FieldValue.serverTimestamp() };
-    if (editandoCadernoId) { db.collection('cadernos').doc(editandoCadernoId).update(dadosToSave).then(() => { alert("Atualizado!"); navegarPara('screen-feed'); }); } 
-    else { db.collection('cadernos').doc(usuarioAtual.uid).set(dadosToSave).then(() => { alert("Publicado!"); navegarPara('screen-feed'); }); }
-}
-
-function abrirCadernoParaResponder(id, dados) {
-    idCadernoAberto = id; 
-    navegarPara('screen-notebook');
-    document.getElementById('titulo-caderno').innerText = "Caderno de " + dados.donoNome;
-    document.querySelector('.pen-tool').style.display = (id === 'tutorial') ? 'none' : 'block';
+.reaction-picker-popup {
+    position: absolute;
+    bottom: 35px; /* Aparece acima do botão */
+    right: -5px;  /* ALINHAMENTO NOVO: Fixa na direita para não cortar no mobile */
+    left: auto;   /* Ignora a esquerda */
     
-    if (unsubscribeRespostas) { unsubscribeRespostas(); unsubscribeRespostas = null; }
-
-    const lista = document.getElementById('lista-perguntas-leitura'); 
-    lista.innerHTML = "<p>Carregando...</p>";
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    padding: 8px;
     
-    if (id === 'tutorial') { renderizarPerguntasERespostas(dados, []); return; }
-
-    unsubscribeRespostas = db.collection('cadernos').doc(id).collection('respostas')
-        .onSnapshot(snap => {
-            const resps = []; 
-            snap.forEach(doc => resps.push({ uid: doc.id, dados: doc.data() }));
-            renderizarPerguntasERespostas(dados, resps);
-        });
-}
-
-function renderizarPerguntasERespostas(caderno, respostas) {
-    const lista = document.getElementById('lista-perguntas-leitura'); 
-    lista.innerHTML = "";
+    /* --- O SEGREDO DO QUADRADO --- */
+    display: grid; 
+    grid-template-columns: repeat(4, 1fr); /* 4 colunas exatas */
+    gap: 8px; /* Espaço entre os ícones */
     
-    caderno.perguntas.forEach((perg, idx) => {
-        const pid = `resp_${idx}`; const n = idx + 1;
-        const li = document.createElement('li'); li.className = 'question-item';
-        li.innerHTML = `<div class="line-container"><span class="number-marker">${n < 10 ? '0'+n : n}.</span><span class="question-text">${perg}</span></div>`;
-        lista.appendChild(li);
-        
-        // 1. Respostas dos Amigos (IMPEDE DUPLICAÇÃO DA MINHA RESPOSTA AQUI)
-        respostas.forEach(r => {
-            if (r.uid === usuarioAtual.uid) return; // PULA A MINHA (já renderiza no input abaixo)
-
-            if (r.dados[pid]) {
-                const pickerId = `picker_${r.uid}_${pid}`;
-                let htmlReacoes = "";
-                if (r.dados[pid].reacoes) {
-                    const listaEmojis = Object.values(r.dados[pid].reacoes);
-                    if (listaEmojis.length > 0) {
-                        const unicos = [...new Set(listaEmojis)].slice(0, 4).join('');
-                        htmlReacoes = `<span class="reaction-list">${unicos}</span>`;
-                    }
-                }
-                const amg = document.createElement('li'); amg.className = 'question-item';
-                amg.innerHTML = `
-                    <div class="line-container answer-container">
-                        <div class="friend-answer-line" style="color:${r.dados[pid].cor}">
-                            <strong style="margin-right:5px">${r.dados.nomeQuemRespondeu}:</strong> ${r.dados[pid].texto}
-                            <div class="reaction-wrapper">
-                                ${htmlReacoes}
-                                <button class="btn-add-reaction" onclick="toggleReactionPicker('${pickerId}')">☺</button> 
-                                <div id="${pickerId}" class="reaction-picker-popup" style="display:none;">
-                                    <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '❤️')">❤️</span>
-                                    <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '🔥')">🔥</span>
-                                    <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '😂')">😂</span>
-                                    <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '😮')">😮</span>
-                                    <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '😢')">😢</span>
-                                    <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '👏')">👏</span>
-                                    <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '👍')">👍</span>
-                                    <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '👎')">👎</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>`;
-                lista.appendChild(amg);
-            }
-        });
-
-        // 2. Minha Linha de Resposta (COM BOTÃO DE AVIÃO + SALVAR AO PULAR LINHA)
-        if (idCadernoAberto !== 'tutorial') {
-            const meuLi = document.createElement('li'); meuLi.className = 'question-item';
-            let txt = "", cor = document.getElementById('colorPickerResposta').value;
-            const minha = respostas.find(r => r.uid === usuarioAtual.uid);
-            
-            if (minha && minha.dados[pid]) { 
-                txt = minha.dados[pid].texto; 
-                cor = minha.dados[pid].cor; 
-            }
-            
-            // onblur = Quando você sai do campo (clica fora ou aperta Tab), ele salva.
-            meuLi.innerHTML = `
-                <div class="line-container answer-container" style="display:flex; align-items:center;">
-                    <input type="text" class="answer-input" id="${pid}" value="${txt}" 
-                        style="color:${cor}; flex:1;" 
-                        placeholder="Sua resposta..." 
-                        onfocus="ultimoInputFocado = this"
-                        onblur="salvarRespostaManual('${pid}')">
-                    <button class="btn-send-answer" onclick="salvarRespostaManual('${pid}')" title="Salvar">➤</button>
-                </div>`;
-            lista.appendChild(meuLi);
-        }
-    });
-}
-
-function salvarRespostaManual(inputId) {
-    if (!usuarioAtual || idCadernoAberto === 'tutorial') return;
-
-    // Se a função foi chamada pelo onblur (passando o ID direto) ou clique (passando string)
-    let inp;
-    if (typeof inputId === 'object') { // Se vier do onblur, é o objeto input
-        inp = inputId;
-        inputId = inp.id; // Pega o ID dele
-    } else {
-        inp = document.getElementById(inputId);
-    }
+    width: max-content;
+    min-width: 140px; /* Garante tamanho mínimo */
     
-    // Pequena verificação se o elemento existe (para evitar erros de loop)
-    if (!inp) inp = document.getElementById(inputId);
-    if (!inp) return;
-
-    const texto = inp.value.trim();
-
-    // Feedback visual discreto (piscar verde claro)
-    inp.style.backgroundColor = "#e8f5e9";
-    setTimeout(() => inp.style.backgroundColor = "transparent", 300);
-
-    const dados = {}; 
-    const cor = inp.style.color || document.getElementById('colorPickerResposta').value;
-    
-    dados[inputId] = { texto: texto, cor: cor };
-    dados.nomeQuemRespondeu = document.getElementById('input-meu-nome').value || usuarioAtual.displayName;
-    
-    db.collection('cadernos').doc(idCadernoAberto)
-      .collection('respostas').doc(usuarioAtual.uid)
-      .set(dados, { merge: true });
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    z-index: 1000;
+    animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.reaction-option {
+    cursor: pointer;
+    font-size: 22px;
+    transition: transform 0.2s;
+    user-select: none;
 }
 
-// --- CORREÇÃO DO LÁPIS ---
-const colorPicker = document.getElementById('colorPickerResposta');
-if (colorPicker) {
-    colorPicker.addEventListener('input', function() {
-        if (ultimoInputFocado) {
-            ultimoInputFocado.style.color = this.value;
-            ultimoInputFocado.focus();
-            // Salva a cor nova assim que escolhe
-            salvarRespostaManual(ultimoInputFocado.id);
-        } else {
-            alert("Clique na linha de resposta antes de escolher a cor!");
-        }
-    });
+.reaction-option:hover {
+    transform: scale(1.3);
 }
 
-// --- UTILITÁRIOS E UI ---
-function abrirTutorial() {
-    abrirCadernoParaResponder("tutorial", {
-        donoNome: "Tutorial",
-        perguntas: ["Bem-vindo ao My Ask Book!", "Crie o seu caderno e comece a interagir.", "Adicione amigos no menu lateral.", "Não esqueça de responder os cadernos de seus amigos!"]
-    });
-}
-function excluirCaderno(id) { if (confirm("Apagar?")) db.collection('cadernos').doc(id).delete(); }
-function selecionarCorCapa(classe, el) {
-    document.getElementById('input-cor-capa').value = classe;
-    document.querySelectorAll('.mini-book').forEach(c => c.classList.remove('selected'));
-    if(el) el.classList.add('selected'); 
-}
-function toggleMenu() { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('overlay').classList.toggle('visible'); }
-function fecharMenus() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('visible'); }
-function toggleNotificacoes() { const m = document.getElementById('notif-modal'); m.style.display = (m.style.display === 'block') ? 'none' : 'block'; }
-function navegarPara(id) { document.querySelectorAll('.screen').forEach(s => s.style.display = 'none'); document.getElementById(id).style.display = 'flex'; }
-
-// --- REAÇÕES E BUSCA ---
-function toggleReactionPicker(elementId) {
-    const picker = document.getElementById(elementId);
-    document.querySelectorAll('.reaction-picker-popup').forEach(p => { if(p.id !== elementId) p.style.display = 'none'; });
-    picker.style.display = (picker.style.display === 'grid') ? 'none' : 'grid';
+@keyframes popIn {
+    from { opacity: 0; transform: scale(0.5) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-function salvarReacao(cadernoId, respondenteId, perguntaId, emoji) {
-    document.querySelectorAll('.reaction-picker-popup').forEach(p => p.style.display = 'none');
-    const docRef = db.collection('cadernos').doc(cadernoId).collection('respostas').doc(respondenteId);
-    return db.runTransaction(transaction => {
-        return transaction.get(docRef).then(doc => {
-            if (!doc.exists) return;
-            const data = doc.data();
-            if (!data[perguntaId]) return;
-            if (!data[perguntaId].reacoes) data[perguntaId].reacoes = {};
-            const reacaoAtual = data[perguntaId].reacoes[usuarioAtual.uid];
-            if (reacaoAtual === emoji) { delete data[perguntaId].reacoes[usuarioAtual.uid]; } 
-            else { data[perguntaId].reacoes[usuarioAtual.uid] = emoji; }
-            transaction.update(docRef, { [perguntaId]: data[perguntaId] });
-        });
-    });
+/* --- BUSCA DE AMIGOS (V13.0) --- */
+/* --- BUSCA LIVE (V13.1) --- */
+.search-dropdown {
+    position: absolute;
+    top: 45px; /* Logo abaixo do campo de texto */
+    left: 0;
+    width: 100%;
+    background: #2a2a2a; /* Fundo um pouco mais claro que a sidebar */
+    border: 1px solid #444;
+    border-radius: 8px;
+    z-index: 2500;
+    display: none; /* Começa oculto */
+    max-height: 250px;
+    overflow-y: auto;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
 }
 
-function buscarUsuarios() {
-    const input = document.getElementById('input-friend-email');
-    const termo = input.value.trim().toLowerCase();
-    const resultadosDiv = document.getElementById('lista-resultados-busca');
-    if (termo.length < 3) { resultadosDiv.style.display = 'none'; resultadosDiv.innerHTML = ""; return; }
-    db.collection('usuarios').where('nome_busca', '>=', termo).where('nome_busca', '<=', termo + '\uf8ff').limit(5).get().then(snapshot => {
-        resultadosDiv.innerHTML = ""; let encontrouAlguem = false;
-        if (snapshot.empty) { resultadosDiv.style.display = 'block'; resultadosDiv.innerHTML = '<div style="padding:10px; color:#bbb; font-size:12px;">Ninguém encontrado...</div>'; return; }
-        resultadosDiv.style.display = 'block';
-        snapshot.forEach(doc => {
-            const user = doc.data(); encontrouAlguem = true; let htmlAcao = '';
-            if (user.email === usuarioAtual.email) htmlAcao = '<span class="badge-me">Você</span>';
-            else if (meusAmigos.includes(user.email)) htmlAcao = '<span class="badge-friend">Amigo ✔</span>';
-            else htmlAcao = `<button class="btn-add-mini" onclick="enviarPedidoPorBusca('${user.email}')" title="Enviar pedido">+</button>`;
-            const div = document.createElement('div'); div.className = 'search-result-item';
-            div.innerHTML = `<img src="${user.foto || 'https://via.placeholder.com/30'}" class="mini-avatar"><div style="flex:1; display:flex; flex-direction:column; align-items:flex-start;"><span style="font-weight:bold; font-size:14px; color:white;">${user.nome}</span><span style="font-size:10px; color:#aaa;">${user.email}</span></div>${htmlAcao}`;
-            resultadosDiv.appendChild(div);
-        });
-        if (!encontrouAlguem) resultadosDiv.innerHTML = '<div style="padding:10px; color:#bbb; font-size:12px;">Ninguém encontrado...</div>';
-    });
+.search-result-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-bottom: 1px solid #333;
+    transition: background 0.2s;
+    cursor: default;
 }
-function enviarPedidoPorBusca(emailDestino) {
-    document.getElementById('input-friend-email').value = emailDestino; enviarPedidoAmizade();
-    document.getElementById('lista-resultados-busca').style.display = 'none';
+
+.search-result-item:hover {
+    background-color: #444;
+}
+
+.mini-avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #d81b60;
+}
+
+.btn-add-mini {
+    background: #4caf50;
+    color: white;
+    border: none;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    transition: transform 0.2s;
+}
+
+.btn-add-mini:hover {
+    transform: scale(1.1);
+    background: #43a047;
+}
+
+/* Badge de "Já é amigo" */
+.badge-friend {
+    background-color: #2e7d32; /* Verde escuro */
+    color: white;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-family: 'Inter', sans-serif;
+    border: 1px solid #4caf50;
+    white-space: nowrap;
+}
+
+/* Etiqueta para identificar o próprio usuário na busca */
+.badge-me {
+    background-color: #607d8b; /* Cinza azulado (Blue Grey) */
+    color: white;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-family: 'Inter', sans-serif;
+    border: 1px solid #78909c;
+    white-space: nowrap;
+    cursor: default;
+}
+
+/* Botão de Enviar Resposta (V13.9) */
+.btn-send-answer {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #2e7d32; /* Verde folha */
+    padding: 0 5px;
+    margin-left: 5px;
+    transition: transform 0.2s;
+    display: flex;
+    align-items: center;
+}
+
+.btn-send-answer:hover {
+    transform: scale(1.2) rotate(-10deg);
+    color: #1b5e20;
+}
+
+.btn-send-answer:active {
+    transform: scale(0.9);
 }
