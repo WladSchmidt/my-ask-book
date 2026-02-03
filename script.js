@@ -9,7 +9,7 @@ let mapaNomesAmigos = {};
 let ultimoInputFocado = null; 
 let editandoCadernoId = null; 
 let bolhasAtivas = {}; 
-let timeoutSalvar = null; // Variável de controle do delay (Debounce)
+let timeoutSalvar = null; // CONTROLADOR DO DELAY
 
 // --- AUTENTICAÇÃO E START ---
 auth.onAuthStateChanged(user => {
@@ -438,17 +438,21 @@ function renderizarPerguntasERespostas(caderno, respostas) {
                 cor = minha.dados[pid].cor; 
             }
             
-            // oninput = agenda salvar (Debounce)
-            // onblur = salva imediatamente (PC)
+            // Textarea com Auto-Resize ao digitar e Salvamento com Delay
             meuLi.innerHTML = `
                 <div class="line-container answer-container">
                     <textarea class="answer-input" id="${pid}" style="color:${cor}" 
                         placeholder="Sua resposta..." 
                         oninput="agendarSalvamento(this)" 
-                        onblur="salvarImediatamente(this)"
                         onfocus="ultimoInputFocado = this">${txt}</textarea>
                 </div>`;
             lista.appendChild(meuLi);
+            
+            // Pequeno ajuste para a altura inicial correta
+            setTimeout(() => {
+                const ta = document.getElementById(pid);
+                if(ta) ta.style.height = (ta.scrollHeight) + "px";
+            }, 100);
         }
     });
 }
@@ -456,7 +460,7 @@ function renderizarPerguntasERespostas(caderno, respostas) {
 // --- FUNÇÕES DE SALVAMENTO INTELIGENTE (DEBOUNCE) ---
 
 function agendarSalvamento(el) {
-    // 1. Ajusta altura automaticamente (UX Profissional)
+    // 1. Ajusta altura automaticamente (Cresce com o texto)
     el.style.height = 'auto';
     el.style.height = (el.scrollHeight) + 'px';
 
@@ -465,11 +469,6 @@ function agendarSalvamento(el) {
     timeoutSalvar = setTimeout(() => {
         executarSalvar(el);
     }, 1500); 
-}
-
-function salvarImediatamente(el) {
-    clearTimeout(timeoutSalvar);
-    executarSalvar(el);
 }
 
 function executarSalvar(inp) {
