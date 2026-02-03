@@ -10,7 +10,7 @@ let ultimoInputFocado = null;
 let editandoCadernoId = null; 
 let bolhasAtivas = {}; 
 
-console.log("Script iniciado...");
+console.log("Script restaurado com botão de avião...");
 
 // --- AUTENTICAÇÃO E START ---
 auth.onAuthStateChanged(user => {
@@ -20,10 +20,8 @@ auth.onAuthStateChanged(user => {
         carregarMeusAmigosDoBanco();
         atualizarUIUsuario();
         monitorarNotificacoes();
-        // A tela de loading sai dentro de carregarFeed()
     } else {
         navegarPara('screen-login');
-        // Se não tem user, tira o loading para mostrar o login
         document.getElementById('screen-loading').style.display = 'none';
     }
 });
@@ -64,13 +62,9 @@ function carregarMeusAmigosDoBanco() {
 // --- LÓGICA DO FEED ---
 function carregarFeed() {
     const grid = document.getElementById('grid-cadernos');
-    
     db.collection('cadernos').onSnapshot((snapshot) => {
-        // --- DESTRAVA A TELA DE LOADING ---
         document.getElementById('screen-loading').style.display = 'none';
         navegarPara('screen-feed');
-        // ----------------------------------
-
         document.getElementById('loading').style.display = 'none'; 
         grid.innerHTML = ""; 
         mapaNomesAmigos = {}; 
@@ -117,7 +111,6 @@ function monitorarNotificacoes() {
             const lista = document.getElementById('lista-notificacoes');
             let countSino = 0;
             lista.innerHTML = "";
-            
             snapshot.forEach(doc => {
                 const notif = doc.data();
                 if(notif.tipo === 'nova_mensagem') {
@@ -130,7 +123,6 @@ function monitorarNotificacoes() {
                     lista.appendChild(li);
                 }
             });
-
             if (countSino > 0) {
                 badge.style.display = 'flex'; badge.innerText = countSino;
             } else {
@@ -144,14 +136,11 @@ function responderAmizade(idNotificacao, emailAmigo, aceitou) {
     const batch = db.batch();
     const notifRef = db.collection('notificacoes').doc(idNotificacao);
     batch.update(notifRef, { status: aceitou ? 'aceito' : 'recusado' });
-
     if (aceitou) {
         const meuRef = db.collection('usuarios').doc(usuarioAtual.uid);
         batch.set(meuRef, { amigos: firebase.firestore.FieldValue.arrayUnion(emailAmigo), email: usuarioAtual.email }, { merge: true });
         db.collection('usuarios').where('email', '==', emailAmigo).get().then(snapshot => {
-            if(!snapshot.empty) {
-                snapshot.docs[0].ref.update({ amigos: firebase.firestore.FieldValue.arrayUnion(usuarioAtual.email) });
-            }
+            if(!snapshot.empty) snapshot.docs[0].ref.update({ amigos: firebase.firestore.FieldValue.arrayUnion(usuarioAtual.email) });
         });
         alert("Amizade aceita!");
     }
@@ -299,21 +288,18 @@ function renderizarPerguntasERespostas(caderno, respostas) {
     lista.innerHTML = "";
     
     caderno.perguntas.forEach((perg, idx) => {
-        const pid = `resp_${idx}`; 
-        const n = idx + 1;
-        
-        // 1. Pergunta
-        const li = document.createElement('li'); 
-        li.className = 'question-item';
+        const pid = `resp_${idx}`; const n = idx + 1;
+        const li = document.createElement('li'); li.className = 'question-item';
         li.innerHTML = `<div class="line-container"><span class="number-marker">${n < 10 ? '0'+n : n}.</span><span class="question-text">${perg}</span></div>`;
         lista.appendChild(li);
         
-        // 2. Respostas dos Amigos
+        // 1. Respostas dos Amigos (IMPEDE DUPLICAÇÃO DA MINHA RESPOSTA AQUI)
         respostas.forEach(r => {
+            if (r.uid === usuarioAtual.uid) return; // PULA A MINHA (já renderiza no input abaixo)
+
             if (r.dados[pid]) {
                 const pickerId = `picker_${r.uid}_${pid}`;
                 let htmlReacoes = "";
-                
                 if (r.dados[pid].reacoes) {
                     const listaEmojis = Object.values(r.dados[pid].reacoes);
                     if (listaEmojis.length > 0) {
@@ -321,9 +307,7 @@ function renderizarPerguntasERespostas(caderno, respostas) {
                         htmlReacoes = `<span class="reaction-list">${unicos}</span>`;
                     }
                 }
-
-                const amg = document.createElement('li'); 
-                amg.className = 'question-item';
+                const amg = document.createElement('li'); amg.className = 'question-item';
                 amg.innerHTML = `
                     <div class="line-container answer-container">
                         <div class="friend-answer-line" style="color:${r.dados[pid].cor}">
@@ -348,10 +332,9 @@ function renderizarPerguntasERespostas(caderno, respostas) {
             }
         });
 
-        // 3. Minha Linha de Resposta (COM AUTOSALVAR + VISUAL PENDENTE)
+        // 2. Minha Linha de Resposta (COM BOTÃO DE AVIÃO + SALVAR AO PULAR LINHA)
         if (idCadernoAberto !== 'tutorial') {
-            const meuLi = document.createElement('li'); 
-            meuLi.className = 'question-item';
+            const meuLi = document.createElement('li'); meuLi.className = 'question-item';
             let txt = "", cor = document.getElementById('colorPickerResposta').value;
             const minha = respostas.find(r => r.uid === usuarioAtual.uid);
             
@@ -360,42 +343,42 @@ function renderizarPerguntasERespostas(caderno, respostas) {
                 cor = minha.dados[pid].cor; 
             }
             
-            // Aqui está a mágica:
-            // oninput: Torna o botão rosa/pendente assim que digita.
-            // onblur: Salva sozinho se clicar fora (resolve seu problema no PC).
+            // onblur = Quando você sai do campo (clica fora ou aperta Tab), ele salva.
             meuLi.innerHTML = `
                 <div class="line-container answer-container" style="display:flex; align-items:center;">
-                    <input type="text" class="answer-input" id="${pid}" value="${txt}" style="color:${cor}; flex:1;" 
+                    <input type="text" class="answer-input" id="${pid}" value="${txt}" 
+                        style="color:${cor}; flex:1;" 
                         placeholder="Sua resposta..." 
                         onfocus="ultimoInputFocado = this"
-                        oninput="marcarComoPendente('${pid}')"
                         onblur="salvarRespostaManual('${pid}')">
-                    
-                    <button id="btn-${pid}" class="btn-send-answer" onclick="salvarRespostaManual('${pid}')" title="Salvar">➤</button>
+                    <button class="btn-send-answer" onclick="salvarRespostaManual('${pid}')" title="Salvar">➤</button>
                 </div>`;
             lista.appendChild(meuLi);
         }
     });
 }
 
-// Função visual para avisar que precisa salvar
-function marcarComoPendente(pid) {
-    const btn = document.getElementById(`btn-${pid}`);
-    if (btn) {
-        btn.classList.remove('saved');
-        btn.classList.add('pending'); // Fica rosa e pulsando
-    }
-}
-
 function salvarRespostaManual(inputId) {
     if (!usuarioAtual || idCadernoAberto === 'tutorial') return;
 
-    const inp = document.getElementById(inputId);
-    const btn = document.getElementById(`btn-${inputId}`);
+    // Se a função foi chamada pelo onblur (passando o ID direto) ou clique (passando string)
+    let inp;
+    if (typeof inputId === 'object') { // Se vier do onblur, é o objeto input
+        inp = inputId;
+        inputId = inp.id; // Pega o ID dele
+    } else {
+        inp = document.getElementById(inputId);
+    }
+    
+    // Pequena verificação se o elemento existe (para evitar erros de loop)
+    if (!inp) inp = document.getElementById(inputId);
+    if (!inp) return;
+
     const texto = inp.value.trim();
 
-    // Se estiver vazio, não faz nada (ou apaga do banco se quiser implementar deletar)
-    if (!texto) return;
+    // Feedback visual discreto (piscar verde claro)
+    inp.style.backgroundColor = "#e8f5e9";
+    setTimeout(() => inp.style.backgroundColor = "transparent", 300);
 
     const dados = {}; 
     const cor = inp.style.color || document.getElementById('colorPickerResposta').value;
@@ -405,17 +388,25 @@ function salvarRespostaManual(inputId) {
     
     db.collection('cadernos').doc(idCadernoAberto)
       .collection('respostas').doc(usuarioAtual.uid)
-      .set(dados, { merge: true })
-      .then(() => {
-          // Feedback Visual: Botão fica Verde e para de pulsar
-          if (btn) {
-              btn.classList.remove('pending');
-              btn.classList.add('saved');
-          }
-      });
+      .set(dados, { merge: true });
 }
 
-// --- UTILITÁRIOS ---
+// --- CORREÇÃO DO LÁPIS ---
+const colorPicker = document.getElementById('colorPickerResposta');
+if (colorPicker) {
+    colorPicker.addEventListener('input', function() {
+        if (ultimoInputFocado) {
+            ultimoInputFocado.style.color = this.value;
+            ultimoInputFocado.focus();
+            // Salva a cor nova assim que escolhe
+            salvarRespostaManual(ultimoInputFocado.id);
+        } else {
+            alert("Clique na linha de resposta antes de escolher a cor!");
+        }
+    });
+}
+
+// --- UTILITÁRIOS E UI ---
 function abrirTutorial() {
     abrirCadernoParaResponder("tutorial", {
         donoNome: "Tutorial",
@@ -432,25 +423,8 @@ function toggleMenu() { document.getElementById('sidebar').classList.toggle('ope
 function fecharMenus() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('visible'); }
 function toggleNotificacoes() { const m = document.getElementById('notif-modal'); m.style.display = (m.style.display === 'block') ? 'none' : 'block'; }
 function navegarPara(id) { document.querySelectorAll('.screen').forEach(s => s.style.display = 'none'); document.getElementById(id).style.display = 'flex'; }
-// --- CORREÇÃO DA FERRAMENTA DE COR (V13.10) ---
-const colorPicker = document.getElementById('colorPickerResposta');
 
-if (colorPicker) {
-    colorPicker.addEventListener('input', function() {
-        // Se temos um campo salvo na memória
-        if (ultimoInputFocado) {
-            // 1. Aplica a cor visualmente na hora
-            ultimoInputFocado.style.color = this.value;
-            
-            // 2. Traz o foco de volta para o campo para você continuar digitando
-            ultimoInputFocado.focus();
-        } else {
-            alert("Clique em uma linha de resposta antes de escolher a cor!");
-        }
-    });
-}
-
-// --- FUNÇÕES DE REAÇÃO (V12.0) ---
+// --- REAÇÕES E BUSCA ---
 function toggleReactionPicker(elementId) {
     const picker = document.getElementById(elementId);
     document.querySelectorAll('.reaction-picker-popup').forEach(p => { if(p.id !== elementId) p.style.display = 'none'; });
@@ -474,7 +448,6 @@ function salvarReacao(cadernoId, respondenteId, perguntaId, emoji) {
     });
 }
 
-// --- BUSCA (V13.9) ---
 function buscarUsuarios() {
     const input = document.getElementById('input-friend-email');
     const termo = input.value.trim().toLowerCase();
@@ -500,5 +473,3 @@ function enviarPedidoPorBusca(emailDestino) {
     document.getElementById('input-friend-email').value = emailDestino; enviarPedidoAmizade();
     document.getElementById('lista-resultados-busca').style.display = 'none';
 }
-
-
