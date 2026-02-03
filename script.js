@@ -378,16 +378,18 @@ function renderizarPerguntasERespostas(caderno, respostas) {
         const pid = `resp_${idx}`; 
         const n = idx + 1;
         
+        // 1. Pergunta
         const li = document.createElement('li'); 
         li.className = 'question-item';
         li.innerHTML = `<div class="line-container"><span class="number-marker">${n < 10 ? '0'+n : n}.</span><span class="question-text">${perg}</span></div>`;
         lista.appendChild(li);
         
+        // 2. Respostas dos Amigos (Código igual ao anterior)
         respostas.forEach(r => {
             if (r.dados[pid]) {
-                const isMeuAmigo = (r.uid !== usuarioAtual.uid);
-                
+                const pickerId = `picker_${r.uid}_${pid}`;
                 let htmlReacoes = "";
+                
                 if (r.dados[pid].reacoes) {
                     const listaEmojis = Object.values(r.dados[pid].reacoes);
                     if (listaEmojis.length > 0) {
@@ -396,25 +398,20 @@ function renderizarPerguntasERespostas(caderno, respostas) {
                     }
                 }
 
-                const pickerId = `picker_${r.uid}_${pid}`;
-
                 const amg = document.createElement('li'); 
                 amg.className = 'question-item';
-               amg.innerHTML = `
+                amg.innerHTML = `
                     <div class="line-container answer-container">
                         <div class="friend-answer-line" style="color:${r.dados[pid].cor}">
                             <strong style="margin-right:5px">${r.dados.nomeQuemRespondeu}:</strong> ${r.dados[pid].texto}
-                            
                             <div class="reaction-wrapper">
                                 ${htmlReacoes}
                                 <button class="btn-add-reaction" onclick="toggleReactionPicker('${pickerId}')">☺</button> 
-                                
                                 <div id="${pickerId}" class="reaction-picker-popup" style="display:none;">
                                     <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '❤️')">❤️</span>
                                     <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '🔥')">🔥</span>
                                     <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '😂')">😂</span>
                                     <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '😮')">😮</span>
-                                    
                                     <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '😢')">😢</span>
                                     <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '👏')">👏</span>
                                     <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '👍')">👍</span>
@@ -426,6 +423,31 @@ function renderizarPerguntasERespostas(caderno, respostas) {
                 lista.appendChild(amg);
             }
         });
+
+        // 3. Minha Linha de Resposta (AGORA COM BOTÃO)
+        if (idCadernoAberto !== 'tutorial') {
+            const meuLi = document.createElement('li'); 
+            meuLi.className = 'question-item';
+            let txt = "", cor = document.getElementById('colorPickerResposta').value;
+            const minha = respostas.find(r => r.uid === usuarioAtual.uid);
+            
+            if (minha && minha.dados[pid]) { 
+                txt = minha.dados[pid].texto; 
+                cor = minha.dados[pid].cor; 
+            }
+            
+            // MUDANÇA AQUI:
+            // 1. Removi o oninput="salvarResposta..."
+            // 2. Adicionei o botão ➤ (save-icon) ao lado
+            meuLi.innerHTML = `
+                <div class="line-container answer-container" style="display:flex; align-items:center;">
+                    <input type="text" class="answer-input" id="${pid}" value="${txt}" style="color:${cor}; flex:1;" placeholder="Sua resposta..." onfocus="ultimoInputFocado = this">
+                    <button class="btn-send-answer" onclick="salvarRespostaManual('${pid}')" title="Salvar">➤</button>
+                </div>`;
+            lista.appendChild(meuLi);
+        }
+    });
+}
 
         if (idCadernoAberto !== 'tutorial') {
             const meuLi = document.createElement('li'); 
@@ -581,6 +603,7 @@ function enviarPedidoPorBusca(emailDestino) {
     // Esconde a lista depois de clicar
     document.getElementById('lista-resultados-busca').style.display = 'none';
 }
+
 
 
 
