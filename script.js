@@ -465,21 +465,32 @@ function renderizarPerguntasERespostas(caderno, respostas) {
         }
     });
 }
-function salvarResposta(inp) {
+// Função chamada apenas ao clicar no aviãozinho ➤
+function salvarRespostaManual(inputId) {
     if (!usuarioAtual || idCadernoAberto === 'tutorial') return;
-    const dados = {}; const cor = inp.style.color || document.getElementById('colorPickerResposta').value;
-    dados[inp.id] = { texto: inp.value, cor: cor };
+
+    const inp = document.getElementById(inputId);
+    const texto = inp.value.trim();
+
+    // Feedback visual (opcional): piscar o input
+    inp.style.backgroundColor = "#e8f5e9"; // Verde bem clarinho
+    setTimeout(() => inp.style.backgroundColor = "transparent", 300);
+
+    const dados = {}; 
+    const cor = inp.style.color || document.getElementById('colorPickerResposta').value;
+    
+    dados[inputId] = { texto: texto, cor: cor };
     dados.nomeQuemRespondeu = document.getElementById('input-meu-nome').value || usuarioAtual.displayName;
-    db.collection('cadernos').doc(idCadernoAberto).collection('respostas').doc(usuarioAtual.uid).set(dados, { merge: true });
+    
+    // Salva no banco
+    db.collection('cadernos').doc(idCadernoAberto)
+      .collection('respostas').doc(usuarioAtual.uid)
+      .set(dados, { merge: true })
+      .then(() => {
+          // Opcional: Feedback de sucesso
+          // alert("Salvo!"); // Descomente se quiser um popup, mas acho chato
+      });
 }
-document.querySelectorAll('input[type="color"]').forEach(picker => {
-    picker.addEventListener('input', function() {
-        if (ultimoInputFocado) {
-            ultimoInputFocado.style.color = this.value;
-            if (ultimoInputFocado.classList.contains('answer-input')) salvarResposta(ultimoInputFocado);
-        }
-    });
-});
 function toggleMenu() { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('overlay').classList.toggle('visible'); }
 function fecharMenus() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('visible'); }
 
@@ -603,6 +614,7 @@ function enviarPedidoPorBusca(emailDestino) {
     // Esconde a lista depois de clicar
     document.getElementById('lista-resultados-busca').style.display = 'none';
 }
+
 
 
 
