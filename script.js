@@ -299,15 +299,21 @@ function renderizarPerguntasERespostas(caderno, respostas) {
     lista.innerHTML = "";
     
     caderno.perguntas.forEach((perg, idx) => {
-        const pid = `resp_${idx}`; const n = idx + 1;
-        const li = document.createElement('li'); li.className = 'question-item';
+        const pid = `resp_${idx}`; 
+        const n = idx + 1;
+        
+        // 1. Pergunta
+        const li = document.createElement('li'); 
+        li.className = 'question-item';
         li.innerHTML = `<div class="line-container"><span class="number-marker">${n < 10 ? '0'+n : n}.</span><span class="question-text">${perg}</span></div>`;
         lista.appendChild(li);
         
+        // 2. Respostas dos Amigos
         respostas.forEach(r => {
             if (r.dados[pid]) {
                 const pickerId = `picker_${r.uid}_${pid}`;
                 let htmlReacoes = "";
+                
                 if (r.dados[pid].reacoes) {
                     const listaEmojis = Object.values(r.dados[pid].reacoes);
                     if (listaEmojis.length > 0) {
@@ -315,7 +321,9 @@ function renderizarPerguntasERespostas(caderno, respostas) {
                         htmlReacoes = `<span class="reaction-list">${unicos}</span>`;
                     }
                 }
-                const amg = document.createElement('li'); amg.className = 'question-item';
+
+                const amg = document.createElement('li'); 
+                amg.className = 'question-item';
                 amg.innerHTML = `
                     <div class="line-container answer-container">
                         <div class="friend-answer-line" style="color:${r.dados[pid].cor}">
@@ -340,30 +348,71 @@ function renderizarPerguntasERespostas(caderno, respostas) {
             }
         });
 
-        // MINHA RESPOSTA (COM BOTÃO MANUAL)
+        // 3. Minha Linha de Resposta (COM AUTOSALVAR + VISUAL PENDENTE)
         if (idCadernoAberto !== 'tutorial') {
-            const meuLi = document.createElement('li'); meuLi.className = 'question-item';
+            const meuLi = document.createElement('li'); 
+            meuLi.className = 'question-item';
             let txt = "", cor = document.getElementById('colorPickerResposta').value;
             const minha = respostas.find(r => r.uid === usuarioAtual.uid);
-            if (minha && minha.dados[pid]) { txt = minha.dados[pid].texto; cor = minha.dados[pid].cor; }
+            
+            if (minha && minha.dados[pid]) { 
+                txt = minha.dados[pid].texto; 
+                cor = minha.dados[pid].cor; 
+            }
+            
+            // Aqui está a mágica:
+            // oninput: Torna o botão rosa/pendente assim que digita.
+            // onblur: Salva sozinho se clicar fora (resolve seu problema no PC).
             meuLi.innerHTML = `
                 <div class="line-container answer-container" style="display:flex; align-items:center;">
-                    <input type="text" class="answer-input" id="${pid}" value="${txt}" style="color:${cor}; flex:1;" placeholder="Sua resposta..." onfocus="ultimoInputFocado = this">
-                    <button class="btn-send-answer" onclick="salvarRespostaManual('${pid}')" title="Salvar">➤</button>
+                    <input type="text" class="answer-input" id="${pid}" value="${txt}" style="color:${cor}; flex:1;" 
+                        placeholder="Sua resposta..." 
+                        onfocus="ultimoInputFocado = this"
+                        oninput="marcarComoPendente('${pid}')"
+                        onblur="salvarRespostaManual('${pid}')">
+                    
+                    <button id="btn-${pid}" class="btn-send-answer" onclick="salvarRespostaManual('${pid}')" title="Salvar">➤</button>
                 </div>`;
             lista.appendChild(meuLi);
         }
     });
 }
 
+// Função visual para avisar que precisa salvar
+function marcarComoPendente(pid) {
+    const btn = document.getElementById(`btn-${pid}`);
+    if (btn) {
+        btn.classList.remove('saved');
+        btn.classList.add('pending'); // Fica rosa e pulsando
+    }
+}
+
 function salvarRespostaManual(inputId) {
     if (!usuarioAtual || idCadernoAberto === 'tutorial') return;
-    const inp = document.getElementById(inputId); const texto = inp.value.trim();
-    inp.style.backgroundColor = "#e8f5e9"; setTimeout(() => inp.style.backgroundColor = "transparent", 300);
-    const dados = {}; const cor = inp.style.color || document.getElementById('colorPickerResposta').value;
+
+    const inp = document.getElementById(inputId);
+    const btn = document.getElementById(`btn-${inputId}`);
+    const texto = inp.value.trim();
+
+    // Se estiver vazio, não faz nada (ou apaga do banco se quiser implementar deletar)
+    if (!texto) return;
+
+    const dados = {}; 
+    const cor = inp.style.color || document.getElementById('colorPickerResposta').value;
+    
     dados[inputId] = { texto: texto, cor: cor };
     dados.nomeQuemRespondeu = document.getElementById('input-meu-nome').value || usuarioAtual.displayName;
-    db.collection('cadernos').doc(idCadernoAberto).collection('respostas').doc(usuarioAtual.uid).set(dados, { merge: true });
+    
+    db.collection('cadernos').doc(idCadernoAberto)
+      .collection('respostas').doc(usuarioAtual.uid)
+      .set(dados, { merge: true })
+      .then(() => {
+          // Feedback Visual: Botão fica Verde e para de pulsar
+          if (btn) {
+              btn.classList.remove('pending');
+              btn.classList.add('saved');
+          }
+      });
 }
 
 // --- UTILITÁRIOS ---
@@ -451,4 +500,5 @@ function enviarPedidoPorBusca(emailDestino) {
     document.getElementById('input-friend-email').value = emailDestino; enviarPedidoAmizade();
     document.getElementById('lista-resultados-busca').style.display = 'none';
 }
+
 
