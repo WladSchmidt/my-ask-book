@@ -14,7 +14,6 @@ body {
     overflow-x: hidden; 
 }
 
-/* ✅ telas por classe */
 .screen { 
     display: none;
     width: 100%; 
@@ -46,9 +45,39 @@ body {
 .sidebar.open { left: 0; }
 .sidebar-title { font-family: 'Gloria Hallelujah'; font-size: 24px; border-bottom: 1px solid #444; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;}
 
-.add-friend-box { display: flex; gap: 5px; margin-bottom: 20px; position: relative; }
-.input-friend { flex: 1; padding: 10px; border-radius: 6px; border: 1px solid #444; background: #333; color: white; font-family: 'Inter', sans-serif; }
-.btn-add-friend { background: #d81b60; color: white; border: none; padding: 5px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; font-family: 'Inter', sans-serif; }
+/* ✅ FIX: botão "Adicionar" não estoura a sidebar */
+.add-friend-box { 
+    display: flex; 
+    gap: 8px; 
+    margin-bottom: 20px; 
+    position: relative; 
+    width: 100%;
+    box-sizing: border-box;
+}
+.input-friend { 
+    flex: 1; 
+    min-width: 0;          /* ✅ permite encolher no flex */
+    padding: 10px; 
+    border-radius: 6px; 
+    border: 1px solid #444; 
+    background: #333; 
+    color: white; 
+    font-family: 'Inter', sans-serif; 
+    box-sizing: border-box;
+}
+.btn-add-friend { 
+    flex-shrink: 0;        /* ✅ não deixa o botão empurrar pra fora */
+    background: #d81b60; 
+    color: white; 
+    border: none; 
+    padding: 10px 12px;    /* ✅ alinhado com o input */
+    height: 40px;          /* ✅ mesma “linha” do input */
+    border-radius: 6px; 
+    cursor: pointer; 
+    font-weight: bold; 
+    font-family: 'Inter', sans-serif;
+    white-space: nowrap;
+}
 
 .friend-list { list-style: none; padding: 0; overflow-y: auto; flex: 1; margin-bottom: 20px; }
 .friend-item { padding: 12px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
@@ -140,12 +169,12 @@ body {
 .question-list { list-style: none; padding: 0; margin: 0; }
 .question-item { margin-bottom: 0; }
 
-/* ✅ Ajuste principal: evita baseline puxar alinhamento */
+/* ✅ Ajuste principal de alinhamento */
 .line-container { 
     min-height: 40px; 
     height: auto; 
     display: flex; 
-    align-items: flex-start; 
+    align-items: flex-start;
 }
 
 .number-marker { 
@@ -157,17 +186,23 @@ body {
 }
 
 .question-text { 
-    font-family: 'Patrick Hand'; font-size: 26px; color: #222; font-weight: bold; 
+    display: block;
+    font-family: 'Patrick Hand'; 
+    font-size: 26px; 
+    color: #222; 
+    font-weight: bold; 
     flex: 1; 
     white-space: normal; 
     word-wrap: break-word; 
     line-height: 40px; 
-    margin: 0; padding: 0;
+    margin: 0; 
+    padding: 0;
 }
 
 .answer-container { padding-left: 55px; }
 
 .friend-answer-line { 
+    display: block;
     font-family: 'Patrick Hand';
     font-size: 24px;
     width: 100%;
@@ -190,6 +225,7 @@ body {
     margin: 0;
     line-height: 40px;
     min-height: 40px;
+    box-sizing: border-box;
 }
 
 /* textarea */
@@ -198,16 +234,11 @@ body {
     resize: none;
     overflow: hidden;
     display: block;
+    vertical-align: top;
 }
 
 /* input criação */
 .create-input { border-bottom: 2px dashed #e91e63; color: #e91e63; }
-
-/* micro-ajuste */
-.question-text,
-.friend-answer-line,
-.answer-input,
-.create-input { padding-top: 2px; }
 
 /* Seletor de Capas */
 .cover-selector-grid { 
@@ -319,8 +350,7 @@ body {
     gap: 6px;
     margin-left: 8px;
     position: relative;
-
-    height: 40px;          /* ✅ casa com a pauta */
+    height: 40px;
 }
 
 .reaction-list {
@@ -332,7 +362,7 @@ body {
     align-items: center;
     gap: 2px;
     cursor: pointer;
-    line-height: 40px;     /* ✅ alinha com a linha */
+    line-height: 40px;
 }
 
 .btn-add-reaction {
@@ -345,43 +375,30 @@ body {
     padding: 0 2px;
     display: inline-flex;
     align-items: center;
-    height: 40px;          /* ✅ alinha com a linha */
+    height: 40px;
     line-height: 40px;
 }
-
-.btn-add-reaction:hover {
-    color: #d81b60;
-    transform: scale(1.1);
-}
+.btn-add-reaction:hover { color: #d81b60; transform: scale(1.1); }
 
 .reaction-picker-popup {
     position: absolute;
     bottom: 35px;
     right: -5px;
     left: auto;
-
     background: white;
     border: 1px solid #ccc;
     border-radius: 12px;
     padding: 8px;
-
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 8px;
-
     width: max-content;
     min-width: 140px;
-
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     z-index: 1000;
     animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-.reaction-option {
-    cursor: pointer;
-    font-size: 22px;
-    transition: transform 0.2s;
-    user-select: none;
-}
+.reaction-option { cursor: pointer; font-size: 22px; transition: transform 0.2s; user-select: none; }
 .reaction-option:hover { transform: scale(1.3); }
 
 @keyframes popIn {
