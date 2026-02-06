@@ -46,7 +46,7 @@ body {
 .sidebar.open { left: 0; }
 .sidebar-title { font-family: 'Gloria Hallelujah'; font-size: 24px; border-bottom: 1px solid #444; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;}
 
-.add-friend-box { display: flex; gap: 5px; margin-bottom: 20px; position: relative; } /* ✅ movido do inline */
+.add-friend-box { display: flex; gap: 5px; margin-bottom: 20px; position: relative; }
 .input-friend { flex: 1; padding: 10px; border-radius: 6px; border: 1px solid #444; background: #333; color: white; font-family: 'Inter', sans-serif; }
 .btn-add-friend { background: #d81b60; color: white; border: none; padding: 5px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; font-family: 'Inter', sans-serif; }
 
@@ -133,14 +133,14 @@ body {
 .creation-title {
     font-family: 'Gloria Hallelujah'; font-size: 36px; color: #000;
     margin: 0 0 40px 0; line-height: 40px; border-bottom: 2px dashed #ccc; padding-bottom: 5px;
-    margin-left: 5px; text-align: left; /* ✅ corrigido +5px */
+    margin-left: 5px; text-align: left; 
 }
 .creation-subtitle-box { text-align: center; margin-bottom: 20px; margin-left: -40px; }
 
 .question-list { list-style: none; padding: 0; margin: 0; }
 .question-item { margin-bottom: 0; }
 
-/* ✅ Ajuste: flex-start evita emoji/strong puxando baseline */
+/* ✅ Ajuste principal: evita baseline puxar alinhamento */
 .line-container { 
     min-height: 40px; 
     height: auto; 
@@ -166,15 +166,19 @@ body {
 }
 
 .answer-container { padding-left: 55px; }
+
 .friend-answer-line { 
-    font-family: 'Patrick Hand'; font-size: 24px; width: 100%; 
-    white-space: normal; 
-    word-wrap: break-word; 
-    line-height: 40px; 
-    margin: 0; padding: 0;
+    font-family: 'Patrick Hand';
+    font-size: 24px;
+    width: 100%;
+    white-space: normal;
+    word-wrap: break-word;
+    line-height: 40px;
+    margin: 0;
+    padding: 0;
 }
 
-/* ✅ Ajuste: inputs/textarea casando com a pauta */
+/* ✅ Inputs/textarea casando com a pauta */
 .answer-input, .create-input {
     width: 100%;
     background: transparent;
@@ -184,12 +188,11 @@ body {
     font-size: 26px;
     padding: 0;
     margin: 0;
-
     line-height: 40px;
     min-height: 40px;
 }
 
-/* textarea (resposta) */
+/* textarea */
 .answer-input {
     color: #0d47a1;
     resize: none;
@@ -197,10 +200,10 @@ body {
     display: block;
 }
 
-/* input (criação) */
+/* input criação */
 .create-input { border-bottom: 2px dashed #e91e63; color: #e91e63; }
 
-/* micro-ajuste para “sentar” no trilho */
+/* micro-ajuste */
 .question-text,
 .friend-answer-line,
 .answer-input,
@@ -310,14 +313,14 @@ body {
 }
 
 /* --- REAÇÕES --- */
-.reaction-wrapper {
+.reaction-wrapper{
     display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
     margin-left: 8px;
     position: relative;
-    vertical-align: middle;
-    height: 24px;
+
+    height: 40px;          /* ✅ casa com a pauta */
 }
 
 .reaction-list {
@@ -329,6 +332,7 @@ body {
     align-items: center;
     gap: 2px;
     cursor: pointer;
+    line-height: 40px;     /* ✅ alinha com a linha */
 }
 
 .btn-add-reaction {
@@ -338,10 +342,11 @@ body {
     font-size: 20px;
     color: #888;
     transition: 0.2s;
-    padding: 0;
-    line-height: 1;
-    display: flex;
+    padding: 0 2px;
+    display: inline-flex;
     align-items: center;
+    height: 40px;          /* ✅ alinha com a linha */
+    line-height: 40px;
 }
 
 .btn-add-reaction:hover {
@@ -354,6 +359,7 @@ body {
     bottom: 35px;
     right: -5px;
     left: auto;
+
     background: white;
     border: 1px solid #ccc;
     border-radius: 12px;
