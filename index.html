@@ -6,7 +6,6 @@
     <title>My Ask Book</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Gloria+Hallelujah&family=Patrick+Hand&family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    
     <link rel="stylesheet" href="style.css">
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -22,14 +21,15 @@
             <span>Amigos</span>
             <button onclick="fecharMenus()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">&times;</button>
         </div>
-        <div class="add-friend-box" style="position:relative;">
-            <input type="text" id="input-friend-email" class="input-friend" placeholder="Busque por nome ou e-mail." oninput="buscarUsuarios()" autocomplete="off">
-            
-            <button class="btn-add-friend" onclick="enviarPedidoAmizade()">Ok</button>
 
+        <div class="add-friend-box">
+            <input type="text" id="input-friend-email" class="input-friend" placeholder="Busque por nome ou e-mail." oninput="buscarUsuarios()" autocomplete="off">
+            <button class="btn-add-friend" onclick="enviarPedidoAmizade()">Adicionar</button>
             <div id="lista-resultados-busca" class="search-dropdown"></div>
         </div>
+
         <ul id="lista-amigos-sidebar" class="friend-list"></ul>
+
         <div class="sidebar-footer">
             <div class="user-info">
                 <img id="user-img" class="user-avatar" src="">
@@ -62,12 +62,13 @@
         </div>
         <div id="chat-body" class="chat-body"></div>
         <div class="chat-footer">
-            <input type="text" id="chat-input" class="chat-input" placeholder="Digite..." onkeypress="if(event.key==='Enter') enviarMensagemChat()">
+            <input type="text" id="chat-input" class="chat-input" placeholder="Digite..." onkeydown="if(event.key==='Enter') enviarMensagemChat()">
             <button onclick="enviarMensagemChat()" style="background:none; border:none; font-size:20px; cursor:pointer;">🚀</button>
         </div>
     </div>
 
-    <div id="screen-loading" class="screen" style="display: flex;">
+    <!-- Agora usa .active em vez de style inline -->
+    <div id="screen-loading" class="screen active">
         <p>Carregando My Ask Book...</p>
     </div>
 
@@ -146,10 +147,10 @@
                     Essas são perguntas modelos, mas você pode editar e adicionar novas perguntas para seus amigos responderem.
                 </div>
             </div>
+
             <input type="hidden" id="input-cor-capa" value="bg-draft">
-            
             <ul class="question-list" id="lista-criacao"></ul>
-            
+
             <div class="line-container" style="justify-content: center; margin-top: 20px;">
                 <button onclick="adicionarNovaLinha()" style="border: 1px dashed #999; background:none; padding: 5px 15px; cursor: pointer; font-family: 'Patrick Hand'; font-size: 18px; color: #555;">+ Adicionar Pergunta</button>
             </div>
@@ -163,7 +164,4 @@
     <script src="firebase-config.js"></script>
     <script src="script.js"></script>
 </body>
-
 </html>
-
-
