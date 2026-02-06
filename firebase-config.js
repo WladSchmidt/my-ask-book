@@ -11,9 +11,9 @@ const firebaseConfig = {
 
 // Inicializa o Firebase
 if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
+  firebase.initializeApp(firebaseConfig);
 }
 
-// Exporta as variáveis para serem usadas no script.js
+// Variáveis globais usadas no script.js
 const auth = firebase.auth();
 const db = firebase.firestore();
