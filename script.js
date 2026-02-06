@@ -15,7 +15,7 @@ let timeoutSalvar = null;
 let idCadernoAberto = null;
 
 auth.onAuthStateChanged(user => {
-    // Sempre tira o loading quando o estado do auth for conhecido
+    // tira o loading assim que o auth responder
     document.getElementById('screen-loading').classList.remove('active');
 
     if (user) {
@@ -133,13 +133,11 @@ function monitorarNotificacoes() {
 function criarOuAtualizarBolha(emailRemetente, nomeRemetente, idNotificacao) {
     const chatModal = document.getElementById('chat-modal');
 
-    // Se o chat com esse amigo está aberto, apaga a notif e não cria bolha
     if (chatModal.style.display === 'flex' && chatAtualEmailAmigo === emailRemetente) {
         db.collection('notificacoes').doc(idNotificacao).delete();
         return;
     }
 
-    // Se bolha já existe, incrementa badge
     if (bolhasAtivas[emailRemetente]) {
         const badge = bolhasAtivas[emailRemetente].querySelector('.bubble-badge');
         let count = parseInt(badge.innerText || "0") + 1;
@@ -158,7 +156,7 @@ function criarOuAtualizarBolha(emailRemetente, nomeRemetente, idNotificacao) {
         bolha.remove();
         delete bolhasAtivas[emailRemetente];
 
-        // ✅ FIX: apagar apenas notificações desse remetente QUE SÃO PARA MIM
+        // ✅ FIX: apaga apenas notificações desse remetente QUE SÃO PARA MIM
         db.collection('notificacoes')
             .where('de', '==', emailRemetente)
             .where('para', '==', usuarioAtual.email)
@@ -185,7 +183,6 @@ function toggleNotificacoes() {
     modal.style.display = abrindo ? 'block' : 'none';
     overlay.classList.toggle('visible', abrindo);
 
-    // se estiver abrindo notif, fecha sidebar
     if (abrindo) document.getElementById('sidebar').classList.remove('open');
 }
 
@@ -282,14 +279,12 @@ function abrirChat(email, nome) {
             b.scrollTop = b.scrollHeight;
         });
 
-    // Quando abre chat, se existia bolha ativa, remove
     if (bolhasAtivas[email]) {
         bolhasAtivas[email].remove();
         delete bolhasAtivas[email];
     }
 }
 
-// ✅ FIX: minimizar chat sem criar bolhas duplicadas e com badge correto
 function minimizarChat() {
     const chatModal = document.getElementById('chat-modal');
     chatModal.style.display = 'none';
@@ -406,7 +401,6 @@ function editarMeuCaderno(id) {
 
         document.getElementById('input-meu-nome').value = dados.donoNome;
 
-        // ✅ FIX: capa fallback consistente
         const capa = dados.corCapa || 'bg-draft';
         selecionarCorCapa(capa, document.querySelector(`.mini-book.${capa}`));
 
@@ -552,42 +546,45 @@ function renderizarPerguntasERespostas(caderno, respostas) {
         lista.appendChild(li);
 
         respostas.forEach(r => {
-            if (r.dados[pid]) {
-                const pickerId = `picker_${r.uid}_${pid}`;
-                let htmlReacoes = "";
+            if (!r.dados[pid]) return;
 
-                if (r.dados[pid].reacoes) {
-                    const listaEmojis = Object.values(r.dados[pid].reacoes);
-                    if (listaEmojis.length > 0) {
-                        const unicos = [...new Set(listaEmojis)].slice(0, 4).join('');
-                        htmlReacoes = `<span class="reaction-list">${unicos}</span>`;
-                    }
+            // ✅ CORREÇÃO: NÃO mostrar minha resposta nessa lista (eu já tenho textarea editável)
+            if (r.uid === usuarioAtual.uid) return;
+
+            const pickerId = `picker_${r.uid}_${pid}`;
+            let htmlReacoes = "";
+
+            if (r.dados[pid].reacoes) {
+                const listaEmojis = Object.values(r.dados[pid].reacoes);
+                if (listaEmojis.length > 0) {
+                    const unicos = [...new Set(listaEmojis)].slice(0, 4).join('');
+                    htmlReacoes = `<span class="reaction-list">${unicos}</span>`;
                 }
-
-                const amg = document.createElement('li');
-                amg.className = 'question-item';
-                amg.innerHTML = `
-                    <div class="line-container answer-container">
-                        <div class="friend-answer-line" style="color:${r.dados[pid].cor}">
-                            <strong style="margin-right:5px">${r.dados.nomeQuemRespondeu}:</strong> ${r.dados[pid].texto}
-                            <span class="reaction-wrapper">
-                                ${htmlReacoes}
-                                <button class="btn-add-reaction" onclick="toggleReactionPicker('${pickerId}')">☺</button>
-                                <div id="${pickerId}" class="reaction-picker-popup" style="display:none;">
-                                    <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '❤️')">❤️</span>
-                                    <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '🔥')">🔥</span>
-                                    <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '😂')">😂</span>
-                                    <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '😮')">😮</span>
-                                    <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '😢')">😢</span>
-                                    <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '👏')">👏</span>
-                                    <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '👍')">👍</span>
-                                    <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '👎')">👎</span>
-                                </div>
-                            </span>
-                        </div>
-                    </div>`;
-                lista.appendChild(amg);
             }
+
+            const amg = document.createElement('li');
+            amg.className = 'question-item';
+            amg.innerHTML = `
+                <div class="line-container answer-container">
+                    <div class="friend-answer-line" style="color:${r.dados[pid].cor}">
+                        <strong style="margin-right:5px">${r.dados.nomeQuemRespondeu}:</strong> ${r.dados[pid].texto}
+                        <span class="reaction-wrapper">
+                            ${htmlReacoes}
+                            <button class="btn-add-reaction" onclick="toggleReactionPicker('${pickerId}')">☺</button>
+                            <div id="${pickerId}" class="reaction-picker-popup" style="display:none;">
+                                <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '❤️')">❤️</span>
+                                <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '🔥')">🔥</span>
+                                <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '😂')">😂</span>
+                                <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '😮')">😮</span>
+                                <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '😢')">😢</span>
+                                <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '👏')">👏</span>
+                                <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '👍')">👍</span>
+                                <span class="reaction-option" onclick="salvarReacao('${idCadernoAberto}', '${r.uid}', '${pid}', '👎')">👎</span>
+                            </div>
+                        </span>
+                    </div>
+                </div>`;
+            lista.appendChild(amg);
         });
 
         if (idCadernoAberto !== 'tutorial') {
@@ -634,7 +631,7 @@ function salvarImediatamente(inp) {
     salvarResposta(inp);
 }
 
-// ✅ FIX: textarea cresce em blocos de 40px (alinha na pauta)
+// ✅ textarea cresce em blocos de 40px (alinha na pauta)
 function ajustarAltura(el) {
     el.style.height = 'auto';
     const linha = 40;
@@ -650,6 +647,8 @@ function salvarResposta(inp) {
     const cor = inp.style.color || document.getElementById('colorPickerResposta').value;
 
     dados[inp.id] = { texto: inp.value, cor: cor };
+
+    // mantém nome do respondente no doc (ok)
     dados.nomeQuemRespondeu = document.getElementById('input-meu-nome').value || usuarioAtual.displayName;
 
     db.collection('cadernos').doc(idCadernoAberto).collection('respostas').doc(usuarioAtual.uid).set(dados, { merge: true });
@@ -698,7 +697,6 @@ function toggleReactionPicker(elementId) {
         if (p.id !== elementId) p.style.display = 'none';
     });
 
-    // ✅ abre em GRID (igual ao CSS)
     picker.style.display = (picker.style.display === 'grid') ? 'none' : 'grid';
 }
 
