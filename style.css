@@ -213,6 +213,11 @@ body {
     padding: 0;
 }
 
+/* Evita desalinhamento após quebra de linha por causa do <strong> */
+.friend-answer-line strong {
+    line-height: 40px;
+}
+
 /* ✅ Inputs/textarea casando com a pauta */
 .answer-input, .create-input {
     width: 100%;
@@ -478,3 +483,4 @@ body {
     white-space: nowrap;
     cursor: default;
 }
+
