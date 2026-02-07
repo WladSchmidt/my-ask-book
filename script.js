@@ -291,19 +291,22 @@ function minimizarChat() {
 
     if (!chatAtualEmailAmigo) return;
 
-    const nomeAmigo = document.getElementById('chat-friend-name').innerText;
+    // Congela os valores para evitar bug de sumir bolha
+    const email = chatAtualEmailAmigo;
+    const nome = document.getElementById('chat-friend-name').innerText;
 
-    if (bolhasAtivas[chatAtualEmailAmigo]) return;
+    // Evita duplicar bolha
+    if (bolhasAtivas[email]) return;
 
     const container = document.getElementById('bubbles-container');
     const bolha = document.createElement('div');
     bolha.className = 'chat-bubble';
-    bolha.innerText = nomeAmigo.charAt(0).toUpperCase();
+    bolha.innerText = nome.charAt(0).toUpperCase();
 
     bolha.onclick = () => {
-        abrirChat(chatAtualEmailAmigo, nomeAmigo);
+        abrirChat(email, nome);
         bolha.remove();
-        delete bolhasAtivas[chatAtualEmailAmigo];
+        delete bolhasAtivas[email];
     };
 
     const badge = document.createElement('div');
@@ -314,8 +317,9 @@ function minimizarChat() {
     bolha.appendChild(badge);
     container.appendChild(bolha);
 
-    bolhasAtivas[chatAtualEmailAmigo] = bolha;
+    bolhasAtivas[email] = bolha;
 }
+
 
 function enviarMensagemChat() {
     const i = document.getElementById('chat-input');
@@ -783,3 +787,4 @@ function enviarPedidoPorBusca(emailDestino) {
     enviarPedidoAmizade();
     document.getElementById('lista-resultados-busca').style.display = 'none';
 }
+
